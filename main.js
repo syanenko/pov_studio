@@ -2,16 +2,17 @@
 //
 // - Switch flat shading (dispose material)
 // - Preserve material on upload (?)
-// - Do export
-// - 
+// - Exporter
 // - 
 //
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 
 import { AsyncLoader } from './modules/AsyncLoader.js';
-import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
+import { POVExporter } from './modules/POVExporter.js';
+
 
 const DEFAULT_MODEL = '/data/models/teapot.glb';
 const PATH_GLAZES   = '/data/mat/';
@@ -173,8 +174,10 @@ window.loadModel = loadModel;
 // Make material
 //
 async function makeMaterial() {
-  if( material != undefined)
+  if( material != undefined) {
+    material.matcap.dispose();
     material.dispose();
+  }
   let matcap = await AsyncLoader.loadTextureAsync(PATH_GLAZES + glaze + "_mcap.png");
   matcap.colorSpace = THREE.SRGBColorSpace;
   material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} );
@@ -262,6 +265,31 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
   renderer.setSize( window.innerWidth, window.innerHeight );
 }
+
+//
+// Download
+//
+const link = document.createElement( 'a' );
+link.style.display = 'none';
+document.body.appendChild( link );
+
+function save( blob, filename ) {
+  link.href = URL.createObjectURL( blob );
+  link.download = filename;
+  link.click();
+}
+
+function saveString( text, filename ) {
+  save( new Blob( [ text ], { type: 'text/plain' } ), filename );
+}
+
+function download() {
+  const exporter = new POVExporter();
+  const result = exporter.parse( model );
+  console.log(result);
+  saveString( result, 'scene.pov' );
+}
+window.download = download;
 
 //
 // Animate

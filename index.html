@@ -99,9 +99,16 @@
     <div id="container"></div>
     <!-- Controls -->
     <div style='position: absolute; top:65px; left:20px; width:90px; z-index:4;'>
-      <input id="upload_button"   type="image" src='data/models/upload_icon.png' style='position: relative;   margin: 2px; border:0px solid #aaaaaa;'>
-      <input id="download_button" type="image" src='data/models/download_icon.png' style='position: relative; margin: 2px; border:0px solid #aaaaaa; border-radius: 0px;'>
+      <input id="upload_button"   type="image" src='data/models/upload_icon.png'   style='position: relative; margin: 2px; border:0px solid #aaaaaa;'>
+      <input id="download_button" type="image" src='data/models/download_icon.png' onclick="window.download()" style='position: relative; margin: 2px; border:0px solid #aaaaaa; border-radius: 0px;'>
+
     </div>
+
+    <script>
+      ub = document.getElementById("upload_button");
+      ub.onclick = function() { let form = document.getElementById("form_upload");
+                                form.style.visibility == "visible" ? form.style.visibility = 'hidden': form.style.visibility = "visible"; }
+    </script>
 
     <div style='position: absolute; top:65px; right:20px; width:90px; z-index:4;'>
       <input id="glaze1"  type="image" src='data/mat/skeleton_icon.png' style='position: relative;  margin: 3px;'>
@@ -119,12 +126,6 @@
       document.getElementById("glaze5").onclick = function() { window.applyGlaze('normal'); }
     </script>
 
-    <script>
-      ub = document.getElementById("upload_button");
-      ub.onclick = function() { let form = document.getElementById("form_upload");
-                                form.style.visibility == "visible" ? form.style.visibility = 'hidden': form.style.visibility = "visible"; }
-    </script>
-
   <!-- Settings -->
   <div style='position: absolute; bottom:15px; left:20px; z-index:4; font-size: 130%;'>
     <input type="checkbox" id="show_normals" onclick="window.showNormals(this.checked)">
@@ -135,6 +136,9 @@
 
     <input type="checkbox" id="flat_shading" onclick="window.flatShading(this.checked)">
     <label for="flat_shading">Flat shading</label><br>
+
+    <input type="checkbox" id="export_array" onclick="window.flatShading(this.checked)">
+    <label for="export_array">Export array</label><br>
   </div>
 
   </body>
