@@ -1,8 +1,7 @@
 // TODO:
 //
-// - Switch normals helper
-// - Switch axis helper
-// - Switch flat shading
+// - Switch flat shading (dispose material)
+// - Preserve material on upload (?)
 // - Do export
 // - 
 // - 
@@ -16,8 +15,7 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 
 const DEFAULT_MODEL = '/data/models/teapot.glb';
 const PATH_GLAZES   = '/data/mat/';
-let DEFAULT_GLAZE   = "skeleton";
-
+const DEFAULT_GLAZE = "skeleton";
 
 // Common
 let container;
@@ -36,6 +34,7 @@ let pmatrix;
 let rotate = false;
 
 let material, model;
+let glaze = DEFAULT_GLAZE;
 
 //
 // Init
@@ -161,14 +160,7 @@ async function loadModel(args)
   ocontrols.reset();
   ocontrols.target.set( 0, lookAt, 0 );
 
-  // Apply material
-  if( material == undefined) {
-    let matcap = await AsyncLoader.loadTextureAsync(PATH_GLAZES + DEFAULT_GLAZE + "_mcap.png");
-    matcap.colorSpace = THREE.SRGBColorSpace;
-    material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} );
-    material.flatShading = true; // TODO: Switchable
-    // material.flatShading = false;
-  }
+  await makeMaterial();
 
   model = new THREE.Mesh( geo, material );
   scene.add(model);
@@ -178,19 +170,27 @@ async function loadModel(args)
 window.loadModel = loadModel;
 
 //
+// Make material
+//
+async function makeMaterial() {
+  if( material != undefined)
+    material.dispose();
+  let matcap = await AsyncLoader.loadTextureAsync(PATH_GLAZES + glaze + "_mcap.png");
+  matcap.colorSpace = THREE.SRGBColorSpace;
+  material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} );
+  material.flatShading = document.getElementById("flat_shading").checked;
+}
+
+//
 // Apply glaze
 //
-async function applyGlaze(glaze) {
-  // Material
-  const matcap = glaze + "_mcap.png";
+async function applyGlaze(_glaze) {
+  if(glaze == _glaze)
+    return;
+  glaze = _glaze;
   model.material.matcap.dispose();
-  model.material.matcap = await AsyncLoader.loadTextureAsync(PATH_GLAZES + matcap);
+  model.material.matcap = await AsyncLoader.loadTextureAsync(PATH_GLAZES + glaze + "_mcap.png");
   model.material.matcap.colorSpace = THREE.SRGBColorSpace;
-  // Image
-  const gi = document.getElementById("glaze_image");
-  if(gi != null) {
-    document.getElementById("glaze_image").src = PATH_GLAZES + glaze + ".png";
-  }
 }
 window.applyGlaze = applyGlaze;
 
@@ -217,7 +217,6 @@ let arrow_helper_x;
 let arrow_helper_y;
 let arrow_helper_z;
 async function showAxis(checked) {
-  console.log(checked);
   if(checked) {
     let o = new THREE.Vector3(0,0,0);
     let x = new THREE.Vector3(1,0,0);
@@ -245,6 +244,17 @@ async function showAxis(checked) {
   }
 }
 window.showAxis = showAxis;
+
+//
+// Flat shading
+//
+async function flatShading() {
+  await makeMaterial();
+  model.material.dispose();
+  model.material = material;
+  model.material.needsUpdate;
+}
+window.flatShading = flatShading;
 
 // Resize
 function onWindowResize() {
