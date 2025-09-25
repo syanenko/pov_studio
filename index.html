@@ -107,8 +107,8 @@
       <input id="glaze1"  type="image" src='data/mat/skeleton_icon.png' style='position: relative;  margin: 3px;'>
       <input id="glaze2"  type="image" src='data/mat/sculpty_icon.png'  style='position: relative;  margin: 3px;'>
       <input id="glaze3"  type="image" src='data/mat/sunny_icon.png'    style='position: relative;  margin: 3px;'>
-      <input id="glaze4"  type="image" src='data/mat/glassy_icon.png'    style='position: relative;  margin: 3px;'>
-      <input id="glaze5"  type="image" src='data/mat/normal_icon.png'    style='position: relative;  margin: 3px;'>
+      <input id="glaze4"  type="image" src='data/mat/glassy_icon.png'   style='position: relative;  margin: 3px;'>
+      <input id="glaze5"  type="image" src='data/mat/normal_icon.png'   style='position: relative;  margin: 3px;'>
     </div>
 
     <script>
@@ -124,6 +124,15 @@
       ub.onclick = function() { let form = document.getElementById("form_upload");
                                 form.style.visibility == "visible" ? form.style.visibility = 'hidden': form.style.visibility = "visible"; }
     </script>
+
+  <!-- Settings -->
+  <div style='position: absolute; bottom:15px; left:20px; z-index:4; font-size: 130%;'>
+    <input type="checkbox" id="show_normals" onclick="window.showNormals(this.checked)">
+    <label for="show_normals">Show normals</label><br>
+
+    <input type="checkbox" id="show_axis" onclick="window.showAxis(this.checked)">
+    <label for="show_axis">Show axis</label><br>
+  </div>
 
   </body>
 </html>

@@ -18,10 +18,6 @@ const DEFAULT_MODEL = '/data/models/teapot.glb';
 const PATH_GLAZES   = '/data/mat/';
 let DEFAULT_GLAZE   = "skeleton";
 
-// Helpers
-// let help = true;
-let help = false;
-let normal_helper;
 
 // Common
 let container;
@@ -52,17 +48,6 @@ async function init() {
 
   scene = new THREE.Scene();
   scene.add( camera );
-
-  // Helpers
-  if(help) {
-    let o = new THREE.Vector3(0,0,0);
-    let x = new THREE.Vector3(1,0,0);
-    let y = new THREE.Vector3(0,1,0);
-    let z = new THREE.Vector3(0,0,1);
-    scene.add( new THREE.ArrowHelper(x,o,1.5,'crimson') );
-    scene.add( new THREE.ArrowHelper(y,o,1.5,'green') );
-    scene.add( new THREE.ArrowHelper(z,o,1.5,'royalblue') );
-  }
 
   window.addEventListener( 'resize', onWindowResize );
 
@@ -118,9 +103,6 @@ async function loadModel(args)
 {
   // Cleanup
   if (typeof model !== "undefined") {
-    scene.remove( normal_helper );
-    if(normal_helper)
-      normal_helper.dispose();
     scene.remove( model );
     model.geometry.dispose();
     model.material.dispose();
@@ -189,11 +171,6 @@ async function loadModel(args)
 
   model = new THREE.Mesh( geo, material );
   scene.add(model);
-
-  if(help) {
-    normal_helper = new VertexNormalsHelper( model, 0.1 )
-    scene.add( normal_helper );
-  }
 }
 window.loadModel = loadModel;
 
@@ -213,6 +190,59 @@ async function applyGlaze(glaze) {
   }
 }
 window.applyGlaze = applyGlaze;
+
+//
+// Show normals
+//
+let normals_helper;
+async function showNormals(checked) {
+  console.log(checked);
+  if(checked) {
+    normals_helper = new VertexNormalsHelper( model, 0.1 )
+    scene.add( normals_helper ); }
+  else {
+   if(normals_helper) {
+    scene.remove( normals_helper );
+    normals_helper.dispose();
+  }}
+}
+window.showNormals = showNormals;
+
+//
+// Show axis
+//
+let arrow_helper_x;
+let arrow_helper_y;
+let arrow_helper_z;
+async function showAxis(checked) {
+  console.log(checked);
+  if(checked) {
+    let o = new THREE.Vector3(0,0,0);
+    let x = new THREE.Vector3(1,0,0);
+    let y = new THREE.Vector3(0,1,0);
+    let z = new THREE.Vector3(0,0,1);
+    arrow_helper_x = new THREE.ArrowHelper(x,o,2,'crimson');
+    arrow_helper_y = new THREE.ArrowHelper(y,o,2,'green');
+    arrow_helper_z = new THREE.ArrowHelper(z,o,2,'royalblue');
+    scene.add( arrow_helper_x );
+    scene.add( arrow_helper_y );
+    scene.add( arrow_helper_z );
+  }
+  else {
+   if(arrow_helper_x) {
+    scene.remove( arrow_helper_x );
+    arrow_helper_x.dispose(); }
+
+   if(arrow_helper_y) {
+    scene.remove( arrow_helper_y );
+    arrow_helper_y.dispose(); }
+
+   if(arrow_helper_z) {
+    scene.remove( arrow_helper_z );
+    arrow_helper_z.dispose(); }
+  }
+}
+window.showAxis = showAxis;
 
 // Resize
 function onWindowResize() {
