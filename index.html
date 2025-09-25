@@ -21,7 +21,9 @@
   </head>
 
   <body>
-    <div class="logo" onclick="about.showModal()">POV-Ray Converter</div>
+    <img id="logo" src="data/images/logo_40x40.png" alt="Logo" width="40" height="40" onclick="window.open('https://www.povray.org', '_blank')">
+    <div id="text" onclick="about.showModal()">POV-Ray Converter</div>
+    <img id="help" src="data/images/help.png" alt="Help" onclick="about.showModal()">
     <hr>
 
     <!-- About -->
@@ -99,8 +101,8 @@
     <div id="container"></div>
     <!-- Controls -->
     <div style='position: absolute; top:65px; left:20px; width:90px; z-index:4;'>
-      <input id="upload_button"   type="image" src='data/models/upload_icon.png'   style='position: relative; margin: 2px; border:0px solid #aaaaaa;'>
-      <input id="download_button" type="image" src='data/models/download_icon.png' onclick="window.download()" style='position: relative; margin: 2px; border:0px solid #aaaaaa; border-radius: 0px;'>
+      <input id="upload_button"   type="image" src='data/images/upload_icon.png'   style='position: relative; padding-top: 15px;'>
+      <input id="download_button" type="image" src='data/images/download_icon.png' onclick="window.download()" style='position: relative; padding-top: 5px;'>
 
     </div>
 

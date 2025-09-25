@@ -17,8 +17,8 @@ html, body {
 }
 
 a {
-	color: #ff0;
-	text-decoration: none;
+  color: #ff0;
+  text-decoration: none;
 }
 
 a:hover {
@@ -126,9 +126,28 @@ background-color:white;
 /* visibility: hidden; */
 }
 
-.logo {
-  padding-top: 7px;
+#logo {
+  display:inline;
+  vertical-align:middle;
+  padding-top: 6px;
   padding-left: 10px;
+  cursor: pointer;
+}
+
+#help {
+  display:inline;
+  float: right;
+  vertical-align:middle;
+  padding-top: 10px;
+  padding-right: 10px;
+  cursor: pointer;
+}
+
+#text {
+  display:inline;
+  vertical-align:middle;
+  padding-top: 7px;
+  padding-left: 5px;
   padding-bottom: 4px;
 	box-sizing: border-box;
 	text-align: left;
@@ -136,8 +155,9 @@ background-color:white;
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-  font-size: 180%;
-  color: #ff9127;
+  font-size: 150%;
+  font-style: italic;
+  color: #cccdce;
   z-index: 2;
   cursor: pointer;
 }
