@@ -107,6 +107,7 @@ async function loadModel(args)
     model.geometry.dispose();
     model.material.dispose();
     renderer.renderLists.dispose();
+    showNormals(false);
   }
 
   // Load geometry
@@ -171,6 +172,8 @@ async function loadModel(args)
 
   model = new THREE.Mesh( geo, material );
   scene.add(model);
+
+  showNormals(document.getElementById("show_normals").checked);
 }
 window.loadModel = loadModel;
 
@@ -196,7 +199,6 @@ window.applyGlaze = applyGlaze;
 //
 let normals_helper;
 async function showNormals(checked) {
-  console.log(checked);
   if(checked) {
     normals_helper = new VertexNormalsHelper( model, 0.1 )
     scene.add( normals_helper ); }
