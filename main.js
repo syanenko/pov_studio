@@ -15,10 +15,11 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 
 const DEFAULT_MODEL = '/data/models/teapot.glb';
 const PATH_GLAZES   = '/data/mat/';
-let DEFAULT_GLAZE   = "sculpty";
+let DEFAULT_GLAZE   = "skeleton";
 
 // Helpers
-let help = false;
+let help = true;
+let normal_helper;
 
 // Common
 let container;
@@ -56,10 +57,9 @@ async function init() {
     let x = new THREE.Vector3(1,0,0);
     let y = new THREE.Vector3(0,1,0);
     let z = new THREE.Vector3(0,0,1);
-    scene.add( new THREE.GridHelper( 2, 20 ) );
-    scene.add( new THREE.ArrowHelper(x,o,2,'crimson') );
-    scene.add( new THREE.ArrowHelper(y,o,2,'green') );
-    scene.add( new THREE.ArrowHelper(z,o,2,'royalblue') );
+    scene.add( new THREE.ArrowHelper(x,o,1.5,'crimson') );
+    scene.add( new THREE.ArrowHelper(y,o,1.5,'green') );
+    scene.add( new THREE.ArrowHelper(z,o,1.5,'royalblue') );
   }
 
   window.addEventListener( 'resize', onWindowResize );
@@ -84,53 +84,11 @@ async function init() {
   let mpos = new THREE.Vector3();
   let mrot = new THREE.Quaternion();
 
-  // XR start
-  renderer.xr.addEventListener( 'sessionstart', function ( event ) {
-    renderer.setClearColor(new THREE.Color(0x000), 1);
-
-    cpos.copy(camera.position);
-    crot.copy(camera.quaternion);
-
-    mpos.copy(model.position);
-    mrot.copy(model.quaternion);
-
-    model.position.z = -3;
-    model.position.y = -1;
-    model.rotation.x = 0.3;
-
-    //gui_mesh.visible = true;
-  });
-
-  // XR end
-  renderer.xr.addEventListener( 'sessionend', function ( event ) {
-    renderer.setClearColor(new THREE.Color(0x000), 0);
-
-    rotate = false;
-    model.position.copy(mpos);
-    model.quaternion.copy(mrot);
-
-    camera.position.copy(cpos);
-    camera.quaternion.copy(crot);
-    camera.projectionMatrix.copy(pmatrix);
-    camera.fov = FOV;
-
-    onWindowResize();
-    //gui_mesh.visible = false;
-  });
-
   // Init orbit controlls
   ocontrols = new OrbitControls( camera, renderer.domElement );
   ocontrols.enablePan = true;
 
   // Load default model
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  let design = urlParams.get('d');
-  if(design == undefined) {
-     design = "pc01006"; // On page: pc01006, pc01024, pc01028c, pc01062, pc01082 
-                         // Reserved: pc01065, pc01076, pc01084, pc01086, pc01101, pc01102, pc01103, pc01105, pc01106, pc01006a, pc01006b, pc01105, pc01035, pc01042, pc01043, pc01061
-  }
-
   await loadModel({model: DEFAULT_MODEL});
   await applyGlaze(DEFAULT_GLAZE);
 }
@@ -158,6 +116,8 @@ async function loadModel(args)
 {
   // Cleanup
   if (typeof model !== "undefined") {
+    scene.remove( normal_helper );
+    normal_helper.dispose();
     scene.remove( model );
     model.geometry.dispose();
     model.material.dispose();
@@ -187,7 +147,7 @@ async function loadModel(args)
   // DEBUG
   geo.deleteAttribute( 'uv' ); // Smooth
   geo.deleteAttribute( 'normal' );
-  geo.deleteAttribute( 'color' );
+  // geo.deleteAttribute( 'color' ); // Keep vertex colors 
   geo = BufferGeometryUtils.mergeVertices(geo);
   geo.computeVertexNormals();
 
@@ -220,14 +180,15 @@ async function loadModel(args)
     let matcap = await AsyncLoader.loadTextureAsync(PATH_GLAZES + DEFAULT_GLAZE + "_mcap.png");
     matcap.colorSpace = THREE.SRGBColorSpace;
     material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} );
-    material.flatShading = false;
+    material.flatShading = true;
   }
 
   model = new THREE.Mesh( geo, material );
   scene.add(model);
 
   if(help) {
-    scene.add( new VertexNormalsHelper( model, 0.2 ) );
+    normal_helper = new VertexNormalsHelper( model, 0.1 )
+    scene.add( normal_helper );
   }
 }
 window.loadModel = loadModel;
@@ -246,24 +207,8 @@ async function applyGlaze(glaze) {
   if(gi != null) {
     document.getElementById("glaze_image").src = PATH_GLAZES + glaze + ".png";
   }
-
-  // Info
-  /*
-  var txtFile = new XMLHttpRequest();
-  const text = PATH_GLAZES + glaze + ".html";
-  txtFile.open("GET", text, true);
-  txtFile.onreadystatechange = function() {
-    if (txtFile.readyState === 4) {  // Makes sure the document is ready to parse.
-      if (txtFile.status === 200) {  // Makes sure it's found the file.
-        document.getElementById('glaze_info').innerHTML = txtFile.responseText;
-      }
-    }
-  }
-  txtFile.send(null);
-  */
 }
 window.applyGlaze = applyGlaze;
-
 
 // Resize
 function onWindowResize() {
