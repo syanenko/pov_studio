@@ -107,7 +107,7 @@ async function loadModel(args)
     model.geometry.dispose();
     model.material.dispose();
     renderer.renderLists.dispose();
-    showNormals(false);
+    displayNormals(false);
   }
 
   // Load geometry
@@ -166,7 +166,7 @@ async function loadModel(args)
   model = new THREE.Mesh( geo, material );
   scene.add(model);
 
-  showNormals(document.getElementById("show_normals").checked);
+  displayNormals(document.getElementById("display_normals").checked);
 }
 window.loadModel = loadModel;
 
@@ -198,10 +198,10 @@ async function applyGlaze(_glaze) {
 window.applyGlaze = applyGlaze;
 
 //
-// Show normals
+// Display normals
 //
 let normals_helper;
-async function showNormals(checked) {
+async function displayNormals(checked) {
   if(checked) {
     normals_helper = new VertexNormalsHelper( model, 0.1 )
     scene.add( normals_helper ); }
@@ -211,15 +211,15 @@ async function showNormals(checked) {
     normals_helper.dispose();
   }}
 }
-window.showNormals = showNormals;
+window.displayNormals = displayNormals;
 
 //
-// Show axis
+// Display axis
 //
 let arrow_helper_x;
 let arrow_helper_y;
 let arrow_helper_z;
-async function showAxis(checked) {
+async function displayAxis(checked) {
   if(checked) {
     let o = new THREE.Vector3(0,0,0);
     let x = new THREE.Vector3(1,0,0);
@@ -246,7 +246,7 @@ async function showAxis(checked) {
     arrow_helper_z.dispose(); }
   }
 }
-window.showAxis = showAxis;
+window.displayAxis = displayAxis;
 
 //
 // Flat shading
