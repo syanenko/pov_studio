@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js)
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3PHDJG8H9Y"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-3PHDJG8H9Y');
+    </script>
+    -->
+    <title>all2pov</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+<!--
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="expires" content="timestamp">
+-->
+    <link type="text/css" rel="stylesheet" href="main.css">
+  </head>
+
+  <body>
+    <div class="logo" onclick="about.showModal()">POV-Ray Converter</div>
+    <hr>
+
+    <!-- About -->
+    <dialog id="about" style="width:320px">
+      <div style="font-size: 24px; color:#ff9127">POV-Ray Converter</div>
+      <p></p>
+      <a href="https://yesbird.online/">Yesbird studio</a></p>
+      <form method="dialog" style="text-align:center">
+        <button>&nbsp;&nbsp;&nbsp;OK&nbsp;&nbsp;&nbsp;</button>
+      </form>
+    </dialog>
+
+    <!-- Glaze info
+    <div id="glaze_info"  style='z-index:2'></div>
+    -->
+
+    <script type="importmap"> { 
+      "imports": { 
+        "three": "/node_modules/three/build/three.module.js",
+        "three/addons/": "/node_modules/three/examples/jsm/",
+        "three/nodes": "/node_modules/three/examples/jsm/nodes/Nodes.js"
+        } 
+    }
+    </script> 
+
+    <!-- Main -->
+    <script type="module" src="main.js"></script>
+ 
+    <!-- Upload model -->
+    <div id="form_upload" style="width:370px">
+      <form encType="multipart/form-data" style="text-align:left">
+        <h3>Upload model (obj,fbx,glb,gltf,stl)</h3>
+        <input type="file" name="model"  accept=".obj,.fbx,.glb,.gltf,.stl"/><br/><br/>
+        <input type="submit"  value="Upload" />&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="button"  value="Cancel" onclick="parentElement.parentElement.style.visibility = 'hidden'"/>
+      </form>
+    </div>
+
+    <script>
+      var form = document.getElementById('form_upload');
+
+      // Add a submit event listener to the form
+      form.addEventListener('submit', function(e) {
+        // Prevent the default form submission behavior
+        e.preventDefault();
+
+        // Create a new FormData object
+        var formData = new FormData();
+
+        // Get the selected file
+        var model   = form.querySelector('[name="model"]'  ).files[0];
+
+        // Add the file to the FormData object
+        formData.append('model',   model);
+
+        // XMLHttpRequest object
+        var xhr = new XMLHttpRequest();
+
+        // Set the request url - check it before publishing
+        xhr.open('POST', 'http://localhost:8085/upload.php');
+        // xhr.open('POST', 'https://glazeview.yesbird.online/upload.php');
+
+        // Set the request onload event listener
+        xhr.responseType = 'json';
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            window.loadModel(xhr.response);
+          } else {
+            console.error(xhr.response);
+          }
+        }
+        // Send the request
+        xhr.send(formData);
+        form.style.visibility = 'hidden';
+      });
+    </script>
+
+    <!-- Model -->
+    <div id="container"></div>
+    <!-- Models -->
+    <div style='position: absolute; top:65px; left:20px; width:90px; z-index:4;'>
+      <input id="upload_button"   type="image" src='data/models/upload_icon.png' style='position: relative; margin: 2px; border:1px solid #aaaaaa; border-radius: 6px;'>
+      <input id="download_button" type="image" src='data/models/download_icon.png' style='position: relative; margin: 2px; border:1px solid #aaaaaa; border-radius: 6px;'>
+    </div>
+
+    <!-- Glazes
+    <div style='position: fixed; bottom:10px; left:20px; z-index:4'>
+    -->
+    <div style='position: absolute; bottom:10px; display: flex; justify-content: center; width:100%; z-index:4;'>
+      <input id="glaze1"  type="image" src='data/mat/sculpty_icon.png' style='position: relative;  margin: 5px;'>
+      <input id="glaze2"  type="image" src='data/mat/skeleton_icon.png' style='position: relative;  margin: 5px;'>
+    </div>
+    <script>
+      document.getElementById("glaze1" ).onclick = function() { window.applyGlaze('sculpty'); }
+      document.getElementById("glaze2" ).onclick = function() { window.applyGlaze('skeleton'); }
+    </script>
+
+    <script>
+      ub = document.getElementById("upload_button");
+      ub.onclick = function() { let form = document.getElementById("form_upload");
+                                form.style.visibility == "visible" ? form.style.visibility = 'hidden': form.style.visibility = "visible"; }
+    </script>
+
+  </body>
+</html>
