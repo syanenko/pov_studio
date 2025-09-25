@@ -97,22 +97,26 @@
 
     <!-- Model -->
     <div id="container"></div>
-    <!-- Models -->
+    <!-- Controls -->
     <div style='position: absolute; top:65px; left:20px; width:90px; z-index:4;'>
-      <input id="upload_button"   type="image" src='data/models/upload_icon.png' style='position: relative; margin: 2px; border:1px solid #aaaaaa; border-radius: 6px;'>
-      <input id="download_button" type="image" src='data/models/download_icon.png' style='position: relative; margin: 2px; border:1px solid #aaaaaa; border-radius: 6px;'>
+      <input id="upload_button"   type="image" src='data/models/upload_icon.png' style='position: relative;   margin: 2px; border:0px solid #aaaaaa;'>
+      <input id="download_button" type="image" src='data/models/download_icon.png' style='position: relative; margin: 2px; border:0px solid #aaaaaa; border-radius: 0px;'>
     </div>
 
-    <!-- Glazes
-    <div style='position: fixed; bottom:10px; left:20px; z-index:4'>
-    -->
-    <div style='position: absolute; bottom:10px; display: flex; justify-content: center; width:100%; z-index:4;'>
-      <input id="glaze1"  type="image" src='data/mat/sculpty_icon.png' style='position: relative;  margin: 5px;'>
-      <input id="glaze2"  type="image" src='data/mat/skeleton_icon.png' style='position: relative;  margin: 5px;'>
+    <div style='position: absolute; top:65px; right:20px; width:90px; z-index:4;'>
+      <input id="glaze1"  type="image" src='data/mat/skeleton_icon.png' style='position: relative;  margin: 3px;'>
+      <input id="glaze2"  type="image" src='data/mat/sculpty_icon.png'  style='position: relative;  margin: 3px;'>
+      <input id="glaze3"  type="image" src='data/mat/sunny_icon.png'    style='position: relative;  margin: 3px;'>
+      <input id="glaze4"  type="image" src='data/mat/glassy_icon.png'    style='position: relative;  margin: 3px;'>
+      <input id="glaze5"  type="image" src='data/mat/normal_icon.png'    style='position: relative;  margin: 3px;'>
     </div>
+
     <script>
-      document.getElementById("glaze1" ).onclick = function() { window.applyGlaze('sculpty'); }
-      document.getElementById("glaze2" ).onclick = function() { window.applyGlaze('skeleton'); }
+      document.getElementById("glaze1").onclick = function() { window.applyGlaze('skeleton'); }
+      document.getElementById("glaze2").onclick = function() { window.applyGlaze('sculpty'); }
+      document.getElementById("glaze3").onclick = function() { window.applyGlaze('sunny'); }
+      document.getElementById("glaze4").onclick = function() { window.applyGlaze('glassy'); }
+      document.getElementById("glaze5").onclick = function() { window.applyGlaze('normal'); }
     </script>
 
     <script>

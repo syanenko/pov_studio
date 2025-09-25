@@ -1,10 +1,11 @@
 // TODO:
 //
-// - Fix small scale on load model after return from XR
-// - Reset: Double click
-// - Start/Stop rotation: single click
-// - Use camera (?)
-// - Take a link (?)
+// - Switch normals helper
+// - Switch axis helper
+// - Switch flat shading
+// - Do export
+// - 
+// - 
 //
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
@@ -18,7 +19,8 @@ const PATH_GLAZES   = '/data/mat/';
 let DEFAULT_GLAZE   = "skeleton";
 
 // Helpers
-let help = true;
+// let help = true;
+let help = false;
 let normal_helper;
 
 // Common
@@ -117,7 +119,8 @@ async function loadModel(args)
   // Cleanup
   if (typeof model !== "undefined") {
     scene.remove( normal_helper );
-    normal_helper.dispose();
+    if(normal_helper)
+      normal_helper.dispose();
     scene.remove( model );
     model.geometry.dispose();
     model.material.dispose();
@@ -147,7 +150,7 @@ async function loadModel(args)
   // DEBUG
   geo.deleteAttribute( 'uv' ); // Smooth
   geo.deleteAttribute( 'normal' );
-  // geo.deleteAttribute( 'color' ); // Keep vertex colors 
+  geo.deleteAttribute( 'color' ); // TODO: Keep vertex colors (?)
   geo = BufferGeometryUtils.mergeVertices(geo);
   geo.computeVertexNormals();
 
@@ -180,7 +183,8 @@ async function loadModel(args)
     let matcap = await AsyncLoader.loadTextureAsync(PATH_GLAZES + DEFAULT_GLAZE + "_mcap.png");
     matcap.colorSpace = THREE.SRGBColorSpace;
     material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} );
-    material.flatShading = true;
+    material.flatShading = true; // TODO: Switchable
+    // material.flatShading = false;
   }
 
   model = new THREE.Mesh( geo, material );
