@@ -22,13 +22,13 @@
 
   <body>
     <img id="logo" src="data/images/logo_40x40.png" alt="Logo" width="40" height="40" onclick="window.open('https://www.povray.org', '_blank')">
-    <div id="text" onclick="about.showModal()">POV-Ray Converter</div>
+    <div id="text" onclick="about.showModal()">POV converter</div>
     <img id="help" src="data/images/help.png" alt="Help" onclick="about.showModal()">
     <hr>
 
     <!-- About -->
     <dialog id="about" style="width:320px">
-      <div style="font-size: 24px; color:#ff9127">POV-Ray Converter</div>
+      <div style="font-size: 24px; color:#ff9127">POV converter</div>
       <p></p>
       <a href="https://yesbird.online/">Yesbird studio</a></p>
       <form method="dialog" style="text-align:center">
@@ -79,8 +79,8 @@
         var xhr = new XMLHttpRequest();
 
         // Set the request url - check it before publishing
-        xhr.open('POST', 'http://localhost:8085/upload.php');
-        // xhr.open('POST', 'https://glazeview.yesbird.online/upload.php');
+        // xhr.open('POST', 'http://localhost:8085/upload.php');
+        xhr.open('POST', 'https://povlab.yesbird.online/all2pov/upload.php');
 
         // Set the request onload event listener
         xhr.responseType = 'json';

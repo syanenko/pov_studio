@@ -14,8 +14,8 @@ import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
 
-const DEFAULT_MODEL = '/data/models/teapot.glb';
-const PATH_GLAZES   = '/data/mat/';
+const DEFAULT_MODEL = 'data/models/teapot.glb';
+const PATH_GLAZES   = 'data/mat/';
 const DEFAULT_GLAZE = "skeleton";
 
 // Common
