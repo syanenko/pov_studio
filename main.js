@@ -1,9 +1,7 @@
 // TODO:
 //
-// - Switch flat shading (dispose material)
-// - Preserve material on upload (?)
 // - Exporter
-// - 
+// - Check size and position on upload
 //
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
@@ -12,7 +10,6 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
-
 
 const DEFAULT_MODEL = 'data/models/teapot.glb';
 const PATH_GLAZES   = 'data/mat/';
