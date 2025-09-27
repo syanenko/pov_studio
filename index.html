@@ -22,14 +22,14 @@
 
   <body>
     <img id="logo" src="data/images/logo_40x40.png" alt="Logo" width="40" height="40" onclick="window.open('https://www.povray.org', '_blank')">
-    <div id="text" onclick="about.showModal()">Converter</div>
-    <img id="help" src="data/images/help.png" alt="Help" onclick="about.showModal()">
+    <div id="text" onclick="about.showModal()">POV-Ray converter</div>
+    <img id="help" src="data/images/help.png" alt="Help" onclick="about.inert=true;  about.showModal(); about.inert=false;">
     <hr>
 
     <!-- About -->
-    <dialog id="about" style="width:320px">
-      <div style="font-size: 24px; color:#ff9127">POV converter</div>
-      <p></p>
+    <dialog id="about" style="width:450px">
+      <div style="font-size: 24px; color:#ff9127">POV-Ray converter</div>
+      <p>Converts obj, fbx, glb, gltf, stl files to mesh2.</p>
       <a href="https://yesbird.online/">Yesbird studio</a></p>
       <form method="dialog" style="text-align:center">
         <button>&nbsp;&nbsp;&nbsp;OK&nbsp;&nbsp;&nbsp;</button>
