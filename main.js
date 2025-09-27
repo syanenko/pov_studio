@@ -282,9 +282,8 @@ function saveString( text, filename ) {
 
 function download() {
   const exporter = new POVExporter();
-  const result = exporter.parse( model );
-  console.log(result);
-  saveString( result, 'scene.pov' );
+  const result = exporter.parse( model, material.flatShading );
+  saveString( result, 'mesh.inc' );
 }
 window.download = download;
 
