@@ -22,7 +22,6 @@ const FOV = 50;
 let ocontrols;
 
 // XR
-let beam;
 const beam_color = 0xffffff;
 const beam_hilight_color = 0x222222;
 let pmatrix;
@@ -102,7 +101,6 @@ async function loadModel(args)
     model.geometry.dispose();
     model.material.dispose();
     renderer.renderLists.dispose();
-    rotate = false;
     displayNormals(false);
   }
 
@@ -163,7 +161,6 @@ async function loadModel(args)
   scene.add(model);
 
   displayNormals(normals);
-  rotate = document.getElementById("switch_rotation").checked;
 }
 window.loadModel = loadModel;
 
@@ -260,7 +257,7 @@ window.flatShading = flatShading;
 // Switch rotation
 //
 async function switchRotation(checked) {
-  rotate = checked;
+  rotate = ocontrols.autoRotate = checked;
 }
 window.switchRotation = switchRotation;
 
@@ -316,16 +313,10 @@ function animate() {
 //
 function render() {
 
-  if(rotate) {
-    if(normals)
-      displayNormals(false);
-    model.rotation.y -= 0.005;
-    if(normals)
-      displayNormals(true);
-  }
+  if(rotate)
+    ocontrols.update(-0.02);
 
   renderer.render(scene, camera);
-  ocontrols.update();
 }
 
 //
