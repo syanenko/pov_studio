@@ -143,7 +143,7 @@ async function loadModel(args)
                       geo.boundingSphere.center.y,
                       geo.boundingSphere.center.z + geo.boundingSphere.radius * 3);
 
-  axis_len = geo.boundingSphere.radius * 2;
+  axis_len = geo.boundingSphere.radius * 2.5;
   displayAxis(false);
   displayAxis(document.getElementById("display_axis").checked);
 
@@ -153,7 +153,7 @@ async function loadModel(args)
   scene.add(model);
   // console.log(model); // DEBUG
 
-  normals_len = geo.boundingSphere.radius / 8;
+  normals_len = geo.boundingSphere.radius / 30;
   displayNormals(false);
   displayNormals(normals);
   ocontrols.update();
