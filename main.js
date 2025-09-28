@@ -54,11 +54,6 @@ async function init() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.VSMShadowMap;
 
-  // XR
-  renderer.xr.enabled = true;
-  renderer.xr.setReferenceSpaceType( 'local' );
-  renderer.xr.setFramebufferScaleFactor( 4.0 );
-
   let cpos = new THREE.Vector3();
   let crot = new THREE.Quaternion();
 
@@ -116,11 +111,21 @@ async function loadModel(args)
   const ext = path.slice(-4);
   switch(ext)
   {
-    case '.obj': geo = getGeo((await AsyncLoader.loadOBJAsync(path)));  break;
-    case '.fbx': geo = getGeo((await AsyncLoader.loadFBXAsync(path)));  break;
-    case '.glb': geo = getGeo((await AsyncLoader.loadGLTFAsync(path))); break;
-    case 'gltf': geo = getGeo((await AsyncLoader.loadGLTFAsync(path))); break;
-    case '.stl': geo = (await AsyncLoader.loadSTLAsync(path));          break;
+    case '.obj':
+    case '.OBJ': geo = getGeo((await AsyncLoader.loadOBJAsync(path)));  break;
+
+    case '.fbx':
+    case '.FBX': geo = getGeo((await AsyncLoader.loadFBXAsync(path)));  break;
+
+    case '.glb':
+    case '.GLB': geo = getGeo((await AsyncLoader.loadGLTFAsync(path))); break;
+
+    case 'gltf':
+    case 'GLTF': geo = getGeo((await AsyncLoader.loadGLTFAsync(path))); break;
+
+    case '.stl':
+    case '.STL': geo = (await AsyncLoader.loadSTLAsync(path)); break;
+
     default: console.error("Unknown file extention: '" + ext + "'");
   }
 
@@ -130,35 +135,26 @@ async function loadModel(args)
   geo = BufferGeometryUtils.mergeVertices(geo);
   geo.computeVertexNormals();
 
-  // Scale
+  // Set view
   geo.computeBoundingSphere();
-  let scale = 1 / geo.boundingSphere.radius;
-  let lookAt = geo.boundingSphere.radius / 2;
-  if(path.includes("teapot")) {
-    scale *= 1.5; 
-    lookAt = 0.3;
-  } else if(path.includes("cup")) {
-    scale *= 1.1; 
-    lookAt = 0.6;
-  } else if(path.includes("ewer")) {
-    scale *= 1.25; 
-    lookAt = 0.6;
-  } else if(path.includes("plate")) {
-    scale *= 1.3; 
-    lookAt = 0;
-  }
-
-  geo.scale(scale, scale, scale);
-
-  // Reset view
   ocontrols.reset();
-  ocontrols.target.set( 0, lookAt, 0 );
+  ocontrols.target.copy(geo.boundingSphere.center);
+  camera.position.set(geo.boundingSphere.center.x,
+                      geo.boundingSphere.center.y,
+                      geo.boundingSphere.center.z + geo.boundingSphere.radius * 3);
+
+  axis_len = geo.boundingSphere.radius * 2;
+  displayAxis(false);
+  displayAxis(document.getElementById("display_axis").checked);
 
   await makeMaterial();
 
   model = new THREE.Mesh( geo, material );
   scene.add(model);
   // console.log(model); // DEBUG
+
+  normals_len = geo.boundingSphere.radius / 8;
+  displayNormals(false);
   displayNormals(normals);
   ocontrols.update();
 }
@@ -200,9 +196,10 @@ window.applyGlaze = applyGlaze;
 // Display normals
 //
 let normals_helper;
+let normals_len = 0.1;
 async function displayNormals(checked) {
   if(checked) {
-    normals_helper = new VertexNormalsHelper( model, 0.1 )
+    normals_helper = new VertexNormalsHelper( model, normals_len )
     scene.add( normals_helper ); }
   else {
    if(normals_helper) {
@@ -218,15 +215,16 @@ window.displayNormals = displayNormals;
 let arrow_helper_x;
 let arrow_helper_y;
 let arrow_helper_z;
+let axis_o = new THREE.Vector3(0,0,0);
+let axis_x = new THREE.Vector3(1,0,0);
+let axis_y = new THREE.Vector3(0,1,0);
+let axis_z = new THREE.Vector3(0,0,1);
+let axis_len = 1;
 async function displayAxis(checked) {
   if(checked) {
-    let o = new THREE.Vector3(0,0,0);
-    let x = new THREE.Vector3(1,0,0);
-    let y = new THREE.Vector3(0,1,0);
-    let z = new THREE.Vector3(0,0,1);
-    arrow_helper_x = new THREE.ArrowHelper(x,o,2,'crimson');
-    arrow_helper_y = new THREE.ArrowHelper(y,o,2,'green');
-    arrow_helper_z = new THREE.ArrowHelper(z,o,2,'royalblue');
+    arrow_helper_x = new THREE.ArrowHelper(axis_x, axis_o, axis_len, 'crimson');
+    arrow_helper_y = new THREE.ArrowHelper(axis_y, axis_o, axis_len, 'green');
+    arrow_helper_z = new THREE.ArrowHelper(axis_z, axis_o, axis_len, 'royalblue');
     scene.add( arrow_helper_x );
     scene.add( arrow_helper_y );
     scene.add( arrow_helper_z );
@@ -320,6 +318,8 @@ function render() {
 
   if(rotate)
     ocontrols.update(-0.02);
+  else
+    ocontrols.update();
 
   renderer.render(scene, camera);
 }
