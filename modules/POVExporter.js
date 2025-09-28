@@ -41,7 +41,8 @@ class POVExporter {
       const indices = geometry.getIndex();
 
       // Name of the mesh object
-      output += 'mesh2 { ' + mesh.name + '\n';
+       
+      output += '#declare model = object { mesh2 { ' + mesh.name + '\n';
 
       // Vertices
       if ( vertices !== undefined ) {
@@ -200,8 +201,7 @@ class POVExporter {
 */
     } );
 
-    output += '  pigment {rgb 1}\n';
-    output += '}\n';
+    output += '}}\n';
     return output;
   }
 }
