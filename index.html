@@ -21,6 +21,15 @@
   </head>
 
   <body>
+    <script type="importmap"> { 
+      "imports": { 
+        "three": "/node_modules/three/build/three.module.js",
+        "three/addons/": "/node_modules/three/examples/jsm/",
+        "three/nodes": "/node_modules/three/examples/jsm/nodes/Nodes.js"
+        } 
+    }
+    </script> 
+
     <img id="logo" src="data/images/logo_40x40.png" alt="Logo" width="40" height="40" onclick="window.open('https://www.povray.org', '_blank')">
     <div id="text" onclick="about.showModal()">POV-Ray converter</div>
     <img id="help" src="data/images/help.png" alt="Help" onclick="about.inert=true;  about.showModal(); about.inert=false;">
@@ -35,15 +44,6 @@
         <button>&nbsp;&nbsp;&nbsp;OK&nbsp;&nbsp;&nbsp;</button>
       </form>
     </dialog>
-
-    <script type="importmap"> { 
-      "imports": { 
-        "three": "/node_modules/three/build/three.module.js",
-        "three/addons/": "/node_modules/three/examples/jsm/",
-        "three/nodes": "/node_modules/three/examples/jsm/nodes/Nodes.js"
-        } 
-    }
-    </script> 
 
     <!-- Main -->
     <script type="module" src="main.js"></script>
