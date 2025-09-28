@@ -15,16 +15,11 @@ const DEFAULT_MODEL = 'data/models/teapot.glb';
 const PATH_GLAZES   = 'data/mat/';
 const DEFAULT_GLAZE = "skeleton";
 
-// Common
 let container;
 let camera, scene, renderer;
 const FOV = 50;
 let ocontrols;
 
-// XR
-const beam_color = 0xffffff;
-const beam_hilight_color = 0x222222;
-let pmatrix;
 let rotate = false;
 let normals = false;
 
@@ -38,7 +33,6 @@ async function init() {
 
   camera = new THREE.PerspectiveCamera( FOV, window.innerWidth / window.innerHeight, 0.1, 1000 );
   camera.position.set( 0, 2, 3 );
-  pmatrix = camera.projectionMatrix.clone();
 
   scene = new THREE.Scene();
   scene.add( camera );
