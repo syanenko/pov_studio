@@ -23,23 +23,23 @@ global_settings{ assumed_gamma 1.0 }
 
 //--------------------------------------------------------------------------
 // camera ------------------------------------------------------------------
-#declare Camera_0 = camera {perspective angle 35               // front view
+#declare Camera_0 = camera {perspective angle 100               // front view
                             location  <0.0 , 1.0 ,-3.0>
                             right     x*image_width/image_height
                             look_at   <0.0 , 0.6 , 0.0>}
-#declare Camera_1 = camera {/*ultra_wide_angle*/ angle 90   // diagonal view
+#declare Camera_1 = camera {/*ultra_wide_angle*/ angle 35   // diagonal view
                             location  <2.0 , 2.5 ,-3.0>
                             right     x*image_width/image_height
-                            look_at   <0.0 , 1.0 , 0.0>}
+                            look_at   <-1.5 , -2.5 , 0.0>}
 #declare Camera_2 = camera {/*ultra_wide_angle*/ angle 90  //right side view
                             location  <3.0 , 1.0 , 0.0>
                             right     x*image_width/image_height
                             look_at   <0.0 , 1.0 , 0.0>}
-#declare Camera_3 = camera {/*ultra_wide_angle*/ angle 90        // top view
+#declare Camera_3 = camera {/*ultra_wide_angle*/ angle 75        // top view
                             location  <0.0 , 3.0 ,-0.001>
                             right     x*image_width/image_height
-                            look_at   <0.0 , 1.0 , 0.0>}
-camera{Camera_0}
+                            look_at   <1.0 , 1.5 , 0.0>}
+camera{Camera_1}
 // sun ----------------------------------------------------------------------
 light_source{< 3000,3000,-3000> color White}
 // sky ----------------------------------------------------------------------
