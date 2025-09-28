@@ -124,10 +124,9 @@ async function loadModel(args)
     default: console.error("Unknown file extention: '" + ext + "'");
   }
 
-  // DEBUG
   geo.deleteAttribute( 'uv' ); // Smooth
   geo.deleteAttribute( 'normal' );
-  geo.deleteAttribute( 'color' ); // TODO: Keep vertex colors (?)
+  geo.deleteAttribute( 'color' ); // TODO: Keep vertex colors for FBX
   geo = BufferGeometryUtils.mergeVertices(geo);
   geo.computeVertexNormals();
 
@@ -159,8 +158,9 @@ async function loadModel(args)
 
   model = new THREE.Mesh( geo, material );
   scene.add(model);
-
+  // console.log(model); // DEBUG
   displayNormals(normals);
+  ocontrols.update();
 }
 window.loadModel = loadModel;
 
@@ -169,11 +169,16 @@ window.loadModel = loadModel;
 //
 async function makeMaterial() {
   if( material != undefined) {
-    material.matcap.dispose();
+    material.matcap.dispose(); // DEBUG FBX
     material.dispose();
   }
   let matcap = await AsyncLoader.loadTextureAsync(PATH_GLAZES + glaze + "_mcap.png");
   matcap.colorSpace = THREE.SRGBColorSpace;
+  // DEBUG FBX
+  //const pointLight = new THREE.PointLight(0xffffff, 300, 1000); // Color, Intensity, Distance
+  //pointLight.position.set(3, 3, 3);
+  //scene.add(pointLight);
+  //material = new THREE.MeshStandardMaterial( {side: THREE.DoubleSide, vertexColors: true} );
   material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} );
   material.flatShading = document.getElementById("flat_shading").checked;
 }
