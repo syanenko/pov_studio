@@ -29,7 +29,7 @@
     <!-- About -->
     <dialog id="about" style="width:450px">
       <div style="font-size: 24px; color:#ff9127">POV-Ray converter</div>
-      <p>Converts obj, fbx, glb, gltf, stl files to mesh2.</p>
+      <p>Converts obj, fbx, glb, gltf, stl formats to mesh2.</p>
       <a href="https://yesbird.online/">Yesbird studio</a></p>
       <form method="dialog" style="text-align:center">
         <button>&nbsp;&nbsp;&nbsp;OK&nbsp;&nbsp;&nbsp;</button>
@@ -128,22 +128,25 @@
       document.getElementById("glaze5").onclick = function() { window.applyGlaze('normal'); }
     </script>
 
-  <!-- Settings -->
-  <div style='position: absolute; bottom:15px; left:20px; z-index:4; font-size: 130%;'>
-    <input type="checkbox" id="display_axis" onclick="window.displayAxis(this.checked)">
-    <label for="display_axis">Display axis</label><br>
+    <!-- Settings -->
+    <div style='position: absolute; bottom:15px; left:20px; z-index:4; font-size: 130%;'>
+      <input type="checkbox" id="display_axis" onclick="window.displayAxis(this.checked)">
+      <label for="display_axis">Display axis</label><br>
 
-    <input type="checkbox" id="display_normals" onclick="window.displayNormals(this.checked)">
-    <label for="display_normals">Display normals</label><br>
+      <input type="checkbox" id="switch_normals" onclick="window.switchNormals(this.checked)">
+      <label for="switch_normals">Display normals</label><br>
 
-    <input type="checkbox" id="flat_shading" onclick="window.flatShading(this.checked)">
-    <label for="flat_shading">Flat shading</label><br>
+      <input type="checkbox" id="switch_rotation" onclick="window.switchRotation(this.checked)">
+      <label for="switch_rotation">Rotation</label><br>
 
-    <!-- Settings
-    <input type="checkbox" id="export_array" onclick="window.flatShading(this.checked)">
-    <label for="export_array">Export array</label><br>
-    -->
-  </div>
+      <input type="checkbox" id="flat_shading" onclick="window.flatShading(this.checked)">
+      <label for="flat_shading">Flat shading</label><br>
+
+      <!--
+      <input type="checkbox" id="export_array" onclick="window.flatShading(this.checked)">
+      <label for="export_array">Export array</label><br>
+      -->
+    </div>
 
   </body>
 </html>

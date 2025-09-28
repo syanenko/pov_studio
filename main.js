@@ -20,9 +20,6 @@ let container;
 let camera, scene, renderer;
 const FOV = 50;
 let ocontrols;
-let controller, rotX, rotY;
-const rotTH = 0.005;
-const rotK = 3;
 
 // XR
 let beam;
@@ -30,6 +27,7 @@ const beam_color = 0xffffff;
 const beam_hilight_color = 0x222222;
 let pmatrix;
 let rotate = false;
+let normals = false;
 
 let material, model;
 let glaze = DEFAULT_GLAZE;
@@ -104,6 +102,7 @@ async function loadModel(args)
     model.geometry.dispose();
     model.material.dispose();
     renderer.renderLists.dispose();
+    rotate = false;
     displayNormals(false);
   }
 
@@ -163,7 +162,8 @@ async function loadModel(args)
   model = new THREE.Mesh( geo, material );
   scene.add(model);
 
-  displayNormals(document.getElementById("display_normals").checked);
+  displayNormals(normals);
+  rotate = document.getElementById("switch_rotation").checked;
 }
 window.loadModel = loadModel;
 
@@ -256,6 +256,23 @@ async function flatShading() {
 }
 window.flatShading = flatShading;
 
+//
+// Switch rotation
+//
+async function switchRotation(checked) {
+  rotate = checked;
+}
+window.switchRotation = switchRotation;
+
+//
+// Switch normals
+//
+async function switchNormals(checked) {
+  normals = checked;
+  displayNormals(normals);
+}
+window.switchNormals = switchNormals;
+
 // Resize
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -300,18 +317,11 @@ function animate() {
 function render() {
 
   if(rotate) {
-    let dX = (rotX - controller.rotation.x) * rotK;
-    let dY = (rotY - controller.rotation.y) * rotK;
-
-    if(Math.abs(dX) > rotTH) {
-      model.rotation.x += dX;
-      rotX = controller.rotation.x;
-    }
-
-    if(Math.abs(dY) > rotTH) {
-      model.rotation.y += dY;
-      rotY = controller.rotation.y;
-    }
+    if(normals)
+      displayNormals(false);
+    model.rotation.y -= 0.005;
+    if(normals)
+      displayNormals(true);
   }
 
   renderer.render(scene, camera);
