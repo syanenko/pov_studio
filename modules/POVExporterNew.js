@@ -1,24 +1,14 @@
-
-// Exports mesh to POV-Ray mesh2: https://www.povray.org/documentation/view/3.60/68/ 
-//
-// Now export only vertices and face's indexes
-//
-// TODO:
-// - Normals
-// - UV   
-// - Colors
-// - Vertix faces as 'mesh1' 
-//
 import {
-	Color,
-	ColorManagement,
-	Matrix3,
-	SRGBColorSpace,
-	Vector2,
-	Vector3
+  Color,
+  ColorManagement,
+  Matrix3,
+  SRGBColorSpace,
+  Vector2,
+  Vector3
 } from 'three';
 
 class POVExporter {
+
   parse( object, flat_shading ) {
 
     let output = '';
@@ -50,83 +40,79 @@ class POVExporter {
       const uvs = geometry.getAttribute( 'uv' );
       const indices = geometry.getIndex();
 
-      // name of the mesh object
-      output +=  '#declare model = mesh2 {\n'
+      // Name of the mesh object
+       
+      output += '#declare model = object { mesh2 { ' + mesh.name + '\n';
 
-      // vertices
-      output += 'vertex_vectors {\n  ' + vertices.count + ',\n';
+      // Vertices
       if ( vertices !== undefined ) {
+        output += '  vertex_vectors {\n';
+        output += '    ' + vertices.count + ',\n';
         for ( let i = 0, l = vertices.count; i < l; i ++, nbVertex ++ ) {
+
           vertex.fromBufferAttribute( vertices, i );
+
           // transform the vertex to world space
           vertex.applyMatrix4( mesh.matrixWorld );
-          // transform the vertex to export format
-          output += '  <' + vertex.x + ',' + vertex.y + ',' + vertex.z  + '>,\n'
-        }
-      }
-      output += '  }\n';
 
-      // uvs
-      if ( uvs !== undefined ) {
-        output += 'uv_vectors {\n  ' + uvs.count + ',\n';
-        for ( let i = 0, l = uvs.count; i < l; i ++, nbVertexUvs ++ ) {
-          uv.fromBufferAttribute( uvs, i );
-          // transform the uv to export format
-          // output += 'vt ' + uv.x + ' ' + uv.y + '\n';
-          output += '  <' + uv.x + ',' + uv.y + '>,\n'
+          // transform the vertex to export format
+          output += '    <' + vertex.x + ', ' + vertex.y + ', ' + vertex.z + '>,\n';
         }
         output += '  }\n';
       }
 
-      // normals
+      // uvs
+      /*
+      if ( uvs !== undefined ) {
+
+        for ( let i = 0, l = uvs.count; i < l; i ++, nbVertexUvs ++ ) {
+
+          uv.fromBufferAttribute( uvs, i );
+
+          // transform the uv to export format
+          output += 'vt ' + uv.x + ' ' + uv.y + '\n';
+
+        }
+      }*/
+
+      // Normals
       if ( (normals !== undefined) && (!flat_shading) ) {
-        output += 'normal_vectors {\n  ' + normals.count + ',\n';
+        output += '  normal_vectors {\n';
+        output += '    ' + vertices.count + ',\n';
         normalMatrixWorld.getNormalMatrix( mesh.matrixWorld );
         for ( let i = 0, l = normals.count; i < l; i ++, nbNormals ++ ) {
           normal.fromBufferAttribute( normals, i );
-
           // transform the normal to world space
           normal.applyMatrix3( normalMatrixWorld ).normalize();
-
           // transform the normal to export format
-          // output += 'vn ' + normal.x + ' ' + normal.y + ' ' + normal.z + '\n';
-          output += '  <' + normal.x + ',' + normal.y + ',' + normal.z + '>,\n'
+          output += '    <' + normal.x + ', ' + normal.y + ', ' + normal.z + '>,\n';
         }
         output += '  }\n';
       }
 
-      // faces
+      // Faces
       if ( indices !== null ) {
-        output += 'face_indices {\n  ' + (indices.count / 3) + ',\n';
+        output += '  face_indices  {\n';
+        output += '    ' + indices.count / 3+ ',\n';
         for ( let i = 0, l = indices.count; i < l; i += 3 ) {
           for ( let m = 0; m < 3; m ++ ) {
             const j = indices.getX( i + m );
             face[ m ] = ( indexVertex + j );
           }
-          // transform the face to export format
-          output += '  <' + face[0] + ',' + face[1] + ',' + face[2] + '>,\n'
+          output += '    <' + face.join( ',' ) + '>,\n';
         }
-        output += '  }\n'; 
-      } else { // Not implemented (Mesh1 ?)
-        for ( let i = 0, l = vertices.count; i < l; i += 3 ) {
-          for ( let m = 0; m < 3; m ++ ) {
-            const j = i + m + 1;
-            face[ m ] = ( indexVertex + j ) + ( normals || uvs ? '/' + ( uvs ? ( indexVertexUvs + j ) : '' ) + ( normals ? '/' + ( indexNormals + j ) : '' ) : '' );
-          }
-          // transform the face to export format
-          output += 'f ' + face.join( ' ' ) + '\n';
-        }
+        output += '  }\n';
       }
-      output += '}\n';
 
       // update index
       indexVertex += nbVertex;
       indexVertexUvs += nbVertexUvs;
       indexNormals += nbNormals;
     }
-
+/*
     function parseLine( line ) {
       let nbVertex = 0;
+
       const geometry = line.geometry;
       const type = line.type;
 
@@ -135,27 +121,23 @@ class POVExporter {
 
       // name of the line object
       output += 'o ' + line.name + '\n';
+
       if ( vertices !== undefined ) {
         for ( let i = 0, l = vertices.count; i < l; i ++, nbVertex ++ ) {
-          vertex.fromBufferAttribute( vertices, i );
 
+          vertex.fromBufferAttribute( vertices, i );
           // transform the vertex to world space
           vertex.applyMatrix4( line.matrixWorld );
-
           // transform the vertex to export format
           output += 'v ' + vertex.x + ' ' + vertex.y + ' ' + vertex.z + '\n';
-
         }
-
       }
 
       if ( type === 'Line' ) {
         output += 'l ';
-
         for ( let j = 1, l = vertices.count; j <= l; j ++ ) {
           output += ( indexVertex + j ) + ' ';
         }
-
         output += '\n';
       }
 
@@ -170,11 +152,9 @@ class POVExporter {
     }
 
     function parsePoints( points ) {
-
       let nbVertex = 0;
 
       const geometry = points.geometry;
-
       const vertices = geometry.getAttribute( 'position' );
       const colors = geometry.getAttribute( 'color' );
 
@@ -185,8 +165,8 @@ class POVExporter {
 
           vertex.fromBufferAttribute( vertices, i );
           vertex.applyMatrix4( points.matrixWorld );
-
           output += 'v ' + vertex.x + ' ' + vertex.y + ' ' + vertex.z;
+
           if ( colors !== undefined ) {
             color.fromBufferAttribute( colors, i );
             ColorManagement.fromWorkingColorSpace( color, SRGBColorSpace );
@@ -205,12 +185,12 @@ class POVExporter {
       // update index
       indexVertex += nbVertex;
     }
-
+*/
     object.traverse( function ( child ) {
       if ( child.isMesh === true ) {
         parseMesh( child );
       }
-/* Not implement yet
+/*
       if ( child.isLine === true ) {
         parseLine( child );
       }
@@ -219,8 +199,9 @@ class POVExporter {
         parsePoints( child );
       }
 */
-    });
+    } );
 
+    output += '}}\n';
     return output;
   }
 }

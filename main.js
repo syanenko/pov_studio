@@ -1,7 +1,8 @@
 // TODO:
 //
 // - inc: header
-// - Extend About
+// - POVExporterOld.js (for uv)
+// - Vertex colors support
 //
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
