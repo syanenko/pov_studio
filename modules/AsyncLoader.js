@@ -5,14 +5,17 @@ import { FBXLoader }  from 'three/addons/loaders/FBXLoader.js';
 import { STLLoader }  from 'three/addons/loaders/STLLoader.js';
 
 // Loading progress
-const progressBar = document.getElementById('progress-bar');
-const progressBarContainer = document.getElementById('progress-container');
+const progress = document.getElementById('progress-bar');
+const progressContainer = document.getElementById('progress-container');
+const progressLabel = document.getElementById('progress-label');
+
 const loadingManager = new THREE.LoadingManager();
 
 loadingManager.onStart = function (url, loaded, total) {
-  //console.log('Loading process has started!');
+  // console.log('Loading process has started!');
   // Display it on upload button click
-  //progressBarContainer.style.display = 'flex';
+  // progressBarContainer.style.display = 'flex';
+  progressLabel.innerHTML = "Parsing...";
 };
 
 loadingManager.onProgress = function (url, loaded, total) {
@@ -21,12 +24,12 @@ loadingManager.onProgress = function (url, loaded, total) {
   number of items loaded: ${loaded}
   total number of items: ${total} `);
 */
-  progressBar.value = (loaded / total) * 100;
+  progress.value = (loaded / total) * 100;
 };
 
 loadingManager.onLoad = function () {
   //console.log('Loading process has been completed!');
-  progressBarContainer.style.display = 'none';
+  progressContainer.style.display = 'none';
 };
 
 loadingManager.onError = function (url) {
