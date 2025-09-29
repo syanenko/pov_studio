@@ -9,6 +9,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 
 import { AsyncLoader } from './modules/AsyncLoader.js';
+import { loadingManager } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
 const DEFAULT_MODEL = 'data/models/teapot.glb';
@@ -30,7 +31,6 @@ let glaze = DEFAULT_GLAZE;
 // Init
 //
 async function init() {
-
   camera = new THREE.PerspectiveCamera( FOV, window.innerWidth / window.innerHeight, 0.1, 1000 );
   camera.position.set( 0, 2, 3 );
 

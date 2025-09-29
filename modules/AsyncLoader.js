@@ -4,11 +4,40 @@ import { OBJLoader }  from 'three/addons/loaders/OBJLoader.js';
 import { FBXLoader }  from 'three/addons/loaders/FBXLoader.js';
 import { STLLoader }  from 'three/addons/loaders/STLLoader.js';
 
+// Loading progress
+const progressBar = document.getElementById('progress-bar');
+const progressBarContainer = document.getElementById('progress-container');
+const loadingManager = new THREE.LoadingManager();
+
+loadingManager.onStart = function (url, loaded, total) {
+  //console.log('Loading process has started!');
+  progressBarContainer.style.display = 'flex';
+};
+
+loadingManager.onProgress = function (url, loaded, total) {
+/*
+  console.log(`Progress: ${url}
+  number of items loaded: ${loaded}
+  total number of items: ${total} `);
+*/
+  progressBar.value = (loaded / total) * 100;
+};
+
+loadingManager.onLoad = function () {
+  //console.log('Loading process has been completed!');
+  progressBarContainer.style.display = 'none';
+};
+
+loadingManager.onError = function (url) {
+  console.error(`Problem loading: ${url}`);
+};
+
+// Loading
 const AsyncLoader = {};
-AsyncLoader.gltfLoader = new GLTFLoader();
-AsyncLoader.objLoader  = new OBJLoader();
-AsyncLoader.fbxLoader  = new FBXLoader();
-AsyncLoader.stlLoader  = new STLLoader();
+AsyncLoader.gltfLoader = new GLTFLoader(loadingManager);
+AsyncLoader.objLoader  = new OBJLoader(loadingManager);
+AsyncLoader.fbxLoader  = new FBXLoader(loadingManager);
+AsyncLoader.stlLoader  = new STLLoader(loadingManager);
 AsyncLoader.textureLoader = new THREE.TextureLoader();
 AsyncLoader.audioLoader   = new THREE.AudioLoader();
 
@@ -77,4 +106,4 @@ AsyncLoader.loadAll = (promiseArr, element, message) => {
         })
     });
 }
-export { AsyncLoader };
+export { AsyncLoader, loadingManager };
