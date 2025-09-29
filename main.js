@@ -12,7 +12,11 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-const DEFAULT_MODEL = 'data/models/teapot.glb';
+// const DEFAULT_MODEL = 'data/models/teapot.glb';
+//const DEFAULT_MODEL = 'data/models/test_spiral.stl';
+//const DEFAULT_MODEL = 'data/models/skull.obj';
+const DEFAULT_MODEL = 'data/models/hand.obj';
+
 const PATH_GLAZES   = 'data/mat/';
 const DEFAULT_GLAZE = "skeleton";
 
@@ -105,7 +109,18 @@ async function loadModel(args)
   switch(ext)
   {
     case '.obj':
-    case '.OBJ': geo = getGeo((await AsyncLoader.loadOBJAsync(path)));  break;
+    case '.OBJ': geo = getGeo((await AsyncLoader.loadOBJAsync(path)));
+                 geo.deleteAttribute( 'normal' );
+                 geo = BufferGeometryUtils.mergeVertices(geo);
+                 geo.computeVertexNormals();
+                 break;
+
+    case '.stl':
+    case '.STL': geo = (await AsyncLoader.loadSTLAsync(path));
+                 geo.deleteAttribute( 'normal' );
+                 geo = BufferGeometryUtils.mergeVertices(geo);
+                 geo.computeVertexNormals();
+                 break;
 
     case '.fbx':
     case '.FBX': geo = getGeo((await AsyncLoader.loadFBXAsync(path)));  break;
@@ -116,18 +131,15 @@ async function loadModel(args)
     case 'gltf':
     case 'GLTF': geo = getGeo((await AsyncLoader.loadGLTFAsync(path))); break;
 
-    case '.stl':
-    case '.STL': geo = (await AsyncLoader.loadSTLAsync(path)); break;
-
     default: console.error("Unknown file extention: '" + ext + "'");
   }
-
-  geo.deleteAttribute( 'uv' ); // Smooth
-  geo.deleteAttribute( 'normal' );
-  geo.deleteAttribute( 'color' ); // TODO: Keep vertex colors for FBX
-  geo = BufferGeometryUtils.mergeVertices(geo);
-  geo.computeVertexNormals();
-
+/*
+  //geo.deleteAttribute( 'uv' );
+  //geo.deleteAttribute( 'normal' );
+  //geo.deleteAttribute( 'color' );
+  //geo = BufferGeometryUtils.mergeVertices(geo);
+  //geo.computeVertexNormals();
+*/
   // Set view
   geo.computeBoundingSphere();
   ocontrols.reset();
@@ -145,6 +157,8 @@ async function loadModel(args)
   model = new THREE.Mesh( geo, material );
   scene.add(model);
   // console.log(model); // DEBUG
+  console.log(model.geometry.attributes); // DEBUG
+  console.log(model.material.flatShading);
 
   normals_len = geo.boundingSphere.radius / 30;
   displayNormals(false);
@@ -246,6 +260,8 @@ async function flatShading() {
   model.material.dispose();
   model.material = material;
   model.material.needsUpdate;
+
+  console.log(model.material.flatShading);
 }
 window.flatShading = flatShading;
 
