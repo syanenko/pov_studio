@@ -21,8 +21,8 @@
     }
     </script> 
 
-    <img id="logo" src="data/images/logo_40x40.png" alt="Logo" width="40" height="40" onclick="window.open('https://www.povray.org', '_blank')">
-    <div id="text" onclick="about.showModal()">POV-Ray converter</div>
+    <img id="logo" src="data/images/logo_40x40.png" alt="Logo" width="40" height="40" onclick="about.inert=true;  about.showModal(); about.inert=false;">
+    <div id="text" onclick="about.inert=true;  about.showModal(); about.inert=false;">POV-Ray converter</div>
     <img id="help" src="data/images/help.png" alt="Help" onclick="about.inert=true;  about.showModal(); about.inert=false;">
     <hr>
 
