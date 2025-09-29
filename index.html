@@ -1,15 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Google tag (gtag.js)
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3PHDJG8H9Y"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-3PHDJG8H9Y');
-    </script>
-    -->
     <title>all2pov</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
@@ -63,6 +54,10 @@
 
       // Add a submit event listener to the form
       form.addEventListener('submit', function(e) {
+
+        // Display progress bar
+        document.getElementById('progress-container').style.display = 'flex';
+
         // Prevent the default form submission behavior
         e.preventDefault();
 
@@ -143,9 +138,6 @@
       <label for="switch_normals">Display normals</label><br>
 
       <!--
-      <input type="checkbox" id="switch_rotation" onclick="window.switchRotation(this.checked)">
-      <label for="switch_rotation">Rotation</label><br>
-
       <input type="checkbox" id="export_array" onclick="window.flatShading(this.checked)">
       <label for="export_array">Export array</label><br>
       -->

@@ -11,7 +11,8 @@ const loadingManager = new THREE.LoadingManager();
 
 loadingManager.onStart = function (url, loaded, total) {
   //console.log('Loading process has started!');
-  progressBarContainer.style.display = 'flex';
+  // Display it on upload button click
+  //progressBarContainer.style.display = 'flex';
 };
 
 loadingManager.onProgress = function (url, loaded, total) {

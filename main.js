@@ -1,7 +1,8 @@
 // TODO:
 //
-// - Exporter
-// - Check size and position on upload
+// - "html upload progress bar"
+// - inc: header
+// - Extend About
 //
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
@@ -21,7 +22,6 @@ let camera, scene, renderer;
 const FOV = 50;
 let ocontrols;
 
-let rotate = false;
 let normals = false;
 
 let material, model;
@@ -251,14 +251,6 @@ async function flatShading() {
 window.flatShading = flatShading;
 
 //
-// Switch rotation
-//
-async function switchRotation(checked) {
-  rotate = ocontrols.autoRotate = checked;
-}
-window.switchRotation = switchRotation;
-
-//
 // Switch normals
 //
 async function switchNormals(checked) {
@@ -309,12 +301,7 @@ function animate() {
 // Render
 //
 function render() {
-
-  if(rotate)
-    ocontrols.update(-0.02);
-  else
-    ocontrols.update();
-
+  ocontrols.update();
   renderer.render(scene, camera);
 }
 
