@@ -1,6 +1,5 @@
 // TODO:
 //
-// - "html upload progress bar"
 // - inc: header
 // - Extend About
 //
@@ -10,7 +9,6 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 
 import { AsyncLoader } from './modules/AsyncLoader.js';
-import { loadingManager } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
 const DEFAULT_MODEL = 'data/models/teapot.glb';

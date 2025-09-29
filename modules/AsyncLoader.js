@@ -15,6 +15,7 @@ loadingManager.onStart = function (url, loaded, total) {
   // console.log('Loading process has started!');
   // Display it on upload button click
   // progressBarContainer.style.display = 'flex';
+  progress.value = 0;
   progressLabel.innerHTML = "Parsing...";
 };
 

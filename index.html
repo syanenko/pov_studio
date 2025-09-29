@@ -58,7 +58,8 @@
         // Display progress bar
         document.getElementById('progress-label').innerHTML = "Loading...";
         document.getElementById('progress-container').style.display = 'flex';
-
+        let progress = document.getElementById('progress-bar');
+        
         // Prevent the default form submission behavior
         e.preventDefault();
 
@@ -80,13 +81,29 @@
 
         // Set the request onload event listener
         xhr.responseType = 'json';
+
+        xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            progress.value = percent;
+            progress.textContent = `${percent}%`;
+        }
+        });
+
         xhr.onload = function() {
           if (xhr.status === 200) {
             window.loadModel(xhr.response);
           } else {
-            console.error(xhr.response);
+            alert("Error loading model: " + xhr.status);
+            document.getElementById('progress-container').style.display = 'none';
           }
         }
+
+        xhr.onerror = function() {
+          alert("Error loading model, see console for details");
+          document.getElementById('progress-container').style.display = 'none';
+        }
+
         // Send the request
         xhr.send(formData);
         form.style.visibility = 'hidden';
