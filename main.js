@@ -304,7 +304,7 @@ function saveString( text, filename ) {
 function download() {
   const exporter = new POVExporter();
   const result = exporter.parse( model, material.flatShading );
-  saveString( result, 'mesh.inc' );
+  saveString( result, 'model.inc' );
 }
 window.download = download;
 
