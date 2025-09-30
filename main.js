@@ -154,13 +154,16 @@ async function loadModel(args)
 
   model = new THREE.Mesh( geo, material );
   scene.add(model);
-  // console.log(model); // DEBUG
-  console.log(model.geometry.attributes); // DEBUG
-  console.log(model.geometry);
+  //console.log(model); // DEBUG
+  //console.log(model.geometry.attributes);
+  //console.log(model.geometry);
 
   normals_len = geo.boundingSphere.radius / 30;
   displayNormals(false);
   displayNormals(normals);
+
+  displayFloor(false);
+  displayFloor(document.getElementById("display_floor").checked);
   ocontrols.update();
 }
 window.loadModel = loadModel;
@@ -260,15 +263,16 @@ window.displayAxis = displayAxis;
 let grid_helper;
 async function displayFloor(checked) {
   if(checked) {
-    let size = Math.ceil(axis_len / 10) * 10;
-    grid_helper = new THREE.GridHelper( size, size / 10,
+    grid_helper = new THREE.GridHelper( axis_len, 20,
                                         new THREE.Color().setHex( 0x888888 ),
                                         new THREE.Color().setHex( 0x888888 ) );
     scene.add( grid_helper );
   }
   else {
-    scene.remove( grid_helper );
-    grid_helper.dispose();
+    if(grid_helper) {
+      scene.remove( grid_helper );
+      grid_helper.dispose();
+    }
   }
 }
 window.displayFloor = displayFloor;
@@ -281,8 +285,6 @@ async function flatShading() {
   model.material.dispose();
   model.material = material;
   model.material.needsUpdate;
-
-  console.log(model.material.flatShading);
 }
 window.flatShading = flatShading;
 
@@ -294,8 +296,6 @@ async function vertexColors() {
   model.material.dispose();
   model.material = material;
   model.material.needsUpdate;
-
-  console.log(model.material.vertexColors);
 }
 window.vertexColors = vertexColors;
 
