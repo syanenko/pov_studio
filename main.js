@@ -1,7 +1,10 @@
 // TODO:
 //
+// - Switchable vertex colors export
 // - inc: header
-// - Vertex colors display
+// - vertexColors Threejs vs ZBrush
+// - vertexColors + flatShading ?
+// - Check cup.glb 
 //
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
@@ -11,11 +14,11 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-// const DEFAULT_MODEL = 'data/models/teapot.glb';
+const DEFAULT_MODEL = 'data/models/teapot.glb';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
 // const DEFAULT_MODEL = 'data/models/hand.obj';
-const DEFAULT_MODEL = 'data/models/cube.fbx';
+// const DEFAULT_MODEL = 'data/models/cube.fbx';
 
 const PATH_GLAZES   = 'data/mat/';
 const DEFAULT_GLAZE = "skeleton";
@@ -113,38 +116,27 @@ async function loadModel(args)
   {
     case '.obj':
     case '.OBJ': geo = getGeo((await AsyncLoader.loadOBJAsync(path)));
-                 geo.deleteAttribute( 'normal' );
-                 geo = BufferGeometryUtils.mergeVertices(geo);
-                 geo.computeVertexNormals();
                  break;
-
     case '.stl':
     case '.STL': geo = (await AsyncLoader.loadSTLAsync(path));
-                 geo.deleteAttribute( 'normal' );
-                 geo = BufferGeometryUtils.mergeVertices(geo);
-                 geo.computeVertexNormals();
                  break;
-
     case '.fbx':
     case '.FBX': geo = getGeo((await AsyncLoader.loadFBXAsync(path)));
-                 geo = BufferGeometryUtils.mergeVertices(geo);
                  break;
-
     case '.glb':
-    case '.GLB': geo = getGeo((await AsyncLoader.loadGLTFAsync(path))); break;
-
+    case '.GLB': geo = getGeo((await AsyncLoader.loadGLTFAsync(path)));
+                 break;
     case 'gltf':
-    case 'GLTF': geo = getGeo((await AsyncLoader.loadGLTFAsync(path))); break;
+    case 'GLTF': geo = getGeo((await AsyncLoader.loadGLTFAsync(path)));
+                 break;
 
     default: console.error("Unknown file extention: '" + ext + "'");
   }
-/*
-  //geo.deleteAttribute( 'uv' );
-  //geo.deleteAttribute( 'normal' );
-  //geo.deleteAttribute( 'color' );
-  //geo = BufferGeometryUtils.mergeVertices(geo);
-  //geo.computeVertexNormals();
-*/
+
+  geo.deleteAttribute( 'normal' );
+  geo = BufferGeometryUtils.mergeVertices(geo);
+  geo.computeVertexNormals();
+
   // Set view
   geo.computeBoundingSphere();
   ocontrols.reset();
@@ -323,7 +315,7 @@ function saveString( text, filename ) {
 
 function download() {
   const exporter = new POVExporter();
-  const result = exporter.parse( model, material.flatShading );
+  const result = exporter.parse( model, material.flatShading, material.vertexColors );
   saveString( result, 'model.inc' );
 }
 window.download = download;
