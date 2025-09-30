@@ -15,6 +15,7 @@ import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
 const DEFAULT_MODEL = 'data/models/teapot.glb';
+// DEBUG 
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
 // const DEFAULT_MODEL = 'data/models/hand.obj';
@@ -252,6 +253,25 @@ async function displayAxis(checked) {
   }
 }
 window.displayAxis = displayAxis;
+
+//
+// Display axis
+//
+let grid_helper;
+async function displayFloor(checked) {
+  if(checked) {
+    let size = Math.ceil(axis_len / 10) * 10;
+    grid_helper = new THREE.GridHelper( size, size / 10,
+                                        new THREE.Color().setHex( 0x888888 ),
+                                        new THREE.Color().setHex( 0x888888 ) );
+    scene.add( grid_helper );
+  }
+  else {
+    scene.remove( grid_helper );
+    grid_helper.dispose();
+  }
+}
+window.displayFloor = displayFloor;
 
 //
 // Flat shading
