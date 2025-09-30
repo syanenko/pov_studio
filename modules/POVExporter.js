@@ -19,7 +19,7 @@ import {
 } from 'three';
 
 class POVExporter {
-  parse( object, flat_shading ) {
+  parse( object, flat_shading, vertex_colors ) {
 
     let output = '';
 
@@ -97,15 +97,16 @@ class POVExporter {
         output += '  }\n';
       }
 
-      // texture_list
-      if ( colors !== undefined ) {
+      // texture list
+      if ( colors !== undefined && vertex_colors) {
         output += 'texture_list {\n  ' + (colors.count) + ',\n';
         for ( let i = 0; i<colors.count; i++ ) {
-            color.fromBufferAttribute( colors, i );
-            ColorManagement.fromWorkingColorSpace( color, SRGBColorSpace );
-            output += 'texture{pigment{rgb <' + color.r + ',' + color.g + ',' + color.b +'>}}\n'
-      }}
-      output += '}\n';
+          color.fromBufferAttribute( colors, i );
+          ColorManagement.fromWorkingColorSpace( color, SRGBColorSpace );
+          output += 'texture{pigment{rgb <' + color.r + ',' + color.g + ',' + color.b +'>}}\n'
+        }
+        output += '}\n';
+      }
 
       // faces
       if ( indices !== null ) {
@@ -116,7 +117,10 @@ class POVExporter {
             face[ m ] = ( indexVertex + j );
           }
           // transform the face to export format
-          output += '  <' + face[0] + ',' + face[1] + ',' + face[2] + '>, ' + face[0] + ',' + face[1] + ',' + face[2] + ',\n'
+          output += '  <' + face[0] + ',' + face[1] + ',' + face[2] + '>';
+          if ( colors !== undefined && vertex_colors)
+            output += ', ' + face[0] + ', ' + face[1] + ', ' + face[2];
+          output +=  '\n';
         }
         output += '  }\n'; 
       } else { // Not implemented (Mesh1 ?)
