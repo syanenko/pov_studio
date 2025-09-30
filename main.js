@@ -1,8 +1,7 @@
 // TODO:
 //
 // - inc: header
-// - POVExporterOld.js (for uv)
-// - Vertex colors support
+// - Vertex colors display
 //
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
@@ -16,7 +15,7 @@ import { POVExporter } from './modules/POVExporter.js';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
 // const DEFAULT_MODEL = 'data/models/hand.obj';
-const DEFAULT_MODEL = 'data/models/onion.fbx';
+const DEFAULT_MODEL = 'data/models/cube.fbx';
 
 const PATH_GLAZES   = 'data/mat/';
 const DEFAULT_GLAZE = "skeleton";
@@ -40,6 +39,9 @@ async function init() {
 
   scene = new THREE.Scene();
   scene.add( camera );
+
+  const ambientLight = new THREE.AmbientLight(0xffffff, 2.5); // White light, 50% intensity
+  scene.add(ambientLight);
 
   window.addEventListener( 'resize', onWindowResize );
 
@@ -175,7 +177,8 @@ window.loadModel = loadModel;
 //
 async function makeMaterial() {
   if( material != undefined) {
-    material.matcap.dispose(); // DEBUG FBX
+    if(material.matcap)
+      material.matcap.dispose();
     material.dispose();
   }
   let matcap = await AsyncLoader.loadTextureAsync(PATH_GLAZES + glaze + "_mcap.png");
@@ -184,8 +187,10 @@ async function makeMaterial() {
   //const pointLight = new THREE.PointLight(0xffffff, 300, 1000); // Color, Intensity, Distance
   //pointLight.position.set(3, 3, 3);
   //scene.add(pointLight);
-  //material = new THREE.MeshStandardMaterial( {side: THREE.DoubleSide, vertexColors: true} );
-  material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} );
+  if(document.getElementById("vertex_colors").checked)
+    material = new THREE.MeshStandardMaterial( {side: THREE.DoubleSide, vertexColors: true} );
+  else
+    material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} );
   material.flatShading = document.getElementById("flat_shading").checked;
 }
 
@@ -196,7 +201,8 @@ async function applyGlaze(_glaze) {
   if(glaze == _glaze)
     return;
   glaze = _glaze;
-  model.material.matcap.dispose();
+  if(model.material.matcap)
+    model.material.matcap.dispose();
   model.material.matcap = await AsyncLoader.loadTextureAsync(PATH_GLAZES + glaze + "_mcap.png");
   model.material.matcap.colorSpace = THREE.SRGBColorSpace;
 }
@@ -267,6 +273,20 @@ async function flatShading() {
   console.log(model.material.flatShading);
 }
 window.flatShading = flatShading;
+
+//
+// Vertex colors
+//
+async function vertexColors() {
+  await makeMaterial(true);
+  model.material.dispose();
+  model.material = material;
+  model.material.needsUpdate;
+
+  console.log(model.material.vertexColors);
+}
+window.vertexColors = vertexColors;
+
 
 //
 // Switch normals
