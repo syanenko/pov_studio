@@ -13,9 +13,10 @@ import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
 // const DEFAULT_MODEL = 'data/models/teapot.glb';
-//const DEFAULT_MODEL = 'data/models/test_spiral.stl';
-//const DEFAULT_MODEL = 'data/models/skull.obj';
-const DEFAULT_MODEL = 'data/models/hand.obj';
+// const DEFAULT_MODEL = 'data/models/test_spiral.stl';
+// const DEFAULT_MODEL = 'data/models/skull.obj';
+// const DEFAULT_MODEL = 'data/models/hand.obj';
+const DEFAULT_MODEL = 'data/models/onion.fbx';
 
 const PATH_GLAZES   = 'data/mat/';
 const DEFAULT_GLAZE = "skeleton";
@@ -123,7 +124,9 @@ async function loadModel(args)
                  break;
 
     case '.fbx':
-    case '.FBX': geo = getGeo((await AsyncLoader.loadFBXAsync(path)));  break;
+    case '.FBX': geo = getGeo((await AsyncLoader.loadFBXAsync(path)));
+                 geo = BufferGeometryUtils.mergeVertices(geo);
+                 break;
 
     case '.glb':
     case '.GLB': geo = getGeo((await AsyncLoader.loadGLTFAsync(path))); break;
@@ -158,7 +161,7 @@ async function loadModel(args)
   scene.add(model);
   // console.log(model); // DEBUG
   console.log(model.geometry.attributes); // DEBUG
-  console.log(model.material.flatShading);
+  console.log(model.geometry);
 
   normals_len = geo.boundingSphere.radius / 30;
   displayNormals(false);

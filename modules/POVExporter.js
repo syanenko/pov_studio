@@ -48,7 +48,9 @@ class POVExporter {
       const vertices = geometry.getAttribute( 'position' );
       const normals = geometry.getAttribute( 'normal' );
       const uvs = geometry.getAttribute( 'uv' );
+      const colors = geometry.getAttribute( 'color' );
       const indices = geometry.getIndex();
+      console.log(indices);
 
       // name of the mesh object
       output +=  '#declare model = mesh2 {\n'
@@ -95,6 +97,16 @@ class POVExporter {
         output += '  }\n';
       }
 
+      // texture_list
+      if ( colors !== undefined ) {
+        output += 'texture_list {\n  ' + (colors.count) + ',\n';
+        for ( let i = 0; i<colors.count; i++ ) {
+            color.fromBufferAttribute( colors, i );
+            ColorManagement.fromWorkingColorSpace( color, SRGBColorSpace );
+            output += 'texture{pigment{rgb <' + color.r + ',' + color.g + ',' + color.b +'>}}\n'
+      }}
+      output += '}\n';
+
       // faces
       if ( indices !== null ) {
         output += 'face_indices {\n  ' + (indices.count / 3) + ',\n';
@@ -104,7 +116,7 @@ class POVExporter {
             face[ m ] = ( indexVertex + j );
           }
           // transform the face to export format
-          output += '  <' + face[0] + ',' + face[1] + ',' + face[2] + '>,\n'
+          output += '  <' + face[0] + ',' + face[1] + ',' + face[2] + '>, ' + face[0] + ',' + face[1] + ',' + face[2] + ',\n'
         }
         output += '  }\n'; 
       } else { // Not implemented (Mesh1 ?)
@@ -144,9 +156,7 @@ class POVExporter {
 
           // transform the vertex to export format
           output += 'v ' + vertex.x + ' ' + vertex.y + ' ' + vertex.z + '\n';
-
         }
-
       }
 
       if ( type === 'Line' ) {
