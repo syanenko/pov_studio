@@ -1,10 +1,9 @@
 // TODO:
 //
-// - Switchable vertex colors export
+// - Help in about
 // - inc: header
 // - vertexColors Threejs vs ZBrush
 // - vertexColors + flatShading ?
-// - Check cup.glb 
 //
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
@@ -157,6 +156,7 @@ async function loadModel(args)
   //console.log(model); // DEBUG
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
+  //console.log(model.geometry.getAttribute( 'position' ));
 
   normals_len = geo.boundingSphere.radius / 30;
   displayNormals(false);

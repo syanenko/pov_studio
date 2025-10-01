@@ -3,6 +3,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { OBJLoader }  from 'three/addons/loaders/OBJLoader.js';
 import { FBXLoader }  from 'three/addons/loaders/FBXLoader.js';
 import { STLLoader }  from 'three/addons/loaders/STLLoader.js';
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js"
 
 // Loading progress
 const progress = document.getElementById('progress-bar');
@@ -45,6 +46,10 @@ AsyncLoader.fbxLoader  = new FBXLoader(loadingManager);
 AsyncLoader.stlLoader  = new STLLoader(loadingManager);
 AsyncLoader.textureLoader = new THREE.TextureLoader();
 AsyncLoader.audioLoader   = new THREE.AudioLoader();
+
+const draco = new DRACOLoader()
+draco.setDecoderPath("node_modules/three/examples/jsm/libs/draco/")
+AsyncLoader.gltfLoader.setDRACOLoader(draco)
 
 AsyncLoader.loadGLTFAsync = (url) => {
     return new Promise((resolve, reject) => {
