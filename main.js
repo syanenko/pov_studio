@@ -13,8 +13,8 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-const DEFAULT_MODEL = 'data/models/hubble.glb';
-// DEBUG 
+const DEFAULT_MODEL = 'data/models/teapot.glb';
+// const DEFAULT_MODEL = 'data/models/hubble.glb';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
 // const DEFAULT_MODEL = 'data/models/hand.obj';
@@ -89,7 +89,6 @@ function getGeoms(obj) {
       geoms.push(e.geometry);
   }})
 
-  console.log(geoms);
   return geoms;
 }
 
@@ -99,16 +98,16 @@ function getGeoms(obj) {
 async function loadModel(args)
 {
   // Cleanup
-  if (typeof model !== "undefined") {
-    displayNormals(false);
-    for(let i=0; i<model.length; i++) {
+  displayNormals(false);
+  for(let i=0; i<model.length; i++) {
+    if (typeof model[i]) {
       scene.remove( model[i] );
       model[i].geometry.dispose();
       model[i].material.dispose();
     }
-    model.length = 0;
-    renderer.renderLists.dispose();
   }
+  model.length = 0;
+  renderer.renderLists.dispose();
 
   await makeMaterial();
 
@@ -120,7 +119,7 @@ async function loadModel(args)
     return;
   }
 
-  let geoms;
+  let geoms = [];
   const ext = path.slice(-4);
   switch(ext)
   {
@@ -128,7 +127,7 @@ async function loadModel(args)
     case '.OBJ': geoms = getGeoms((await AsyncLoader.loadOBJAsync(path)));
                  break;
     case '.stl':
-    case '.STL': geoms = (await AsyncLoader.loadSTLAsync(path));
+    case '.STL': geoms.push(await AsyncLoader.loadSTLAsync(path)); // Single geometry
                  break;
     case '.fbx':
     case '.FBX': geoms = getGeoms((await AsyncLoader.loadFBXAsync(path)));
