@@ -225,17 +225,25 @@ window.applyGlaze = applyGlaze;
 //
 // Display normals
 //
-let normals_helper;
+let normals_helpers = [];
 let normals_len = 0.1;
 async function displayNormals(checked) {
+  
   if(checked) {
-    normals_helper = new VertexNormalsHelper( model, normals_len )
-    scene.add( normals_helper ); }
+    for(let i=0; i<model.length; i++) {
+      let nh = new VertexNormalsHelper( model[i], normals_len )
+      normals_helpers.push(nh);
+      scene.add( nh ); }
+  }
   else {
-   if(normals_helper) {
-    scene.remove( normals_helper );
-    normals_helper.dispose();
-  }}
+    for(let i=0; i<model.length; i++) {
+      if(normals_helpers[i]) {
+        scene.remove( normals_helpers[i] );
+        normals_helpers[i].dispose();
+      }
+    }
+    normals_helpers.length = 0;
+  }
 }
 window.displayNormals = displayNormals;
 
@@ -300,9 +308,12 @@ window.displayFloor = displayFloor;
 //
 async function flatShading() {
   await makeMaterial();
-  model.material.dispose();
-  model.material = material;
-  model.material.needsUpdate;
+
+  for(let i=0; i<model.length; i++) {
+    model[i].material.dispose();
+    model[i].material = material;
+    model[i].material.needsUpdate;
+  }
 }
 window.flatShading = flatShading;
 
@@ -311,9 +322,11 @@ window.flatShading = flatShading;
 //
 async function vertexColors() {
   await makeMaterial(true);
-  model.material.dispose();
-  model.material = material;
-  model.material.needsUpdate;
+  for(let i=0; i<model.length; i++) {
+    model[i].material.dispose();
+    model[i].material = material;
+    model[i].material.needsUpdate;
+  }
 }
 window.vertexColors = vertexColors;
 
