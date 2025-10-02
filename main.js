@@ -13,7 +13,7 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-const DEFAULT_MODEL = 'data/models/teapot.glb';
+const DEFAULT_MODEL = 'data/models/hubble.glb';
 // DEBUG 
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
@@ -30,14 +30,14 @@ let ocontrols;
 
 let normals = false;
 
-let material, model;
+let material, model = [];
 let glaze = DEFAULT_GLAZE;
 
 //
 // Init
 //
 async function init() {
-  camera = new THREE.PerspectiveCamera( FOV, window.innerWidth / window.innerHeight, 0.1, 1000 );
+  camera = new THREE.PerspectiveCamera( FOV, window.innerWidth / window.innerHeight, 0.1, 5000 );
   camera.position.set( 0, 2, 3 );
 
   scene = new THREE.Scene();
@@ -79,17 +79,18 @@ async function init() {
 //
 // Get geometry
 // 
-function getGeo(obj) {
-  let geo;
+function getGeoms(obj) {
+  let geoms = [];
   if(obj.scene)
     obj = obj.scene
 
   obj.traverse(e =>{
     if(e.isMesh) {
-      geo = e.geometry;
+      geoms.push(e.geometry);
   }})
 
-  return geo;
+  console.log(geoms);
+  return geoms;
 }
 
 //
@@ -99,12 +100,18 @@ async function loadModel(args)
 {
   // Cleanup
   if (typeof model !== "undefined") {
-    scene.remove( model );
-    model.geometry.dispose();
-    model.material.dispose();
+    for(let i=0; i<model.length; i++) {
+      scene.remove( model[i] );
+      model[i].geometry.dispose();
+      model[i].material.dispose();
+    }
+    model.length = 0;
+
     renderer.renderLists.dispose();
     displayNormals(false);
   }
+
+  await makeMaterial();
 
   // Load geometry
   if(args.model) {
@@ -114,55 +121,58 @@ async function loadModel(args)
     return;
   }
 
-  let geo;
+  let geoms;
   const ext = path.slice(-4);
   switch(ext)
   {
     case '.obj':
-    case '.OBJ': geo = getGeo((await AsyncLoader.loadOBJAsync(path)));
+    case '.OBJ': geoms = getGeoms((await AsyncLoader.loadOBJAsync(path)));
                  break;
     case '.stl':
-    case '.STL': geo = (await AsyncLoader.loadSTLAsync(path));
+    case '.STL': geoms = (await AsyncLoader.loadSTLAsync(path));
                  break;
     case '.fbx':
-    case '.FBX': geo = getGeo((await AsyncLoader.loadFBXAsync(path)));
+    case '.FBX': geoms = getGeoms((await AsyncLoader.loadFBXAsync(path)));
                  break;
     case '.glb':
-    case '.GLB': geo = getGeo((await AsyncLoader.loadGLTFAsync(path)));
+    case '.GLB': geoms = getGeoms((await AsyncLoader.loadGLTFAsync(path)));
                  break;
     case 'gltf':
-    case 'GLTF': geo = getGeo((await AsyncLoader.loadGLTFAsync(path)));
+    case 'GLTF': geoms = getGeoms((await AsyncLoader.loadGLTFAsync(path)));
                  break;
 
     default: console.error("Unknown file extention: '" + ext + "'");
   }
 
-  geo.deleteAttribute( 'normal' );
-  geo = BufferGeometryUtils.mergeVertices(geo);
-  geo.computeVertexNormals();
+  for (let i = 0; i < geoms.length; i++) {
+    geoms[i].deleteAttribute( 'normal' );
+    geoms[i] = BufferGeometryUtils.mergeVertices(geoms[i]);
+    geoms[i].computeVertexNormals();
+
+    let surface = new THREE.Mesh( geoms[i], material );
+    model.push(surface);
+    scene.add(surface);
+  }
+  //console.log(model); // DEBUG
+  //console.log(model.geometry.attributes);
+  // console.log(model.geometry);
+  //console.log(model.geometry.getAttribute( 'position' ));
 
   // Set view
-  geo.computeBoundingSphere();
+  // DEBUG
+  const g = 1;
+  geoms[g].computeBoundingSphere();
   ocontrols.reset();
-  ocontrols.target.copy(geo.boundingSphere.center);
-  camera.position.set(geo.boundingSphere.center.x,
-                      geo.boundingSphere.center.y,
-                      geo.boundingSphere.center.z + geo.boundingSphere.radius * 3);
+  ocontrols.target.copy(geoms[g].boundingSphere.center);
+  camera.position.set(geoms[g].boundingSphere.center.x,
+                      geoms[g].boundingSphere.center.y,
+                      geoms[g].boundingSphere.center.z + geoms[g].boundingSphere.radius * 3);
 
-  axis_len = geo.boundingSphere.radius * 2.5;
+  axis_len = geoms[g].boundingSphere.radius * 2.5;
   displayAxis(false);
   displayAxis(document.getElementById("display_axis").checked);
 
-  await makeMaterial();
-
-  model = new THREE.Mesh( geo, material );
-  scene.add(model);
-  //console.log(model); // DEBUG
-  //console.log(model.geometry.attributes);
-  //console.log(model.geometry);
-  //console.log(model.geometry.getAttribute( 'position' ));
-
-  normals_len = geo.boundingSphere.radius / 30;
+  normals_len = geoms[g].boundingSphere.radius / 30;
   displayNormals(false);
   displayNormals(normals);
 
@@ -201,10 +211,14 @@ async function applyGlaze(_glaze) {
   if(glaze == _glaze)
     return;
   glaze = _glaze;
-  if(model.material.matcap)
-    model.material.matcap.dispose();
-  model.material.matcap = await AsyncLoader.loadTextureAsync(PATH_GLAZES + glaze + "_mcap.png");
-  model.material.matcap.colorSpace = THREE.SRGBColorSpace;
+
+  let tex = await AsyncLoader.loadTextureAsync(PATH_GLAZES + glaze + "_mcap.png");
+  for(let i=0; i<model.length; i++) {
+    if(model[i].material.matcap)
+      model[i].material.matcap.dispose();
+    model[i].material.matcap = tex;
+    model[i].material.matcap.colorSpace = THREE.SRGBColorSpace;
+  }
 }
 window.applyGlaze = applyGlaze;
 
