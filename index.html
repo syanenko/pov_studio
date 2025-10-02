@@ -147,15 +147,13 @@
 
     <!-- Settings -->
     <div style='position: absolute; bottom:15px; left:20px; z-index:4; font-size: 130%;'>
-
-      <input type="checkbox" id="flat_shading" onclick="window.updateMaterial(this.checked)">
-      <label for="flat_shading">Flat</label><br>
-
-      <input type="checkbox" id="normal_shading" onclick="window.updateMaterial(this.checked)">
-      <label for="normal_shading">Normal</label><br>
-
-      <input type="checkbox" id="wire_shading" onclick="window.updateMaterial(this.checked)">
-      <label for="wire_shading">Wireframe</label><br>
+      <label for="shading">Shading</label>
+      <select id="shading" onclick="window.updateMaterial(this.value)">
+        <option value="flat">Flat</option>
+        <option value="normal">Normal</option>
+        <option value="wireframe">Wireframe</option>
+      </select>
+      <br>
 
       <input type="checkbox" id="vertex_colors" onclick="window.updateMaterial(this.checked)">
       <label for="vertex_colors">Vertex colors</label><br>
@@ -166,12 +164,8 @@
       <input type="checkbox" id="display_floor" onclick="window.displayFloor(this.checked)">
       <label for="display_floor">Display floor</label><br>
 
-      <input type="checkbox" id="switch_normals" onclick="window.switchNormals(this.checked)">
-      <label for="switch_normals">Display normals</label><br>
-      <!--
-      <input type="checkbox" id="export_array" onclick="window.flatShading(this.checked)">
-      <label for="export_array">Export array</label><br>
-      -->
+      <input type="checkbox" id="display_normals" onclick="window.displayNormals(this.checked)">
+      <label for="display_normals">Display normals</label><br>
     </div>
 
     <!-- Progress -->

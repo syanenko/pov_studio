@@ -15,8 +15,8 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-const DEFAULT_MODEL = 'data/models/teapot.glb';
-// const DEFAULT_MODEL = 'data/models/hubble.glb';
+// const DEFAULT_MODEL = 'data/models/skull.obj';
+const DEFAULT_MODEL = 'data/models/hubble.glb';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
 // const DEFAULT_MODEL = 'data/models/hand.obj';
@@ -34,6 +34,11 @@ let normals = false;
 
 let material, model = [];
 let glaze = DEFAULT_GLAZE;
+
+let cb_VertexColors;
+let cb_DisplayAxis;
+let cb_DisplayFloor;
+let cb_DisplayNormals;
 
 //
 // Init
@@ -59,36 +64,37 @@ async function init() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.VSMShadowMap;
 
-  let cpos = new THREE.Vector3();
-  let crot = new THREE.Quaternion();
-
-  let mpos = new THREE.Vector3();
-  let mrot = new THREE.Quaternion();
-
   // Init orbit controlls
   ocontrols = new OrbitControls( camera, renderer.domElement );
   ocontrols.enablePan = true;
+
+  // Settings
+  cb_VertexColors = document.getElementById("vertex_colors");
+  cb_DisplayAxis = document.getElementById("display_axis");
+  cb_DisplayFloor = document.getElementById("display_floor");
+  cb_DisplayNormals = document.getElementById("display_normals");
 
   // Load default model
   await loadModel({model: DEFAULT_MODEL});
   await applyGlaze(DEFAULT_GLAZE);
 
   // Display on startup
-  document.getElementById("display_axis").click();
-  document.getElementById("display_floor").click();
+  cb_DisplayAxis.click();
+  cb_DisplayFloor.click();
 }
 
 //
 // Get geometry
 // 
 function getGeoms(obj) {
+  console.log(obj);
   let geoms = [];
   if(obj.scene)
-    obj.scene.traverse(e =>{
+    obj = scene;
+  obj.traverse(e =>{
       if(e.isMesh) {
         geoms.push(e.geometry);
     }})
-
   return geoms;
 }
 
@@ -133,7 +139,7 @@ async function loadModel(args)
     case '.FBX': geoms = getGeoms((await AsyncLoader.loadFBXAsync(path)));
                  break;
     case '.glb':
-    case '.GLB': geoms = getGeoms((await AsyncLoader.loadGLTFAsync(path)));
+    case '.GLB': geoms = getGeoms((await AsyncLoader.loadGLTFAsync(path)).scene);
                  break;
     case 'gltf':
     case 'GLTF': geoms = getGeoms((await AsyncLoader.loadGLTFAsync(path)));
@@ -173,13 +179,13 @@ async function loadModel(args)
 
   axis_len = bs.radius * 2.5;
   displayAxis(false);
-  displayAxis(document.getElementById("display_axis").checked);
+  displayAxis(cb_DisplayAxis.checked);
 
   normals_len = bs.radius / 30;
-  displayNormals(normals);
+  displayNormals(cb_DisplayNormals.checked);
 
   displayFloor(false);
-  displayFloor(document.getElementById("display_floor").checked);
+  displayFloor(cb_DisplayFloor.checked);
   ocontrols.update();
 }
 window.loadModel = loadModel;
@@ -187,28 +193,33 @@ window.loadModel = loadModel;
 //
 // Make material
 //
-async function makeMaterial() {
+async function makeMaterial(shading) {
   if( material != undefined) {
     if(material.matcap)
       material.matcap.dispose();
     material.dispose();
   }
-  let matcap = await AsyncLoader.loadTextureAsync(PATH_GLAZES + glaze + "_mcap.png");
-  matcap.colorSpace = THREE.SRGBColorSpace;
-  // DEBUG FBX
+  // DEBUG Vertez colors
   //const pointLight = new THREE.PointLight(0xffffff, 300, 1000); // Color, Intensity, Distance
   //pointLight.position.set(3, 3, 3);
   //scene.add(pointLight);
 
-  if(document.getElementById("wire_shading").checked)
-    material = new THREE.MeshStandardMaterial( {side: THREE.DoubleSide, wireframe: true} );
-  else if(document.getElementById("vertex_colors").checked)
-    material = new THREE.MeshStandardMaterial( {side: THREE.DoubleSide, vertexColors: true} );
-  else
-    material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide,} );
-  material.flatShading = document.getElementById("flat_shading").checked;
-}
+  if(cb_VertexColors.checked) {
+    material = new THREE.MeshStandardMaterial( {side: THREE.DoubleSide, vertexColors: true} ); }
+  else if(shading == "wireframe") {
+    material = new THREE.MeshStandardMaterial( {side: THREE.DoubleSide, wireframe: true} ); }
+  else {
+    let matcap = await AsyncLoader.loadTextureAsync(PATH_GLAZES + glaze + "_mcap.png");
+    matcap.colorSpace = THREE.SRGBColorSpace;
+    material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} ); }
+ 
+  material.flatShading = true;
 
+  if(shading == "flat")
+    material.flatShading = true;
+  else if(shading == "normal")
+    material.flatShading = false;
+}
 //
 // Apply glaze
 //
@@ -311,8 +322,8 @@ window.displayFloor = displayFloor;
 //
 // Flat shading
 //
-async function updateMaterial() {
-  await makeMaterial();
+async function updateMaterial(shading) {
+  await makeMaterial(shading);
   for(let i=0; i<model.length; i++) {
     model[i].material.dispose();
     model[i].material = material;
@@ -324,11 +335,13 @@ window.updateMaterial = updateMaterial;
 //
 // Switch normals
 //
-async function switchNormals(checked) {
+/*
+async function displayNormals(checked) {
   normals = checked;
   displayNormals(normals);
 }
-window.switchNormals = switchNormals;
+window.displayNormals = displayNormals;
+*/
 
 // Resize
 function onWindowResize() {
