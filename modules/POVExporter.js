@@ -1,13 +1,6 @@
-
-// Exports mesh to POV-Ray mesh2: https://www.povray.org/documentation/view/3.60/68/ 
 //
-// Now export only vertices and face's indexes
-//
-// TODO:
-// - Normals
-// - UV   
-// - Colors
-// - Vertix faces as 'mesh1' 
+// Exports all meshes in scene to POV-Ray mesh2: https://www.povray.org/documentation/view/3.60/68/ 
+// Mesh attributes: vertices, faces, normals, UVs, vertice colors
 //
 import {
 	Color,
@@ -19,7 +12,7 @@ import {
 } from 'three';
 
 class POVExporter {
-  parse( object, flat_shading, vertex_colors ) {
+  parse( object, flat_shading, vertex_colors, bb, bs ) {
 
     let output = '';
     let surCount = 1;
@@ -51,7 +44,6 @@ class POVExporter {
       const uvs = geometry.getAttribute( 'uv' );
       const colors = geometry.getAttribute( 'color' );
       const indices = geometry.getIndex();
-      console.log(indices);
 
       // name of the mesh object
       output += '#declare surface' + surCount + ' = mesh2 {\n'
@@ -215,8 +207,16 @@ class POVExporter {
       indexVertex += nbVertex;
     }
 
+    output += "#declare CENTER = <"+ bs.center.x + ", " + bs.center.y + ", " + bs.center.z + ">;\n";
+    output += "#declare RADIUS = " + bs.radius + ";\n";
+    output += "#declare XMIN = " + bb.min.x + ";\n";
+    output += "#declare XMAX =" + bb.max.x + ";\n";
+    output += "#declare YMIN =" + bb.min.y + ";\n";
+    output += "#declare YMAX =" + bb.max.y + ";\n";
+    output += "#declare ZMIN =" + bb.min.z + ";\n";
+    output += "#declare ZMAX =" + bb.max.z + ";\n\n";
+
     object.traverse( function ( child ) {
-      console.log(child);
       if ( child.isMesh === true && child.name == "surface" ) {
         parseMesh( child );
       }

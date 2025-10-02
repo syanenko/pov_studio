@@ -48,7 +48,7 @@ AsyncLoader.textureLoader = new THREE.TextureLoader();
 AsyncLoader.audioLoader   = new THREE.AudioLoader();
 
 const draco = new DRACOLoader()
-draco.setDecoderPath("node_modules/three/examples/jsm/libs/draco/")
+draco.setDecoderPath("/node_modules/three/examples/jsm/libs/draco/")
 AsyncLoader.gltfLoader.setDRACOLoader(draco)
 
 AsyncLoader.loadGLTFAsync = (url) => {

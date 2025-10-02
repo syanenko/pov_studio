@@ -15,8 +15,9 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
+const DEFAULT_MODEL = 'data/models/teapot.glb';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
-const DEFAULT_MODEL = 'data/models/hubble.glb';
+// const DEFAULT_MODEL = 'data/models/hubble.glb';
 // const DEFAULT_MODEL = 'data/models/two_cubes_test.obj';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
@@ -31,7 +32,8 @@ let camera, scene, renderer;
 const FOV = 50;
 let ocontrols;
 
-let normals = false;
+let bb;
+let bs;
 
 let material, model = [];
 let glaze = DEFAULT_GLAZE;
@@ -148,7 +150,7 @@ async function loadModel(args)
     default: console.error("Unknown file extention: '" + ext + "'");
   }
 
-  const bb = new THREE.Box3();
+  bb = new THREE.Box3();
   for (let i = 0; i < geoms.length; i++) {
     geoms[i].deleteAttribute( 'normal' );
     geoms[i] = BufferGeometryUtils.mergeVertices(geoms[i]);
@@ -163,13 +165,12 @@ async function loadModel(args)
   }
   //console.log(model); // DEBUG
   //console.log(model.geometry.attributes);
-  // console.log(model.geometry);
+  //console.log(model.geometry);
   //console.log(model.geometry.getAttribute( 'position' ));
 
   // Set view
   // TODO: calculate for all geometries max(dist from origin + radius)
-  const g = 0;
-  const bs = new THREE.Sphere();
+  bs = new THREE.Sphere();
   bb.getBoundingSphere(bs);
 
   ocontrols.reset();
@@ -370,7 +371,7 @@ function saveString( text, filename ) {
 
 function download() {
   const exporter = new POVExporter();
-  const result = exporter.parse( scene, material.flatShading, material.vertexColors );
+  const result = exporter.parse( scene, material.flatShading, material.vertexColors, bb, bs );
   saveString( result, 'model.inc' );
 }
 window.download = download;
