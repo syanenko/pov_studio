@@ -70,6 +70,10 @@ async function init() {
   // Load default model
   await loadModel({model: DEFAULT_MODEL});
   await applyGlaze(DEFAULT_GLAZE);
+
+  // Display on startup
+  document.getElementById("display_axis").click();
+  document.getElementById("display_floor").click();
 }
 
 //
