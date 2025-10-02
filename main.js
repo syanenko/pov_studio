@@ -1,5 +1,7 @@
 // TODO:
 //
+// - Export multiple meshes
+// - Shading checkbox mutual ex.
 // - Help in about
 // - inc: header
 // - vertexColors Threejs vs ZBrush
@@ -82,12 +84,10 @@ async function init() {
 function getGeoms(obj) {
   let geoms = [];
   if(obj.scene)
-    obj = obj.scene
-
-  obj.traverse(e =>{
-    if(e.isMesh) {
-      geoms.push(e.geometry);
-  }})
+    obj.scene.traverse(e =>{
+      if(e.isMesh) {
+        geoms.push(e.geometry);
+    }})
 
   return geoms;
 }
@@ -199,10 +199,13 @@ async function makeMaterial() {
   //const pointLight = new THREE.PointLight(0xffffff, 300, 1000); // Color, Intensity, Distance
   //pointLight.position.set(3, 3, 3);
   //scene.add(pointLight);
-  if(document.getElementById("vertex_colors").checked)
+
+  if(document.getElementById("wire_shading").checked)
+    material = new THREE.MeshStandardMaterial( {side: THREE.DoubleSide, wireframe: true} );
+  else if(document.getElementById("vertex_colors").checked)
     material = new THREE.MeshStandardMaterial( {side: THREE.DoubleSide, vertexColors: true} );
   else
-    material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} );
+    material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide,} );
   material.flatShading = document.getElementById("flat_shading").checked;
 }
 
@@ -308,30 +311,15 @@ window.displayFloor = displayFloor;
 //
 // Flat shading
 //
-async function flatShading() {
+async function updateMaterial() {
   await makeMaterial();
-
   for(let i=0; i<model.length; i++) {
     model[i].material.dispose();
     model[i].material = material;
     model[i].material.needsUpdate;
   }
 }
-window.flatShading = flatShading;
-
-//
-// Vertex colors
-//
-async function vertexColors() {
-  await makeMaterial(true);
-  for(let i=0; i<model.length; i++) {
-    model[i].material.dispose();
-    model[i].material = material;
-    model[i].material.needsUpdate;
-  }
-}
-window.vertexColors = vertexColors;
-
+window.updateMaterial = updateMaterial;
 
 //
 // Switch normals
