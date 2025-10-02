@@ -17,6 +17,7 @@ import { POVExporter } from './modules/POVExporter.js';
 
 // const DEFAULT_MODEL = 'data/models/skull.obj';
 const DEFAULT_MODEL = 'data/models/hubble.glb';
+// const DEFAULT_MODEL = 'data/models/two_cubes_test.obj';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
 // const DEFAULT_MODEL = 'data/models/hand.obj';
@@ -87,7 +88,6 @@ async function init() {
 // Get geometry
 // 
 function getGeoms(obj) {
-  console.log(obj);
   let geoms = [];
   if(obj.scene)
     obj = scene;
@@ -156,6 +156,7 @@ async function loadModel(args)
     // geoms[i].computeBoundingSphere();
 
     let surface = new THREE.Mesh( geoms[i], material );
+    surface.name = "surface";
     model.push(surface);
     scene.add(surface);
     bb.expandByObject(surface);
@@ -369,7 +370,7 @@ function saveString( text, filename ) {
 
 function download() {
   const exporter = new POVExporter();
-  const result = exporter.parse( model, material.flatShading, material.vertexColors );
+  const result = exporter.parse( scene, material.flatShading, material.vertexColors );
   saveString( result, 'model.inc' );
 }
 window.download = download;

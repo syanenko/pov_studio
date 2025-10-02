@@ -22,6 +22,7 @@ class POVExporter {
   parse( object, flat_shading, vertex_colors ) {
 
     let output = '';
+    let surCount = 1;
 
     let indexVertex = 0;
     let indexVertexUvs = 0;
@@ -53,7 +54,8 @@ class POVExporter {
       console.log(indices);
 
       // name of the mesh object
-      output +=  '#declare model = mesh2 {\n'
+      output += '#declare surface' + surCount + ' = mesh2 {\n'
+      surCount++;
 
       // vertices
       output += 'vertex_vectors {\n  ' + vertices.count + ',\n';
@@ -116,7 +118,6 @@ class POVExporter {
             const j = indices.getX( i + m );
             face[ m ] = ( indexVertex + j );
           }
-          // transform the face to export format
           output += '  <' + face[0] + ',' + face[1] + ',' + face[2] + '>';
           if ( colors !== undefined && vertex_colors)
             output += ', ' + face[0] + ', ' + face[1] + ', ' + face[2];
@@ -129,16 +130,10 @@ class POVExporter {
             const j = i + m + 1;
             face[ m ] = ( indexVertex + j ) + ( normals || uvs ? '/' + ( uvs ? ( indexVertexUvs + j ) : '' ) + ( normals ? '/' + ( indexNormals + j ) : '' ) : '' );
           }
-          // transform the face to export format
           output += 'f ' + face.join( ' ' ) + '\n';
         }
       }
       output += '}\n';
-
-      // update index
-      indexVertex += nbVertex;
-      indexVertexUvs += nbVertexUvs;
-      indexNormals += nbNormals;
     }
 
     function parseLine( line ) {
@@ -221,7 +216,8 @@ class POVExporter {
     }
 
     object.traverse( function ( child ) {
-      if ( child.isMesh === true ) {
+      console.log(child);
+      if ( child.isMesh === true && child.name == "surface" ) {
         parseMesh( child );
       }
 /* Not implement yet
@@ -234,7 +230,14 @@ class POVExporter {
       }
 */
     });
-
+    
+    // Write union here
+    // ... 
+    output += 'union {\n';
+    for (let i=1; i<surCount; i++) {
+      output += '  object { surface'+ i +' }\n';
+    }
+    output += '  pigment{rgb 1}\n}\n';
     return output;
   }
 }
