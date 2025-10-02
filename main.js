@@ -100,15 +100,14 @@ async function loadModel(args)
 {
   // Cleanup
   if (typeof model !== "undefined") {
+    displayNormals(false);
     for(let i=0; i<model.length; i++) {
       scene.remove( model[i] );
       model[i].geometry.dispose();
       model[i].material.dispose();
     }
     model.length = 0;
-
     renderer.renderLists.dispose();
-    displayNormals(false);
   }
 
   await makeMaterial();
@@ -144,14 +143,17 @@ async function loadModel(args)
     default: console.error("Unknown file extention: '" + ext + "'");
   }
 
+  const bb = new THREE.Box3();
   for (let i = 0; i < geoms.length; i++) {
     geoms[i].deleteAttribute( 'normal' );
     geoms[i] = BufferGeometryUtils.mergeVertices(geoms[i]);
     geoms[i].computeVertexNormals();
+    // geoms[i].computeBoundingSphere();
 
     let surface = new THREE.Mesh( geoms[i], material );
     model.push(surface);
     scene.add(surface);
+    bb.expandByObject(surface);
   }
   //console.log(model); // DEBUG
   //console.log(model.geometry.attributes);
@@ -159,21 +161,22 @@ async function loadModel(args)
   //console.log(model.geometry.getAttribute( 'position' ));
 
   // Set view
-  // DEBUG
-  const g = 1;
-  geoms[g].computeBoundingSphere();
-  ocontrols.reset();
-  ocontrols.target.copy(geoms[g].boundingSphere.center);
-  camera.position.set(geoms[g].boundingSphere.center.x,
-                      geoms[g].boundingSphere.center.y,
-                      geoms[g].boundingSphere.center.z + geoms[g].boundingSphere.radius * 3);
+  // TODO: calculate for all geometries max(dist from origin + radius)
+  const g = 0;
+  const bs = new THREE.Sphere();
+  bb.getBoundingSphere(bs);
 
-  axis_len = geoms[g].boundingSphere.radius * 2.5;
+  ocontrols.reset();
+  ocontrols.target.copy(bs.center);
+  camera.position.set(bs.center.x,
+                      bs.center.y,
+                      bs.center.z + bs.radius * 3);
+
+  axis_len = bs.radius * 2.5;
   displayAxis(false);
   displayAxis(document.getElementById("display_axis").checked);
 
-  normals_len = geoms[g].boundingSphere.radius / 30;
-  displayNormals(false);
+  normals_len = bs.radius / 30;
   displayNormals(normals);
 
   displayFloor(false);
