@@ -46,7 +46,7 @@ let cb_DisplayNormals;
 // Init
 //
 async function init() {
-  camera = new THREE.PerspectiveCamera( FOV, window.innerWidth / window.innerHeight, 0.1, 5000 );
+  camera = new THREE.PerspectiveCamera( FOV, window.innerWidth / window.innerHeight, 0.1, 8000 );
   camera.position.set( 0, 2, 3 );
 
   scene = new THREE.Scene();
