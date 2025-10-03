@@ -1,10 +1,9 @@
 // TODO
 //
-// - Vertex colors breaks present shading
-// - Help in about
-// - inc: header
 // - vertexColors Threejs vs ZBrush
 // - vertexColors + flatShading ?
+// - inc: header
+// - Help in about
 //
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
@@ -194,7 +193,7 @@ window.loadModel = loadModel;
 //
 // Make material
 //
-async function makeMaterial(shading) {
+async function makeMaterial() {
   if( material != undefined) {
     if(material.matcap)
       material.matcap.dispose();
@@ -204,6 +203,7 @@ async function makeMaterial(shading) {
   //const pointLight = new THREE.PointLight(0xffffff, 300, 1000); // Color, Intensity, Distance
   //pointLight.position.set(3, 3, 3);
   //scene.add(pointLight);
+  let shading = document.getElementById("shading").value;
 
   if(cb_VertexColors.checked) {
     material = new THREE.MeshStandardMaterial( {side: THREE.DoubleSide, vertexColors: true} ); }
@@ -212,14 +212,15 @@ async function makeMaterial(shading) {
   else {
     let matcap = await AsyncLoader.loadTextureAsync(PATH_GLAZES + glaze + "_mcap.png");
     matcap.colorSpace = THREE.SRGBColorSpace;
-    material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} ); }
- 
-  material.flatShading = true;
+    material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} );
+  }
 
   if(shading == "flat")
     material.flatShading = true;
   else if(shading == "normal")
     material.flatShading = false;
+
+  return material;
 }
 //
 // Apply glaze
@@ -323,8 +324,8 @@ window.displayFloor = displayFloor;
 //
 // Flat shading
 //
-async function updateMaterial(shading) {
-  await makeMaterial(shading);
+async function updateMaterial() {
+  await makeMaterial();
   for(let i=0; i<model.length; i++) {
     model[i].material.dispose();
     model[i].material = material;
