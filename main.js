@@ -14,9 +14,9 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-// const DEFAULT_MODEL = 'data/models/teapot.glb';
+const DEFAULT_MODEL = 'data/models/teapot.glb';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
-const DEFAULT_MODEL = 'data/models/hubble.glb';
+// const DEFAULT_MODEL = 'data/models/hubble.glb';
 // const DEFAULT_MODEL = 'data/models/two_cubes_test.obj';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
@@ -232,16 +232,6 @@ async function updateMaterial() {
     material.dispose();
   }
 
-  /* TODO: Update only checked
-    // for(let i=0; i<model.length; i++) {
-    //   if( document.getElementById(model[i].name).checked) {
-    //     model[i].material.dispose();
-    //     model[i].material = material;
-    //     model[i].material.needsUpdate;
-    //   }
-    // }
-  }*/
-
   // DEBUG Vertez colors
   //const pointLight = new THREE.PointLight(0xffffff, 300, 1000); // Color, Intensity, Distance
   //pointLight.position.set(3, 3, 3);
@@ -263,7 +253,14 @@ async function updateMaterial() {
   else if(shading == "normal")
     material.flatShading = false;
 
-  return material;
+  for(let i=0; i<model.length; i++) {
+    // TODO: Update only checked
+    //if( document.getElementById(model[i].name).checked) {
+      model[i].material.dispose();
+      model[i].material = material;
+      model[i].material.needsUpdate;
+    //}
+  }
 }
 window.updateMaterial = updateMaterial;
 
