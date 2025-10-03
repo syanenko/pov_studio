@@ -368,6 +368,14 @@ async function updateMaterial() {
 window.updateMaterial = updateMaterial;
 
 //
+// Rotation
+//
+async function switchRotation() {
+  ocontrols.autoRotate = !ocontrols.autoRotate;
+}
+window.switchRotation = switchRotation;
+
+//
 // Switch normals
 //
 /*
