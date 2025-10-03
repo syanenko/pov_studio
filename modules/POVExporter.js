@@ -60,7 +60,7 @@ class POVExporter {
           output += '  <' + vertex.x + ',' + vertex.y + ',' + vertex.z  + '>,\n'
         }
       }
-      output += '  }\n';
+      output = output.slice(0, -2) + '  \n}\n';
 
       // uvs
       if ( uvs !== undefined ) {
@@ -127,7 +127,7 @@ class POVExporter {
       }
       output += '}\n';
     }
-
+    /*
     function parseLine( line ) {
       let nbVertex = 0;
       const geometry = line.geometry;
@@ -206,7 +206,7 @@ class POVExporter {
       // update index
       indexVertex += nbVertex;
     }
-
+ */
     output += "#declare CENTER = <"+ bs.center.x + ", " + bs.center.y + ", " + bs.center.z + ">;\n";
     output += "#declare RADIUS = " + bs.radius + ";\n";
     output += "#declare XMIN = " + bb.min.x + ";\n";
@@ -231,8 +231,7 @@ class POVExporter {
 */
     });
     
-    // Write union here
-    // ... 
+    // Union
     output += 'union {\n';
     for (let i=1; i<surCount; i++) {
       output += '  object { surface'+ i +' }\n';
