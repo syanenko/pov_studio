@@ -1,6 +1,5 @@
 // TODO
 //
-// - Shift: emerald_ring.glb
 // - vertexColors Threejs vs ZBrush
 // - vertexColors + flatShading ?
 // - inc: header
@@ -23,8 +22,8 @@ const DEFAULT_MODEL = 'data/models/teapot.glb';
 // const DEFAULT_MODEL = 'data/models/hand.obj';
 // const DEFAULT_MODEL = 'data/models/cube.fbx';
 
-const PATH_GLAZES   = 'data/mat/';
-const DEFAULT_GLAZE = "skeleton";
+const PATH_MATCAPS   = 'data/mat/';
+const DEFAULT_MATCAP = "skeleton";
 
 let container;
 let camera, scene, renderer;
@@ -35,7 +34,7 @@ let bb;
 let bs;
 
 let material, model = [];
-let glaze = DEFAULT_GLAZE;
+let matcap = DEFAULT_MATCAP;
 
 let cb_VertexColors;
 let cb_DisplayAxis;
@@ -80,7 +79,7 @@ async function init() {
 
   // Load default model
   await loadModel({model: DEFAULT_MODEL});
-  await applyGlaze(DEFAULT_GLAZE);
+  await applyMatcap(DEFAULT_MATCAP);
 
   // Display on startup
   cb_DisplayAxis.click();
@@ -243,9 +242,9 @@ async function updateMaterial() {
   else if(shading == "wireframe") {
     material = new THREE.MeshStandardMaterial( {side: THREE.DoubleSide, wireframe: true} ); }
   else {
-    let matcap = await AsyncLoader.loadTextureAsync(PATH_GLAZES + glaze + "_mcap.png");
-    matcap.colorSpace = THREE.SRGBColorSpace;
-    material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} );
+    let mc = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcap + "_mcap.png");
+    mc.colorSpace = THREE.SRGBColorSpace;
+    material = new THREE.MeshMatcapMaterial( {matcap: mc, side: THREE.DoubleSide} );
   }
 
   if(shading == "flat")
@@ -255,6 +254,7 @@ async function updateMaterial() {
 
   for(let i=0; i<model.length; i++) {
     // TODO: Update only checked
+    // mesh.userData.material = 'M_xxxx';
     //if( document.getElementById(model[i].name).checked) {
       model[i].material.dispose();
       model[i].material = material;
@@ -265,14 +265,14 @@ async function updateMaterial() {
 window.updateMaterial = updateMaterial;
 
 //
-// Apply glaze
+// Apply matcap
 //
-async function applyGlaze(_glaze) {
-  if(glaze == _glaze)
+async function applyMatcap(mc) {
+  if(matcap == mc)
     return;
-  glaze = _glaze;
+  matcap = mc;
 
-  let tex = await AsyncLoader.loadTextureAsync(PATH_GLAZES + glaze + "_mcap.png");
+  let tex = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcap + "_mcap.png");
   for(let i=0; i<model.length; i++) {
     if(model[i].material.matcap)
       model[i].material.matcap.dispose();
@@ -280,7 +280,7 @@ async function applyGlaze(_glaze) {
     model[i].material.matcap.colorSpace = THREE.SRGBColorSpace;
   }
 }
-window.applyGlaze = applyGlaze;
+window.applyMatcap = applyMatcap;
 
 //
 // Display normals
