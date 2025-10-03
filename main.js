@@ -1,7 +1,6 @@
-// TODO:
+// TODO
 //
-// - Export multiple meshes
-// - Shading checkbox mutual ex.
+// - Vertex colors breaks present shading
 // - Help in about
 // - inc: header
 // - vertexColors Threejs vs ZBrush
@@ -89,15 +88,15 @@ async function init() {
 //
 // Get geometry
 // 
-function getGeoms(obj) {
-  let geoms = [];
+function getMeshes(obj) {
+  let meshes = [];
   if(obj.scene)
     obj = scene;
   obj.traverse(e =>{
-      if(e.isMesh) {
-        geoms.push(e.geometry);
+    if(e.isMesh) {
+        meshes.push(e);
     }})
-  return geoms;
+  return meshes;
 }
 
 //
@@ -127,41 +126,41 @@ async function loadModel(args)
     return;
   }
 
-  let geoms = [];
+  let meshes = [];
   const ext = path.slice(-4);
   switch(ext)
   {
     case '.obj':
-    case '.OBJ': geoms = getGeoms((await AsyncLoader.loadOBJAsync(path)));
+    case '.OBJ': meshes = getMeshes((await AsyncLoader.loadOBJAsync(path)));
                  break;
     case '.stl':
-    case '.STL': geoms.push(await AsyncLoader.loadSTLAsync(path)); // Single geometry
+    case '.STL': meshes.push(await AsyncLoader.loadSTLAsync(path)); // Single geometry
                  break;
     case '.fbx':
-    case '.FBX': geoms = getGeoms((await AsyncLoader.loadFBXAsync(path)));
+    case '.FBX': meshes = getMeshes((await AsyncLoader.loadFBXAsync(path)));
                  break;
     case '.glb':
-    case '.GLB': geoms = getGeoms((await AsyncLoader.loadGLTFAsync(path)).scene);
+    case '.GLB': meshes = getMeshes((await AsyncLoader.loadGLTFAsync(path)).scene);
                  break;
     case 'gltf':
-    case 'GLTF': geoms = getGeoms((await AsyncLoader.loadGLTFAsync(path)));
+    case 'GLTF': meshes = getMeshes((await AsyncLoader.loadGLTFAsync(path)));
                  break;
 
     default: console.error("Unknown file extention: '" + ext + "'");
   }
 
   bb = new THREE.Box3();
-  for (let i = 0; i < geoms.length; i++) {
-    geoms[i].deleteAttribute( 'normal' );
-    geoms[i] = BufferGeometryUtils.mergeVertices(geoms[i]);
-    geoms[i].computeVertexNormals();
-    // geoms[i].computeBoundingSphere();
+  for (let i = 0; i < meshes.length; i++) {
+    meshes[i].geometry.deleteAttribute( 'normal' );
+    meshes[i].geometry = BufferGeometryUtils.mergeVertices(meshes[i].geometry);
+    meshes[i].geometry.computeVertexNormals();
 
-    let surface = new THREE.Mesh( geoms[i], material );
-    surface.name = "surface";
-    model.push(surface);
-    scene.add(surface);
-    bb.expandByObject(surface);
+    meshes[i].material.dispose();
+    meshes[i].material = material;
+    meshes[i].name = "surface";
+    model.push(meshes[i]);
+    scene.add(meshes[i]);
+    bb.expandByObject(meshes[i]);
   }
   //console.log(model); // DEBUG
   //console.log(model.geometry.attributes);
