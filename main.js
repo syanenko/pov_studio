@@ -156,7 +156,7 @@ async function loadModel(args)
 
     meshes[i].material.dispose();
     meshes[i].material = material;
-    meshes[i].name = "surface";
+    meshes[i].name = "part";
     model.push(meshes[i]);
     scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);

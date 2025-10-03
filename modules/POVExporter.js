@@ -46,7 +46,7 @@ class POVExporter {
       const indices = geometry.getIndex();
 
       // name of the mesh object
-      output += '#declare surface' + surCount + ' = mesh2 {\n'
+      output += '#declare part' + surCount + ' = mesh2 {\n'
       surCount++;
 
       // vertices
@@ -217,7 +217,7 @@ class POVExporter {
     output += "#declare ZMAX =" + bb.max.z + ";\n\n";
 
     object.traverse( function ( child ) {
-      if ( child.isMesh === true && child.name == "surface" ) {
+      if ( child.isMesh === true && child.name == "part" ) {
         parseMesh( child );
       }
 /* Not implement yet
@@ -234,7 +234,7 @@ class POVExporter {
     // Union
     output += 'union {\n';
     for (let i=1; i<surCount; i++) {
-      output += '  object { surface'+ i +' }\n';
+      output += '  object { part'+ i +' }\n';
     }
     output += '  pigment{rgb 1}\n}\n';
     return output;
