@@ -46,7 +46,7 @@ class POVExporter {
       const indices = geometry.getIndex();
 
       // name of the mesh object
-      output += '#declare part' + surCount + ' = mesh2 {\n'
+      output += '#declare ' + mesh.name + ' = mesh2 {\n'
       surCount++;
 
       // vertices
@@ -217,7 +217,7 @@ class POVExporter {
     output += "#declare ZMAX =" + bb.max.z + ";\n\n";
 
     object.traverse( function ( child ) {
-      if ( child.isMesh === true && child.name == "part" ) {
+      if ( child.isMesh === true && child.name.substring(0,4) == "part" ) {
         parseMesh( child );
       }
 /* Not implement yet

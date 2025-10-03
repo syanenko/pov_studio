@@ -1,5 +1,6 @@
 // TODO
 //
+// - Shift: emerald_ring.glb
 // - vertexColors Threejs vs ZBrush
 // - vertexColors + flatShading ?
 // - inc: header
@@ -13,9 +14,9 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-const DEFAULT_MODEL = 'data/models/teapot.glb';
+// const DEFAULT_MODEL = 'data/models/teapot.glb';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
-// const DEFAULT_MODEL = 'data/models/hubble.glb';
+const DEFAULT_MODEL = 'data/models/hubble.glb';
 // const DEFAULT_MODEL = 'data/models/two_cubes_test.obj';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
@@ -41,6 +42,8 @@ let cb_DisplayAxis;
 let cb_DisplayFloor;
 let cb_DisplayNormals;
 
+let parts = [];
+let labels = [];
 //
 // Init
 //
@@ -115,6 +118,11 @@ async function loadModel(args)
   model.length = 0;
   renderer.renderLists.dispose();
 
+  for(let i=0; i<parts.length; i++) {
+    parts[i].remove();
+    labels[i].remove();
+  }
+
   await makeMaterial();
 
   // Load geometry
@@ -133,7 +141,9 @@ async function loadModel(args)
     case '.OBJ': meshes = getMeshes((await AsyncLoader.loadOBJAsync(path)));
                  break;
     case '.stl':
-    case '.STL': meshes.push(await AsyncLoader.loadSTLAsync(path)); // Single geometry
+    case '.STL': let geom = await AsyncLoader.loadSTLAsync(path);
+                 let mesh = new THREE.Mesh( geom, material );
+                 meshes.push(mesh);  // Geometry only
                  break;
     case '.fbx':
     case '.FBX': meshes = getMeshes((await AsyncLoader.loadFBXAsync(path)));
@@ -148,7 +158,11 @@ async function loadModel(args)
     default: console.error("Unknown file extention: '" + ext + "'");
   }
 
+  // Container for parts
+  // let contParts = document.getElementById("parts");
+
   bb = new THREE.Box3();
+  console.log(meshes); // DEBUG
   for (let i = 0; i < meshes.length; i++) {
     meshes[i].geometry.deleteAttribute( 'normal' );
     meshes[i].geometry = BufferGeometryUtils.mergeVertices(meshes[i].geometry);
@@ -156,12 +170,31 @@ async function loadModel(args)
 
     meshes[i].material.dispose();
     meshes[i].material = material;
-    meshes[i].name = "part";
+    meshes[i].name = "part" + (i + 1);
     model.push(meshes[i]);
     scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
+
+    // Create parts checkboxs
+    /*
+    var cb = document.createElement('input');
+    cb.type = "checkbox";
+    cb.name = meshes[i].name;
+    cb.value = "value";
+    cb.id = meshes[i].name;
+
+    var lb = document.createElement('label')
+    lb.htmlFor = meshes[i].name;
+    let text = meshes[i].name.replace("p", "P");
+    lb.appendChild(document.createTextNode(text));
+
+    contParts.appendChild(cb);
+    contParts.appendChild(lb);
+    parts.push(cb);
+    labels.push(lb);
+    */
   }
-  //console.log(model); // DEBUG
+  // console.log(model); // DEBUG
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
   //console.log(model.geometry.getAttribute( 'position' ));

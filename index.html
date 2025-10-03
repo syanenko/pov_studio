@@ -22,14 +22,14 @@
     </script> 
 
     <img id="logo" src="data/images/logo_40x40.png" alt="Logo" width="40" height="40" onclick="about.inert=true;  about.showModal(); about.inert=false;">
-    <div id="text" onclick="about.inert=true;  about.showModal(); about.inert=false;">POV-Ray converter</div>
+    <div id="text" onclick="about.inert=true;  about.showModal(); about.inert=false;">POV-Ray studio</div>
     <img id="help" src="data/images/help.png" alt="Help" onclick="about.inert=true;  about.showModal(); about.inert=false;">
     <hr>
 
     <!-- About -->
     <dialog id="about" style="width:390px;">
-      <div style="font-size: 24px; color:#ff9127">POV-Ray converter</div>
-      <p>Converts obj, fbx, glb, gltf, stl to mesh2.</p>
+      <div style="font-size: 24px; color:#ff9127">POV-Ray studio</div>
+      <p>Translates formats <i>obj, fbx, glb, gltf, stl</i> to <i>mesh2</i>.</p>
       <a href="https://www.povray.org/" target="_blank" rel="noopener noreferrer">POV-Ray</a>
       &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
       <a href="https://yesbird.online/" target="_blank" rel="noopener noreferrer">Yesbird studio</a>
@@ -118,8 +118,9 @@
     <div style='position: absolute; top:65px; left:20px; width:90px; z-index:4;'>
       <input id="upload_button"   type="image" src='data/images/upload_icon.png'   style='position: relative; padding-top: 15px;'>
       <input id="download_button" type="image" src='data/images/download_icon.png' onclick="window.download()" style='position: relative; padding-top: 5px;'>
-
     </div>
+    <!-- Parts -->
+    <div id="parts" style="position: absolute; top:300px; left:20px; width:60px"></div>
 
     <script>
       ub = document.getElementById("upload_button");
