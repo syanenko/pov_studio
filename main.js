@@ -42,8 +42,8 @@ let cb_DisplayAxis;
 let cb_DisplayFloor;
 let cb_DisplayNormals;
 
-let parts = [];
-let labels = [];
+let cb_parts = [];
+let cb_labels = [];
 //
 // Init
 //
@@ -118,14 +118,11 @@ async function loadModel(args)
   model.length = 0;
   renderer.renderLists.dispose();
 
-  for(let i=0; i<parts.length; i++) {
-    parts[i].remove();
-    labels[i].remove();
+  for(let i=0; i<cb_parts.length; i++) {
+    cb_parts[i].remove();
+    cb_labels[i].remove();
   }
 
-  await makeMaterial();
-
-  // Load geometry
   if(args.model) {
     var path = args['model'];
   } else {
@@ -133,6 +130,9 @@ async function loadModel(args)
     return;
   }
 
+  await updateMaterial();
+
+  // Load meshes
   let meshes = [];
   const ext = path.slice(-4);
   switch(ext)
@@ -158,11 +158,10 @@ async function loadModel(args)
     default: console.error("Unknown file extention: '" + ext + "'");
   }
 
-  // Container for parts
-  // let contParts = document.getElementById("parts");
+  // Container for cb_parts
+  let contParts = document.getElementById("parts");
 
   bb = new THREE.Box3();
-  console.log(meshes); // DEBUG
   for (let i = 0; i < meshes.length; i++) {
     meshes[i].geometry.deleteAttribute( 'normal' );
     meshes[i].geometry = BufferGeometryUtils.mergeVertices(meshes[i].geometry);
@@ -175,8 +174,8 @@ async function loadModel(args)
     scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
 
-    // Create parts checkboxs
-    /*
+    // Create cb_parts checkboxs
+    // DEBUG -----------------------------
     var cb = document.createElement('input');
     cb.type = "checkbox";
     cb.name = meshes[i].name;
@@ -190,9 +189,9 @@ async function loadModel(args)
 
     contParts.appendChild(cb);
     contParts.appendChild(lb);
-    parts.push(cb);
-    labels.push(lb);
-    */
+    cb_parts.push(cb);
+    cb_labels.push(lb);
+    // ---------------------------------
   }
   // console.log(model); // DEBUG
   //console.log(model.geometry.attributes);
@@ -224,14 +223,25 @@ async function loadModel(args)
 window.loadModel = loadModel;
 
 //
-// Make material
+// Update material
 //
-async function makeMaterial() {
+async function updateMaterial() {
   if( material != undefined) {
     if(material.matcap)
       material.matcap.dispose();
     material.dispose();
   }
+
+  /* TODO: Update only checked
+    // for(let i=0; i<model.length; i++) {
+    //   if( document.getElementById(model[i].name).checked) {
+    //     model[i].material.dispose();
+    //     model[i].material = material;
+    //     model[i].material.needsUpdate;
+    //   }
+    // }
+  }*/
+
   // DEBUG Vertez colors
   //const pointLight = new THREE.PointLight(0xffffff, 300, 1000); // Color, Intensity, Distance
   //pointLight.position.set(3, 3, 3);
@@ -255,6 +265,8 @@ async function makeMaterial() {
 
   return material;
 }
+window.updateMaterial = updateMaterial;
+
 //
 // Apply glaze
 //
@@ -353,19 +365,6 @@ async function displayFloor(checked) {
   }
 }
 window.displayFloor = displayFloor;
-
-//
-// Flat shading
-//
-async function updateMaterial() {
-  await makeMaterial();
-  for(let i=0; i<model.length; i++) {
-    model[i].material.dispose();
-    model[i].material = material;
-    model[i].material.needsUpdate;
-  }
-}
-window.updateMaterial = updateMaterial;
 
 //
 // Rotation
