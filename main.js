@@ -5,6 +5,10 @@
 // - inc: header
 // - Help in about
 //
+// - save the pov-lines how to use the code in a docu-block in the upper part of the file
+// - save the name of the original file also somewhere (have now many files in my
+//   download-folder like "model (4).inc" and dont know whats in it. 
+//
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -13,6 +17,7 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
+// const DEFAULT_MODEL = 'data/models/frog.obj';
 const DEFAULT_MODEL = 'data/models/teapot.glb';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
 // const DEFAULT_MODEL = 'data/models/hubble.glb';
@@ -165,7 +170,7 @@ async function loadModel(args)
     meshes[i].geometry.deleteAttribute( 'normal' );
     meshes[i].geometry = BufferGeometryUtils.mergeVertices(meshes[i].geometry);
     meshes[i].geometry.computeVertexNormals();
-
+    // console.log(meshes[i].material); 
     meshes[i].material.dispose();
     meshes[i].material = material;
     meshes[i].name = "part" + (i + 1);
@@ -175,6 +180,7 @@ async function loadModel(args)
 
     // Create cb_parts checkboxs
     // DEBUG -----------------------------
+    /*
     var cb = document.createElement('input');
     cb.type = "checkbox";
     cb.name = meshes[i].name;
@@ -190,6 +196,7 @@ async function loadModel(args)
     contParts.appendChild(lb);
     cb_parts.push(cb);
     cb_labels.push(lb);
+    */
     // ---------------------------------
   }
   // console.log(model); // DEBUG
@@ -267,7 +274,7 @@ window.updateMaterial = updateMaterial;
 //
 // Apply matcap
 //
-async function applyMatcap(mc) {
+async function applyMatcap(mc, matname) {
   if(matcap == mc)
     return;
   matcap = mc;
@@ -278,7 +285,9 @@ async function applyMatcap(mc) {
       model[i].material.matcap.dispose();
     model[i].material.matcap = tex;
     model[i].material.matcap.colorSpace = THREE.SRGBColorSpace;
+    model[i].userData.matname = matname;
   }
+  console.log(model);
 }
 window.applyMatcap = applyMatcap;
 
