@@ -88,9 +88,10 @@ async function init() {
   await loadModel({model: DEFAULT_MODEL});
   await applyMatcap(DEFAULT_MATCAP);
 
-  // Display on startup
+  // Defaults
   cb_DisplayAxis.click();
   cb_DisplayFloor.click();
+  document.getElementById("flat").click();
 }
 
 //
@@ -251,7 +252,6 @@ async function createMaterial() {
   let mc = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcap + "_mcap.png");
   mc.colorSpace = THREE.SRGBColorSpace;
   material = new THREE.MeshMatcapMaterial( {matcap: mc, side: THREE.DoubleSide} );
-  material.flatShading = true;
 
   for(let i=0; i<model.length; i++) {
       model[i].material.matcap.dispose();
@@ -267,14 +267,24 @@ window.createMaterial = createMaterial;
 //
 // Update shading
 //
-async function updateShading() {
-  let shading = document.getElementById("shading").value;
+async function updateShading(checked) {
   for(let i=0; i<model.length; i++) {
-    model[i].material.flatShading = (shading == "flat");
+    model[i].material.flatShading = checked;
     model[i].material.needsUpdate = true;
   }
 }
 window.updateShading = updateShading;
+
+//
+// Update vertex colors
+//
+async function updateVertexColors(checked) {
+  for(let i=0; i<model.length; i++) {
+    model[i].material.vertexColors = checked;
+    model[i].material.needsUpdate = true;
+  }
+}
+window.updateVertexColors = updateVertexColors;
 
 //
 // Apply matcap (Apply material)
@@ -383,8 +393,8 @@ window.displayFloor = displayFloor;
 //
 // Rotation
 //
-async function switchRotation() {
-  ocontrols.autoRotate = !ocontrols.autoRotate;
+async function switchRotation(checked) {
+  ocontrols.autoRotate = checked;
 }
 window.switchRotation = switchRotation;
 
