@@ -29,17 +29,18 @@ const DEFAULT_MODEL = 'data/models/teapot.glb';
 
 const PATH_MATCAPS   = 'data/mat/';
 const DEFAULT_MATCAP = "skeleton";
+const DEFAULT_POVMAT = "M_bright_gold_metal";
 
 let container;
 let camera, scene, renderer;
 const FOV = 50;
 let ocontrols;
 
-let bb;
-let bs;
+let bb, bs;
 
 let material, model = [];
 let matcap = DEFAULT_MATCAP;
+let povmat = DEFAULT_POVMAT; 
 
 let cb_VertexColors;
 let cb_DisplayAxis;
@@ -174,13 +175,13 @@ async function loadModel(args)
     meshes[i].material.dispose();
     meshes[i].material = material;
     meshes[i].name = "part" + (i + 1);
+    meshes[i].userData.povmat = povmat;
     model.push(meshes[i]);
     scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
 
     // Create cb_parts checkboxs
     // DEBUG -----------------------------
-    /*
     var cb = document.createElement('input');
     cb.type = "checkbox";
     cb.name = meshes[i].name;
@@ -196,7 +197,6 @@ async function loadModel(args)
     contParts.appendChild(lb);
     cb_parts.push(cb);
     cb_labels.push(lb);
-    */
     // ---------------------------------
   }
   // console.log(model); // DEBUG
@@ -261,7 +261,7 @@ async function updateMaterial() {
 
   for(let i=0; i<model.length; i++) {
     // TODO: Update only checked
-    // mesh.userData.material = 'M_xxxx';
+    // mesh.userData.povmat = 'M_xxxx';
     //if( document.getElementById(model[i].name).checked) {
       model[i].material.dispose();
       model[i].material = material;
@@ -274,7 +274,7 @@ window.updateMaterial = updateMaterial;
 //
 // Apply matcap
 //
-async function applyMatcap(mc, matname) {
+async function applyMatcap(mc, povmat) {
   if(matcap == mc)
     return;
   matcap = mc;
@@ -285,9 +285,8 @@ async function applyMatcap(mc, matname) {
       model[i].material.matcap.dispose();
     model[i].material.matcap = tex;
     model[i].material.matcap.colorSpace = THREE.SRGBColorSpace;
-    model[i].userData.matname = matname;
+    model[i].userData.povmat = povmat;
   }
-  console.log(model);
 }
 window.applyMatcap = applyMatcap;
 

@@ -27,7 +27,8 @@ class POVExporter {
     const uv = new Vector2();
 
     const face = [];
-
+    const povmats = [];
+    
     function parseMesh( mesh ) {
 
       let nbVertex = 0;
@@ -126,6 +127,9 @@ class POVExporter {
         }
       }
       output += '}\n';
+
+      // Save POV material name
+      povmats.push(mesh.userData.povmat);
     }
     /*
     function parseLine( line ) {
@@ -234,9 +238,9 @@ class POVExporter {
     // Union
     output += 'union {\n';
     for (let i=1; i<surCount; i++) {
-      output += '  object { part'+ i +' }\n';
+      output += '  object { part'+ i + '\n           material { ' + povmats[i-1] + ' }\n  }\n';
     }
-    output += '  pigment{rgb 1}\n}\n';
+    output += '}\n';
     return output;
   }
 }
