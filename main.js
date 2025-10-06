@@ -273,11 +273,11 @@ window.updateMaterial = updateMaterial;
 //
 // Apply matcap
 //
-async function applyMatcap(mc, povmat) {
+async function applyMatcap(mc, pm) {
   if(matcap == mc)
     return;
   matcap = mc;
-
+  povmat = pm;
   let tex = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcap + "_mcap.png");
   for(let i=0; i<model.length; i++) {
     if(model[i].material.matcap)
