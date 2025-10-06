@@ -84,6 +84,7 @@ async function init() {
   cb_DisplayNormals = document.getElementById("display_normals");
 
   // Load default model
+  await updateMaterial();
   await loadModel({model: DEFAULT_MODEL});
   await applyMatcap(DEFAULT_MATCAP);
 
@@ -134,8 +135,6 @@ async function loadModel(args)
     console.error('No model in function argumets');
     return;
   }
-
-  await updateMaterial();
 
   // Load meshes
   let meshes = [];
