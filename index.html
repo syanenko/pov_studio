@@ -140,17 +140,19 @@
     <!-- Settings -->
     <div style='position: absolute; bottom:15px; left:20px; z-index:4; font-size: 130%;'>
       <label for="shading">Shading</label>
-      <select id="shading" onclick="window.updateMaterial()">
+      <select id="shading" onclick="window.updateShading()">
         <option value="flat">Flat</option>
         <option value="normal">Normal</option>
+<!--
         <option value="wireframe">Wireframe</option>
+-->
       </select>
       <br>
 
       <input type="checkbox" id="rotation" onclick="window.switchRotation()">
       <label for="rotation">Rotation</label><br>
 
-      <input type="checkbox" id="vertex_colors" onclick="window.updateMaterial()">
+      <input type="checkbox" id="vertex_colors" onclick="window.updateVertexColors()">
       <label for="vertex_colors">Vertex colors</label><br>
 
       <input type="checkbox" id="display_axis" onclick="window.displayAxis(this.checked)">

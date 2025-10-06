@@ -1,13 +1,13 @@
 // TODO
 //
-// - vertexColors Threejs vs ZBrush
-// - vertexColors + flatShading ?
+// - vertexColors Threejs vs ZBrush (?)
+// - vertexColors + flatShading (?)
 // - inc: header
 // - Help in about
 //
 // - save the pov-lines how to use the code in a docu-block in the upper part of the file
 // - save the name of the original file also somewhere (have now many files in my
-//   download-folder like "model (4).inc" and dont know whats in it. 
+//   download-folder like "model (4).inc" and dont know whats in it.
 //
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
@@ -18,9 +18,9 @@ import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
 // const DEFAULT_MODEL = 'data/models/frog.obj';
-const DEFAULT_MODEL = 'data/models/teapot.glb';
+// const DEFAULT_MODEL = 'data/models/teapot.glb';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
-// const DEFAULT_MODEL = 'data/models/hubble.glb';
+const DEFAULT_MODEL = 'data/models/hubble.glb';
 // const DEFAULT_MODEL = 'data/models/two_cubes_test.obj';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
@@ -84,7 +84,7 @@ async function init() {
   cb_DisplayNormals = document.getElementById("display_normals");
 
   // Load default model
-  await updateMaterial();
+  await createMaterial();
   await loadModel({model: DEFAULT_MODEL});
   await applyMatcap(DEFAULT_MATCAP);
 
@@ -170,22 +170,22 @@ async function loadModel(args)
     meshes[i].geometry.deleteAttribute( 'normal' );
     meshes[i].geometry = BufferGeometryUtils.mergeVertices(meshes[i].geometry);
     meshes[i].geometry.computeVertexNormals();
-    // console.log(meshes[i].material); 
     meshes[i].material.dispose();
-    meshes[i].material = material;
+    meshes[i].material = material.clone();
+    meshes[i].material.needsUpdate = true;
     meshes[i].name = "part" + (i + 1);
     meshes[i].userData.povmat = povmat;
     model.push(meshes[i]);
     scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
 
-    // Create cb_parts checkboxs
-    // DEBUG -----------------------------
+    // Create parts checkboxs
     var cb = document.createElement('input');
     cb.type = "checkbox";
     cb.name = meshes[i].name;
     cb.value = "value";
     cb.id = meshes[i].name;
+    cb.checked = true;
 
     var lb = document.createElement('label')
     lb.htmlFor = meshes[i].name;
@@ -196,7 +196,6 @@ async function loadModel(args)
     contParts.appendChild(lb);
     cb_parts.push(cb);
     cb_labels.push(lb);
-    // ---------------------------------
   }
   // console.log(model); // DEBUG
   //console.log(model.geometry.attributes);
@@ -228,21 +227,16 @@ async function loadModel(args)
 window.loadModel = loadModel;
 
 //
-// Update material
+// Creat material
 //
-async function updateMaterial() {
+async function createMaterial() {
   if( material != undefined) {
     if(material.matcap)
       material.matcap.dispose();
     material.dispose();
   }
 
-  // DEBUG Vertez colors
-  //const pointLight = new THREE.PointLight(0xffffff, 300, 1000); // Color, Intensity, Distance
-  //pointLight.position.set(3, 3, 3);
-  //scene.add(pointLight);
-  let shading = document.getElementById("shading").value;
-
+/* VertexColors
   if(cb_VertexColors.checked) {
     material = new THREE.MeshStandardMaterial( {side: THREE.DoubleSide, vertexColors: true} ); }
   else if(shading == "wireframe") {
@@ -252,26 +246,38 @@ async function updateMaterial() {
     mc.colorSpace = THREE.SRGBColorSpace;
     material = new THREE.MeshMatcapMaterial( {matcap: mc, side: THREE.DoubleSide} );
   }
+*/
 
-  if(shading == "flat")
-    material.flatShading = true;
-  else if(shading == "normal")
-    material.flatShading = false;
+  let mc = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcap + "_mcap.png");
+  mc.colorSpace = THREE.SRGBColorSpace;
+  material = new THREE.MeshMatcapMaterial( {matcap: mc, side: THREE.DoubleSide} );
+  material.flatShading = true;
 
   for(let i=0; i<model.length; i++) {
-    // TODO: Update only checked
-    // mesh.userData.povmat = 'M_xxxx';
-    //if( document.getElementById(model[i].name).checked) {
+      model[i].material.matcap.dispose();
       model[i].material.dispose();
-      model[i].material = material;
-      model[i].material.needsUpdate;
-    //}
+      model[i].material = material.clone();
+      model[i].material.matcap = material.matcap.clone();
+      model[i].material.matcap.needsUpdate = true;
+      model[i].material.needsUpdate = true;
   }
 }
-window.updateMaterial = updateMaterial;
+window.createMaterial = createMaterial;
 
 //
-// Apply matcap
+// Update shading
+//
+async function updateShading() {
+  let shading = document.getElementById("shading").value;
+  for(let i=0; i<model.length; i++) {
+    model[i].material.flatShading = (shading == "flat");
+    model[i].material.needsUpdate = true;
+  }
+}
+window.updateShading = updateShading;
+
+//
+// Apply matcap (Apply material)
 //
 async function applyMatcap(mc, pm) {
   if(matcap == mc)
@@ -279,11 +285,15 @@ async function applyMatcap(mc, pm) {
   matcap = mc;
   povmat = pm;
   let tex = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcap + "_mcap.png");
+
+  // console.log(model);
   for(let i=0; i<model.length; i++) {
+    if( !document.getElementById(model[i].name).checked) continue;
     if(model[i].material.matcap)
       model[i].material.matcap.dispose();
     model[i].material.matcap = tex;
     model[i].material.matcap.colorSpace = THREE.SRGBColorSpace;
+    model[i].material.matcap.needsUpdate = true;
     model[i].userData.povmat = povmat;
   }
 }
