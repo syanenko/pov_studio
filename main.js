@@ -18,9 +18,9 @@ import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
 // const DEFAULT_MODEL = 'data/models/frog.obj';
-// const DEFAULT_MODEL = 'data/models/teapot.glb';
+const DEFAULT_MODEL = 'data/models/teapot.glb';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
-const DEFAULT_MODEL = 'data/models/hubble.glb';
+// const DEFAULT_MODEL = 'data/models/hubble.glb';
 // const DEFAULT_MODEL = 'data/models/two_cubes_test.obj';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
@@ -268,6 +268,9 @@ window.createMaterial = createMaterial;
 // Update shading
 //
 async function updateShading(checked) {
+  material.flatShading = checked;
+  material.needsUpdate = true;
+
   for(let i=0; i<model.length; i++) {
     model[i].material.flatShading = checked;
     model[i].material.needsUpdate = true;
@@ -290,8 +293,6 @@ window.updateVertexColors = updateVertexColors;
 // Apply matcap (Apply material)
 //
 async function applyMatcap(mc, pm) {
-  if(matcap == mc)
-    return;
   matcap = mc;
   povmat = pm;
   let tex = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcap + "_mcap.png");
