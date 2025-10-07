@@ -278,9 +278,7 @@ async function selectMatcap(button) {
 
   matcapName = button.id;
   povmat = button.name;
-  console.log(matcapName);
   matcap = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcapName + "_mcap.png");
-  console.log(fill);
   if(fill) {
     for(let i=0; i<model.length; i++) {
       if(model[i].material.matcap)
@@ -430,20 +428,15 @@ const mouse = new THREE.Vector2();
 let io = null;
 
 function onMouseDown(event) {
-  // console.log(scene);
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-  console.log(mouse.y);
   mouse.y += 0.12; // DEBUG: Why ?
   raycaster.setFromCamera(mouse, camera);
-
   const intersects = raycaster.intersectObjects(model, false);
-  console.log('intersects.length:', intersects.length);
 
   if (intersects.length > 0) {
     io = intersects[0].object;
     for (let i=0; i<intersects.length; i++) {
-      console.log('Selected:', io.name);
       io.material.matcap.dispose();
       io.material.matcap = matcap;
       io.material.matcap.colorSpace = THREE.SRGBColorSpace;
