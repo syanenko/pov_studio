@@ -18,10 +18,10 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-// const DEFAULT_MODEL = 'data/models/frog.obj';
+const DEFAULT_MODEL = 'data/models/emerald_ring.glb';
 // const DEFAULT_MODEL = 'data/models/teapot.glb';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
-const DEFAULT_MODEL = 'data/models/hubble.glb';
+//const DEFAULT_MODEL = 'data/models/hubble.glb';
 // const DEFAULT_MODEL = 'data/models/two_cubes_test.obj';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
@@ -297,16 +297,14 @@ window.updateVertexColors = updateVertexColors;
 async function applyMatcap(mc, pm) {
   matcap = mc;
   povmat = pm;
+  console.log(matcap);
   let tex = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcap + "_mcap.png");
 
-  // console.log(model);
   for(let i=0; i<model.length; i++) {
-    // if( !document.getElementById(model[i].name).checked) continue;
     if(model[i].material.matcap)
       model[i].material.matcap.dispose();
     model[i].material.matcap = tex;
     model[i].material.matcap.colorSpace = THREE.SRGBColorSpace;
-    // DEBUG !
     model[i].material.matcap.needsUpdate = true;
     model[i].userData.povmat = povmat;
   }
@@ -420,43 +418,6 @@ function onWindowResize() {
   renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
-////////////// Test ///////////////////
-// --- Setup ---
-/*
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-let io = null;
-
-// Add to event listener for mouse clicks
-document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-
-function onDocumentMouseDown( event ) {
-    // Calculate mouse position in normalized device coordinates (-1 to 1)
-    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-    // Update the picking ray with the camera and mouse position
-    raycaster.setFromCamera( mouse, camera );
-
-    // Find intersecting objects
-    const intersects = raycaster.intersectObjects( scene.children, true ); // true to check children
-
-    if ( intersects.length > 0 ) {
-        // The first element is the closest intersected object
-        io = intersects[ 0 ].object;
-        console.log( "Selected object:", io.name );
-        // Example: Change its color
-        io.material.color.setHex( 0xff0000 );
-    } else {
-        // If no object is intersected, reset any previous selection
-        if (io) {
-            io.material.color.setHex( 0xffffff ); // Reset to original color
-            io = null;
-        }
-    }
-}
-*/
-
 //
 // Download
 //
@@ -482,18 +443,21 @@ function download() {
 window.download = download;
 
 //
-// Slection
+// Selection
 //
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 let io = null;
 
 function onMouseDown(event) {
+  console.log(scene);
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
+  console.log(mouse.y);
+  mouse.y += 0.12; // DEBUG: Why ?
   raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(model, true);
+
+  const intersects = raycaster.intersectObjects(model, false);
   console.log('intersects.length:', intersects.length);
 
   if (intersects.length > 0) {
