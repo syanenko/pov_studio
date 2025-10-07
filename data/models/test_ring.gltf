@@ -42,7 +42,6 @@
     {
       "name": "zuanshi_jeizhi",
       "extras": {
-        "name": "zuanshi jeizhi",
         "material": "M_glass_green_water"
       },
       "mesh": 0
@@ -50,7 +49,6 @@
     {
       "name": "jeizhi_jeizhi",
       "extras": {
-        "name": "jeizhi jeizhi",
         "material": "M_bright_gold_metal"
       },
       "mesh": 1
