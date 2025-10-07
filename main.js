@@ -1,5 +1,6 @@
 // TODO
-//
+// - Slector
+// - CB 'Fill all'
 // - vertexColors Threejs vs ZBrush (?)
 // - vertexColors + flatShading (?)
 // - inc: header
@@ -18,9 +19,9 @@ import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
 // const DEFAULT_MODEL = 'data/models/frog.obj';
-const DEFAULT_MODEL = 'data/models/teapot.glb';
+// const DEFAULT_MODEL = 'data/models/teapot.glb';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
-// const DEFAULT_MODEL = 'data/models/hubble.glb';
+const DEFAULT_MODEL = 'data/models/hubble.glb';
 // const DEFAULT_MODEL = 'data/models/two_cubes_test.obj';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/skull.obj';
@@ -198,7 +199,7 @@ async function loadModel(args)
     cb_parts.push(cb);
     cb_labels.push(lb);
   }
-  // console.log(model); // DEBUG
+  console.log(model); // DEBUG
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
   //console.log(model.geometry.getAttribute( 'position' ));
@@ -290,7 +291,7 @@ async function updateVertexColors(checked) {
 window.updateVertexColors = updateVertexColors;
 
 //
-// Apply matcap (Apply material)
+// Apply matcap
 //
 async function applyMatcap(mc, pm) {
   matcap = mc;
@@ -416,6 +417,43 @@ function onWindowResize() {
   camera.updateProjectionMatrix();
   renderer.setSize( window.innerWidth, window.innerHeight );
 }
+
+////////////// Test ///////////////////
+// --- Setup ---
+/*
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let intersectedObject = null;
+
+// Add to event listener for mouse clicks
+document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+
+function onDocumentMouseDown( event ) {
+    // Calculate mouse position in normalized device coordinates (-1 to 1)
+    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+    // Update the picking ray with the camera and mouse position
+    raycaster.setFromCamera( mouse, camera );
+
+    // Find intersecting objects
+    const intersects = raycaster.intersectObjects( scene.children, true ); // true to check children
+
+    if ( intersects.length > 0 ) {
+        // The first element is the closest intersected object
+        intersectedObject = intersects[ 0 ].object;
+        console.log( "Selected object:", intersectedObject.name );
+        // Example: Change its color
+        intersectedObject.material.color.setHex( 0xff0000 );
+    } else {
+        // If no object is intersected, reset any previous selection
+        if (intersectedObject) {
+            intersectedObject.material.color.setHex( 0xffffff ); // Reset to original color
+            intersectedObject = null;
+        }
+    }
+}
+*/
 
 //
 // Download

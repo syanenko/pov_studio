@@ -17,21 +17,22 @@
         "three": "/node_modules/three/build/three.module.js",
         "three/addons/": "/node_modules/three/examples/jsm/",
         "three/nodes": "/node_modules/three/examples/jsm/nodes/Nodes.js"
-        } 
+        }
     }
     </script> 
 
     <img id="logo" src="data/images/logo_40x40.png" alt="Logo" width="40" height="40" onclick="about.inert=true;  about.showModal(); about.inert=false;">
-    <div id="text" onclick="about.inert=true;  about.showModal(); about.inert=false;">POV-Ray Studio 0.8b</div>
+    <div id="text" onclick="about.inert=true;  about.showModal(); about.inert=false;">POV-Ray Studio 0.9b</div>
     <img id="help" src="data/images/help.png" alt="Help" onclick="about.inert=true;  about.showModal(); about.inert=false;">
     <hr>
 
     <!-- About -->
-    <dialog id="about" style="width:390px;">
+    <dialog id="about" style="width:450px;">
       <div style="font-size: 24px; color:#ff9127">POV-Ray studio</div>
-      <p>Translates formats <i>obj, fbx, glb, gltf, stl</i> to <i>mesh2</i>.</p>
+      <p>Translates formats <i>obj, fbx, glb, gltf, stl</i> to <i>mesh2</i>, assigns materials to parts of the model. Download
+      <a href="./data/download/studio.zip">scene template</a>, unzip, download model in the same directory, render 'studio.pov'.</p>
       <a href="https://www.povray.org/" target="_blank" rel="noopener noreferrer">POV-Ray</a>
-      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
+      &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp
       <a href="https://yesbird.online/" target="_blank" rel="noopener noreferrer">Yesbird studio</a>
             <form method="dialog" style="text-align:center">
         <button>&nbsp;&nbsp;&nbsp;OK&nbsp;&nbsp;&nbsp;</button>
@@ -129,12 +130,12 @@
     </script>
 
     <div style='position: absolute; top:65px; right:20px; width:90px; z-index:4;'>
-      <input id="glaze1" name="M_spotted_weed_B" type="image" src='data/mat/skeleton_icon.png' style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('skeleton', this.name)">
-      <input id="glaze2" name="M_copper_old" type="image" src='data/mat/sculpty_icon.png'  style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('sculpty', this.name)">
-      <input id="glaze3" name="M_shroom_A" type="image" src='data/mat/sunny_icon.png'    style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('sunny', this.name)">
-      <input id="glaze4" name="M_glass_green_water" type="image" src='data/mat/glassy_icon.png'   style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('glassy', this.name)">
-      <input id="glaze5" name="M_glass_frosted" type="image" src='data/mat/gold_icon.png'     style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('gold', this.name)">
-      <input id="glaze6" name="M_bright_gold_metal" type="image" src='data/mat/petrol_icon.png'   style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('petrol', this.name)">
+      <input id="glaze1" name="M_spotted_weed_B" title="M_spotted_weed_B" type="image" src='data/mat/skeleton_icon.png' style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('skeleton', this.name)">
+      <input id="glaze2" name="M_copper_old" title="M_copper_old" type="image" src='data/mat/sculpty_icon.png'  style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('sculpty', this.name)">
+      <input id="glaze3" name="M_shroom_A" title="M_shroom_A" type="image" src='data/mat/sunny_icon.png'    style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('sunny', this.name)">
+      <input id="glaze4" name="M_glass_green_water" title="M_glass_green_water" type="image" src='data/mat/glassy_icon.png'   style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('glassy', this.name)">
+      <input id="glaze5" name="M_glass_frosted" title="M_glass_frosted" type="image" src='data/mat/gold_icon.png'     style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('gold', this.name)">
+      <input id="glaze6" name="M_bright_gold_metal" title="M_bright_gold_metal" type="image" src='data/mat/petrol_icon.png'   style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('petrol', this.name)">
     </div>
 
     <!-- Settings -->
