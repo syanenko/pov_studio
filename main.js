@@ -1,6 +1,5 @@
 // TODO
-// - Slector
-// - CB 'Fill all'
+// - Allow replacing materials dialog
 // - vertexColors Threejs vs ZBrush (?)
 // - vertexColors + flatShading (?)
 // - inc: header
@@ -18,15 +17,16 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-//const DEFAULT_MODEL = 'data/models/emerald_ring.glb';
+const DEFAULT_MODEL = './data/models/test_ring.gltf';
+// const DEFAULT_MODEL = 'data/models/emerald_ring.glb';
 // const DEFAULT_MODEL = 'data/models/teapot.glb';
-const DEFAULT_MODEL = 'data/models/hubble.glb';
+// const DEFAULT_MODEL = 'data/models/hubble.glb';
 // const DEFAULT_MODEL = 'data/models/cube.fbx';
 // const DEFAULT_MODEL = 'data/models/two_cubes_test.obj';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/hand.obj';
 
-const PATH_MATCAPS   = 'data/mat/';
+const PATH_MATCAPS   = './data/mat/';
 const DEFAULT_MATCAP = "skeleton";
 const DEFAULT_POVMAT = "M_bright_gold_metal";
 
@@ -154,7 +154,7 @@ async function loadModel(args)
     case '.GLB': meshes = getMeshes((await AsyncLoader.loadGLTFAsync(path)).scene);
                  break;
     case 'gltf':
-    case 'GLTF': meshes = getMeshes((await AsyncLoader.loadGLTFAsync(path)));
+    case 'GLTF': meshes = getMeshes((await AsyncLoader.loadGLTFAsync(path)).scene);
                  break;
 
     default: console.error("Unknown file extention: '" + ext + "'");
@@ -169,12 +169,14 @@ async function loadModel(args)
     meshes[i].material = material.clone();
     meshes[i].material.needsUpdate = true;
     meshes[i].name = "part" + (i + 1);
-    meshes[i].userData.povmat = povmat;
+    if(meshes[i].userData.material == undefined)
+       meshes[i].userData.material = povmat;
     model.push(meshes[i]);
     scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
   }
-  //console.log(model); // DEBUG
+  console.log(model[0].userData); // DEBUG
+  console.log(model[1].userData);
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
   //console.log(model.geometry.getAttribute( 'position' ));
@@ -286,7 +288,8 @@ async function selectMatcap(button) {
       model[i].material.matcap = matcap;
       model[i].material.matcap.colorSpace = THREE.SRGBColorSpace;
       model[i].material.matcap.needsUpdate = true;
-      model[i].userData.povmat = povmat;
+      if(model[i].userData.material == undefined)
+         model[i].userData.material = povmat;
     }
   }
 }
@@ -441,7 +444,7 @@ function onMouseDown(event) {
       io.material.matcap = matcap;
       io.material.matcap.colorSpace = THREE.SRGBColorSpace;
       io.material.matcap.needsUpdate = true;
-      io.userData.povmat = povmat;
+      io.userData.material = povmat;
     }
   } else {
       // for (let i=0; i<model.length; i++) {
