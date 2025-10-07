@@ -130,12 +130,12 @@
     </script>
 
     <div style='position: absolute; top:65px; right:20px; width:90px; z-index:4;'>
-      <input id="mc1" name="M_spotted_weed_B" title="M_spotted_weed_B" type="image" src='data/mat/skeleton_icon.png' style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('skeleton', this.name)">
-      <input id="mc2" name="M_copper_old" title="M_copper_old" type="image" src='data/mat/sculpty_icon.png'  style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('sculpty', this.name)">
-      <input id="mc3" name="M_shroom_A" title="M_shroom_A" type="image" src='data/mat/sunny_icon.png'    style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('sunny', this.name)">
-      <input id="mc4" name="M_glass_green_water" title="M_glass_green_water" type="image" src='data/mat/glassy_icon.png'   style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('glassy', this.name)">
-      <input id="mc5" name="M_glass_frosted" title="M_glass_frosted" type="image" src='data/mat/gold_icon.png'     style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('gold', this.name)">
-      <input id="mc6" name="M_bright_gold_metal" title="M_bright_gold_metal" type="image" src='data/mat/petrol_icon.png'   style='position: relative;  margin: 3px;' onclick = "window.applyMatcap('petrol', this.name)">
+      <input id="skeleton" name="M_spotted_weed_B" title="M_spotted_weed_B" type="image" src='data/mat/skeleton_icon.png' class="mc_button" onclick = "window.selectMatcap(this)">
+      <input id="sculpty" name="M_copper_old" title="M_copper_old" type="image" src='data/mat/sculpty_icon.png' class="mc_button" onclick = "window.selectMatcap(this)">
+      <input id="sunny" name="M_shroom_A" title="M_shroom_A" type="image" src='data/mat/sunny_icon.png' class="mc_button" onclick = "window.selectMatcap(this)">
+      <input id="glassy" name="M_glass_green_water" title="M_glass_green_water" type="image" src='data/mat/glassy_icon.png' class="mc_button" onclick = "window.selectMatcap(this)">
+      <input id="gold" name="M_glass_frosted" title="M_glass_frosted" type="image" src='data/mat/gold_icon.png' class="mc_button" onclick = "window.selectMatcap(this)">
+      <input id="petrol" name="M_bright_gold_metal" title="M_bright_gold_metal" type="image" src='data/mat/petrol_icon.png' class="mc_button" onclick = "window.selectMatcap(this)">
     </div>
 
     <!-- Settings -->
@@ -157,6 +157,10 @@
 
       <input type="checkbox" id="display_normals" onclick="window.displayNormals(this.checked)">
       <label for="display_normals">Display normals</label><br>
+    </div>
+    <div style="position: absolute; bottom:15px; right:20px; z-index:4; font-size: 130%;"> 
+      <input type="checkbox" id="fill" onclick="window.setFill(this.checked)">
+    <label for="fill">Fill model</label><br>
     </div>
 
     <!-- Progress -->

@@ -191,4 +191,9 @@ progress {background-color: gray;}
 progress::-webkit-progress-value {background-color: white !important;}
 progress::-moz-progress-bar {background-color: white !important;}
 progress {color: white;}
- 
+
+.mc_button {
+  position: relative;
+  margin: 3px;
+  outline: 1px solid #fff;
+}

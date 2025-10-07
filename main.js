@@ -18,15 +18,13 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-const DEFAULT_MODEL = 'data/models/emerald_ring.glb';
+//const DEFAULT_MODEL = 'data/models/emerald_ring.glb';
 // const DEFAULT_MODEL = 'data/models/teapot.glb';
-// const DEFAULT_MODEL = 'data/models/skull.obj';
-//const DEFAULT_MODEL = 'data/models/hubble.glb';
+const DEFAULT_MODEL = 'data/models/hubble.glb';
+// const DEFAULT_MODEL = 'data/models/cube.fbx';
 // const DEFAULT_MODEL = 'data/models/two_cubes_test.obj';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
-// const DEFAULT_MODEL = 'data/models/skull.obj';
 // const DEFAULT_MODEL = 'data/models/hand.obj';
-// const DEFAULT_MODEL = 'data/models/cube.fbx';
 
 const PATH_MATCAPS   = 'data/mat/';
 const DEFAULT_MATCAP = "skeleton";
@@ -40,16 +38,18 @@ let ocontrols;
 let bb, bs;
 
 let material, model = [];
-let matcap = DEFAULT_MATCAP;
+let matcapName = DEFAULT_MATCAP;
+let matcap;
 let povmat = DEFAULT_POVMAT; 
+let curMatcapBut;
 
 let cb_VertexColors;
 let cb_DisplayAxis;
 let cb_DisplayFloor;
 let cb_DisplayNormals;
 
-let cb_parts = [];
-let cb_labels = [];
+let fill = false;
+
 //
 // Init
 //
@@ -87,7 +87,8 @@ async function init() {
   // Load default model
   await createMaterial();
   await loadModel({model: DEFAULT_MODEL});
-  await applyMatcap(DEFAULT_MATCAP);
+  curMatcapBut = document.getElementById("skeleton");
+  await selectMatcap(curMatcapBut);
 
   // Defaults
   cb_DisplayAxis.click();
@@ -125,12 +126,7 @@ async function loadModel(args)
   }
   model.length = 0;
   renderer.renderLists.dispose();
-
-  for(let i=0; i<cb_parts.length; i++) {
-    cb_parts[i].remove();
-    cb_labels[i].remove();
-  }
-
+  
   if(args.model) {
     var path = args['model'];
   } else {
@@ -163,10 +159,7 @@ async function loadModel(args)
 
     default: console.error("Unknown file extention: '" + ext + "'");
   }
-
-  // Container for cb_parts
-  let contParts = document.getElementById("parts");
-
+  
   bb = new THREE.Box3();
   for (let i = 0; i < meshes.length; i++) {
     meshes[i].geometry.deleteAttribute( 'normal' );
@@ -180,27 +173,8 @@ async function loadModel(args)
     model.push(meshes[i]);
     scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
-
-    // Create parts checkboxs
-    // DEBUG
-    // var cb = document.createElement('input');
-    // cb.type = "checkbox";
-    // cb.name = meshes[i].name;
-    // cb.value = "value";
-    // cb.id = meshes[i].name;
-    // cb.checked = false;
-
-    // var lb = document.createElement('label')
-    // lb.htmlFor = meshes[i].name;
-    // let text = meshes[i].name.replace("p", "P");
-    // lb.appendChild(document.createTextNode(text));
-
-    // contParts.appendChild(cb);
-    // contParts.appendChild(lb);
-    // cb_parts.push(cb);
-    // cb_labels.push(lb);
   }
-  console.log(model); // DEBUG
+  //console.log(model); // DEBUG
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
   //console.log(model.geometry.getAttribute( 'position' ));
@@ -251,9 +225,9 @@ async function createMaterial() {
   }
 */
 
-  let mc = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcap + "_mcap.png");
-  mc.colorSpace = THREE.SRGBColorSpace;
-  material = new THREE.MeshMatcapMaterial( {matcap: mc, side: THREE.DoubleSide} );
+  matcap = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcapName + "_mcap.png");
+  matcap.colorSpace = THREE.SRGBColorSpace;
+  material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} );
 
   for(let i=0; i<model.length; i++) {
       model[i].material.matcap.dispose();
@@ -294,22 +268,31 @@ window.updateVertexColors = updateVertexColors;
 //
 // Apply matcap
 //
-async function applyMatcap(mc, pm) {
-  matcap = mc;
-  povmat = pm;
-  console.log(matcap);
-  let tex = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcap + "_mcap.png");
+async function selectMatcap(button) {
+  if(curMatcapBut)
+    curMatcapBut.style.outline = "1px solid #fff";
 
-  for(let i=0; i<model.length; i++) {
-    if(model[i].material.matcap)
-      model[i].material.matcap.dispose();
-    model[i].material.matcap = tex;
-    model[i].material.matcap.colorSpace = THREE.SRGBColorSpace;
-    model[i].material.matcap.needsUpdate = true;
-    model[i].userData.povmat = povmat;
+  button.style.outline = "3px solid #ff9127";
+  button.style.outlineOffset = "-1px";
+  curMatcapBut = button;
+
+  matcapName = button.id;
+  povmat = button.name;
+  console.log(matcapName);
+  matcap = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcapName + "_mcap.png");
+  console.log(fill);
+  if(fill) {
+    for(let i=0; i<model.length; i++) {
+      if(model[i].material.matcap)
+        model[i].material.matcap.dispose();
+      model[i].material.matcap = matcap;
+      model[i].material.matcap.colorSpace = THREE.SRGBColorSpace;
+      model[i].material.matcap.needsUpdate = true;
+      model[i].userData.povmat = povmat;
+    }
   }
 }
-window.applyMatcap = applyMatcap;
+window.selectMatcap = selectMatcap;
 
 //
 // Display normals
@@ -403,13 +386,10 @@ window.switchRotation = switchRotation;
 //
 // Switch normals
 //
-/*
-async function displayNormals(checked) {
-  normals = checked;
-  displayNormals(normals);
+async function setFill(checked) {
+  fill = checked;
 }
-window.displayNormals = displayNormals;
-*/
+window.setFill = setFill;
 
 // Resize
 function onWindowResize() {
@@ -450,7 +430,7 @@ const mouse = new THREE.Vector2();
 let io = null;
 
 function onMouseDown(event) {
-  console.log(scene);
+  // console.log(scene);
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   console.log(mouse.y);
@@ -462,14 +442,18 @@ function onMouseDown(event) {
 
   if (intersects.length > 0) {
     io = intersects[0].object;
-    io.material.color.setHex(0xff0000);
     for (let i=0; i<intersects.length; i++) {
       console.log('Selected:', io.name);
+      io.material.matcap.dispose();
+      io.material.matcap = matcap;
+      io.material.matcap.colorSpace = THREE.SRGBColorSpace;
+      io.material.matcap.needsUpdate = true;
+      io.userData.povmat = povmat;
     }
   } else {
-      for (let i=0; i<model.length; i++) {
-      model[i].material.color.setHex(0xffffff);
-    }
+      // for (let i=0; i<model.length; i++) {
+      // model[i].material.color.setHex(0xffffff);
+      // }
   }
 }
 document.addEventListener('mousedown', onMouseDown, false);
