@@ -1,13 +1,21 @@
 // TODO
-// - Allow replacing materials dialog
-// - vertexColors Threejs vs ZBrush (?)
-// - vertexColors + flatShading (?)
-// - inc: header
-// - Help in about
 //
+// - Allow replacing materials dialog
+// - Help in about
+// - Save GLB/GLTF (with material tags)
+// {
+//  "povray": {
+//    "material": "M_glass_green_water"
+//  }
+// }
+// - Check selector shifting
+// - inc: header:
 // - save the pov-lines how to use the code in a docu-block in the upper part of the file
 // - save the name of the original file also somewhere (have now many files in my
 //   download-folder like "model (4).inc" and dont know whats in it.
+//
+// - vertexColors Threejs vs ZBrush (?)
+// - vertexColors + flatShading (?)
 //
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
@@ -17,7 +25,7 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-const DEFAULT_MODEL = './data/models/test_ring.gltf';
+const DEFAULT_MODEL = './data/models/test_ring.glb';
 // const DEFAULT_MODEL = 'data/models/emerald_ring.glb';
 // const DEFAULT_MODEL = 'data/models/teapot.glb';
 // const DEFAULT_MODEL = 'data/models/hubble.glb';
@@ -169,14 +177,14 @@ async function loadModel(args)
     meshes[i].material = material.clone();
     meshes[i].material.needsUpdate = true;
     meshes[i].name = "part" + (i + 1);
-    if(meshes[i].userData.material == undefined)
-       meshes[i].userData.material = povmat;
+    console.log(meshes[i].userData); // DEBUG
+    if(meshes[i].userData.povray.material == undefined)
+       meshes[i].userData.povray.material = povmat;
     model.push(meshes[i]);
     scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
   }
   console.log(model[0].userData); // DEBUG
-  console.log(model[1].userData);
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
   //console.log(model.geometry.getAttribute( 'position' ));
@@ -288,8 +296,8 @@ async function selectMatcap(button) {
       model[i].material.matcap = matcap;
       model[i].material.matcap.colorSpace = THREE.SRGBColorSpace;
       model[i].material.matcap.needsUpdate = true;
-      if(model[i].userData.material == undefined)
-         model[i].userData.material = povmat;
+      if(model[i].userData.povray.material == undefined)
+         model[i].userData.povray.material = povmat;
     }
   }
 }
@@ -444,7 +452,7 @@ function onMouseDown(event) {
       io.material.matcap = matcap;
       io.material.matcap.colorSpace = THREE.SRGBColorSpace;
       io.material.matcap.needsUpdate = true;
-      io.userData.material = povmat;
+      io.userData.povray.material = povmat;
     }
   } else {
       // for (let i=0; i<model.length; i++) {

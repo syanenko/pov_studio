@@ -42,14 +42,18 @@
     {
       "name": "zuanshi_jeizhi",
       "extras": {
-        "material": "M_glass_green_water"
+        "povray": {
+          "material": "M_glass_green_water"
+        }
       },
       "mesh": 0
     },
     {
       "name": "jeizhi_jeizhi",
       "extras": {
-        "material": "M_bright_gold_metal"
+        "povray": {
+          "material": "M_bright_gold_metal"
+        }
       },
       "mesh": 1
     },
@@ -277,7 +281,7 @@
           ]
         },
         "KHR_materials_ior": {
-          "ior": 6.8125000000000036
+          "ior": 2.3333333333333335
         }
       }
     },

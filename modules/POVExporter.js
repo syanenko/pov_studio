@@ -129,7 +129,7 @@ class POVExporter {
       output += '}\n';
 
       // Save POV material name
-      materials.push(mesh.userData.material);
+      materials.push(mesh.userData.povray.material);
     }
     /*
     function parseLine( line ) {
