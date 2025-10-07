@@ -182,22 +182,23 @@ async function loadModel(args)
     bb.expandByObject(meshes[i]);
 
     // Create parts checkboxs
-    var cb = document.createElement('input');
-    cb.type = "checkbox";
-    cb.name = meshes[i].name;
-    cb.value = "value";
-    cb.id = meshes[i].name;
-    cb.checked = true;
+    // DEBUG
+    // var cb = document.createElement('input');
+    // cb.type = "checkbox";
+    // cb.name = meshes[i].name;
+    // cb.value = "value";
+    // cb.id = meshes[i].name;
+    // cb.checked = false;
 
-    var lb = document.createElement('label')
-    lb.htmlFor = meshes[i].name;
-    let text = meshes[i].name.replace("p", "P");
-    lb.appendChild(document.createTextNode(text));
+    // var lb = document.createElement('label')
+    // lb.htmlFor = meshes[i].name;
+    // let text = meshes[i].name.replace("p", "P");
+    // lb.appendChild(document.createTextNode(text));
 
-    contParts.appendChild(cb);
-    contParts.appendChild(lb);
-    cb_parts.push(cb);
-    cb_labels.push(lb);
+    // contParts.appendChild(cb);
+    // contParts.appendChild(lb);
+    // cb_parts.push(cb);
+    // cb_labels.push(lb);
   }
   console.log(model); // DEBUG
   //console.log(model.geometry.attributes);
@@ -300,11 +301,12 @@ async function applyMatcap(mc, pm) {
 
   // console.log(model);
   for(let i=0; i<model.length; i++) {
-    if( !document.getElementById(model[i].name).checked) continue;
+    // if( !document.getElementById(model[i].name).checked) continue;
     if(model[i].material.matcap)
       model[i].material.matcap.dispose();
     model[i].material.matcap = tex;
     model[i].material.matcap.colorSpace = THREE.SRGBColorSpace;
+    // DEBUG !
     model[i].material.matcap.needsUpdate = true;
     model[i].userData.povmat = povmat;
   }
@@ -423,7 +425,7 @@ function onWindowResize() {
 /*
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
-let intersectedObject = null;
+let io = null;
 
 // Add to event listener for mouse clicks
 document.addEventListener( 'mousedown', onDocumentMouseDown, false );
@@ -441,15 +443,15 @@ function onDocumentMouseDown( event ) {
 
     if ( intersects.length > 0 ) {
         // The first element is the closest intersected object
-        intersectedObject = intersects[ 0 ].object;
-        console.log( "Selected object:", intersectedObject.name );
+        io = intersects[ 0 ].object;
+        console.log( "Selected object:", io.name );
         // Example: Change its color
-        intersectedObject.material.color.setHex( 0xff0000 );
+        io.material.color.setHex( 0xff0000 );
     } else {
         // If no object is intersected, reset any previous selection
-        if (intersectedObject) {
-            intersectedObject.material.color.setHex( 0xffffff ); // Reset to original color
-            intersectedObject = null;
+        if (io) {
+            io.material.color.setHex( 0xffffff ); // Reset to original color
+            io = null;
         }
     }
 }
@@ -478,6 +480,35 @@ function download() {
   saveString( result, 'model.inc' );
 }
 window.download = download;
+
+//
+// Slection
+//
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let io = null;
+
+function onMouseDown(event) {
+  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(model, true);
+  console.log('intersects.length:', intersects.length);
+
+  if (intersects.length > 0) {
+    io = intersects[0].object;
+    io.material.color.setHex(0xff0000);
+    for (let i=0; i<intersects.length; i++) {
+      console.log('Selected:', io.name);
+    }
+  } else {
+      for (let i=0; i<model.length; i++) {
+      model[i].material.color.setHex(0xffffff);
+    }
+  }
+}
+document.addEventListener('mousedown', onMouseDown, false);
 
 //
 // Animate
