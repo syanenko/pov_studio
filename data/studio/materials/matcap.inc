@@ -85,14 +85,14 @@ light_source {
     fade_power 2     
     translate <-200,100,150>
 }   
-//light_left
+light_left
 
 
 #declare light_right =
 light_source {
     <0,0,0> 
     #declare light_color = color red 1 green 1 blue 1 ;                      
-    light_color * 1                  
+    light_color * 0.1                  
     area_light
     <50, 0, 0> <0, 0, 50>         
     4, 4                          
@@ -104,7 +104,7 @@ light_source {
     fade_power 2     
     translate <200,200,-150>
 }   
-//light_right 
+light_right 
 
 
 #declare light_under =
@@ -124,7 +124,7 @@ light_source {
     translate <-100,-100,0> 
     shadowless 
 }   
-//light_under 
+light_under 
     
 // -----------------------------------------------------------------------------------------
 //                      S K Y

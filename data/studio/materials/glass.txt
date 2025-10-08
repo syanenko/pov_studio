@@ -1,0 +1,22 @@
+#declare M_glass_gold_swirl = material{ texture{T_glass_gold_swirl} interior {I_clear} } 
+//   M_glass 
+//   M_glass_dark
+//   M_glass_dark 
+//   M_glass_red 
+//   M_glass_gold 
+//   M_glass_green 
+//   M_glass_blue 
+//   M_glass_milk 
+//   M_glass_frosted 
+//   M_glass_wripple 
+//   M_glass_gold_frost 
+//   M_glass_gold_wripple 
+//   M_glass_green_water 
+//   M_glass_old 
+//   M_glass_dark_blue 
+//   M_glass_red_pillow 
+//   M_glass_clear_pillow 
+#declare M_glass_swirl_A =
+#declare M_glass_swirl_B =
+#declare M_glass_block =
+make_tiles ()     #declare M_glass_block2 = material{_material scale .12 rotate <90,0,0>} ;

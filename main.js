@@ -2,14 +2,19 @@
 //
 // - 12 matcaps
 // - Allow replacing materials dialog
+// - Check GLB hierarchy (Ingenuity Mars Helicopter.glb)
 // - Help in about
+//
 // - Save GLB/GLTF (with material tags)
 // {
 //  "povray": {
 //    "material": "M_glass_green_water"
 //  }
 // }
+//
 // - Check selector shifting
+// - Materials: add gems
+//
 // - inc: header:
 // - save the pov-lines how to use the code in a docu-block in the upper part of the file
 // - save the name of the original file also somewhere (have now many files in my
@@ -35,7 +40,7 @@ const DEFAULT_MODEL = './data/models/test_ring.glb';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/hand.obj';
 
-const PATH_MATCAPS   = './data/mat/';
+const PATH_MATCAPS   = './data/materials/';
 const DEFAULT_MATCAP = "skeleton";
 const DEFAULT_POVMAT = "M_bright_gold_metal";
 
