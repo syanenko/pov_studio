@@ -1,7 +1,7 @@
 //
 // POV-Ray studio
 //
-// URL: https://povlab.yesbird.online/all2pov/
+// URL: https://povlab.yesbird.online/studio/
 //
 //
 #version 3.7;
@@ -67,8 +67,7 @@ light_source {
     fade_power 2     
     translate <200,-200,150>
 }   
-light_right 
-
+light_right
 
 #declare light_under =
 light_source {
@@ -87,8 +86,7 @@ light_source {
     translate <0,100,0> 
     shadowless 
 }   
-light_under 
-
+light_under
 
 // -----------------------------------------------------------------------------------------
 //                      S K Y
