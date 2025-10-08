@@ -1,8 +1,23 @@
+//
 // New in this release
 //
-// 1. Reduced accuracy to 6 digits in export to reduce file size ('kurtz le pirate')
-//
+// 1. Start of materials library: 12 items from Mikes Miller's collection.
+// 2. Processing materials tags in "extras" section of GLB/GLTF to support external material assigment (for ex, in Blender).
+/*
+      "extras": {
+        "povray": {
+          "material": "M_glass_green_water"
+        }
+      },
+*/
+// 3. On export accuracy decreased to 6 digits to reduce file size (thanks to 'kurtz le pirate').
+// 4. Export format fixes (thanks to 'jr').
 
+//
+// Known issues:
+// 1. On import GLB/GLTF groups are not supported yes , so some issues are possibe
+//    (ex. 'Ingenuity Mars Helicopter.glb' from NASA collection)
+//
 // TODO
 //
 // - Check exported material with vertex colors ('skeleton' ?)
@@ -39,19 +54,20 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-// const DEFAULT_MODEL = './data/models/test_ring.glb';
+const DEFAULT_MODEL = './data/models/test_ring.glb';
+// const DEFAULT_MODEL = './data/models/test_ring.gltf';
 // const DEFAULT_MODEL = 'data/models/emerald_ring.glb';
 // const DEFAULT_MODEL = 'data/models/teapot.glb';
 // const DEFAULT_MODEL = 'data/models/hubble.glb';
 // const DEFAULT_MODEL = 'data/models/cube.fbx';
-const DEFAULT_MODEL = 'data/models/pingouin.obj';
-//const DEFAULT_MODEL = 'data/models/onion.fbx';
+// const DEFAULT_MODEL = 'data/models/pingouin.obj';
+// const DEFAULT_MODEL = 'data/models/onion.fbx';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/hand.obj';
 
 const PATH_MATCAPS   = './data/materials/';
-const DEFAULT_MATCAP = "M_bright_gold_metal";
-const DEFAULT_POVMAT = "M_bright_gold_metal";
+const DEFAULT_POVMAT = "M_light_tan_dull";
+const DEFAULT_SELECTED = "M_yellow_green_gloss";
 
 let container;
 let camera, scene, renderer;
@@ -61,7 +77,6 @@ let ocontrols;
 let bb, bs;
 
 let material, model = [];
-let matcapName = DEFAULT_MATCAP;
 let matcap;
 let povmat = DEFAULT_POVMAT; 
 let curMatcapBut;
@@ -110,8 +125,8 @@ async function init() {
   // Load default model
   await createMaterial();
   await loadModel({model: DEFAULT_MODEL});
-  curMatcapBut = document.getElementById("M_dark_gold_metal");
-  await selectMatcap(curMatcapBut);
+  curMatcapBut = document.getElementById(DEFAULT_SELECTED);
+  await selectMat(curMatcapBut);
 
   // Defaults
   cb_DisplayAxis.click();
@@ -251,7 +266,7 @@ async function createMaterial() {
   }
 */
 
-  matcap = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcapName + ".png");
+  matcap = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + povmat + ".png");
   matcap.colorSpace = THREE.SRGBColorSpace;
   material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} );
 
@@ -296,7 +311,7 @@ window.updateVertexColors = updateVertexColors;
 //
 // Apply matcap
 //
-async function selectMatcap(button) {
+async function selectMat(button) {
   if(curMatcapBut)
     curMatcapBut.style.outline = "1px solid #fff";
 
@@ -304,8 +319,8 @@ async function selectMatcap(button) {
   button.style.outlineOffset = "-1px";
   curMatcapBut = button;
 
-  povmat = matcapName = button.id;
-  matcap = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcapName + ".png");
+  povmat = button.id;
+  matcap = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + povmat + ".png");
   if(fill) {
     for(let i=0; i<model.length; i++) {
       if(model[i].material.matcap)
@@ -319,7 +334,7 @@ async function selectMatcap(button) {
     }
   }
 }
-window.selectMatcap = selectMatcap;
+window.selectMat = selectMat;
 
 //
 // Display normals
