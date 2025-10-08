@@ -1,5 +1,6 @@
 // TODO
 //
+// - 12 matcaps
 // - Allow replacing materials dialog
 // - Help in about
 // - Save GLB/GLTF (with material tags)
@@ -177,14 +178,13 @@ async function loadModel(args)
     meshes[i].material = material.clone();
     meshes[i].material.needsUpdate = true;
     meshes[i].name = "part" + (i + 1);
-    console.log(meshes[i].userData); // DEBUG
     if(meshes[i].userData.povray.material == undefined)
        meshes[i].userData.povray.material = povmat;
     model.push(meshes[i]);
     scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
   }
-  console.log(model[0].userData); // DEBUG
+  //console.log(model[0].userData); // DEBUG
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
   //console.log(model.geometry.getAttribute( 'position' ));
@@ -235,7 +235,7 @@ async function createMaterial() {
   }
 */
 
-  matcap = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcapName + "_mcap.png");
+  matcap = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcapName + ".png");
   matcap.colorSpace = THREE.SRGBColorSpace;
   material = new THREE.MeshMatcapMaterial( {matcap: matcap, side: THREE.DoubleSide} );
 
@@ -286,9 +286,8 @@ async function selectMatcap(button) {
   button.style.outlineOffset = "-1px";
   curMatcapBut = button;
 
-  matcapName = button.id;
-  povmat = button.name;
-  matcap = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcapName + "_mcap.png");
+  povmat = matcapName = button.id;
+  matcap = await AsyncLoader.loadTextureAsync(PATH_MATCAPS + matcapName + ".png");
   if(fill) {
     for(let i=0; i<model.length; i++) {
       if(model[i].material.matcap)
