@@ -4,9 +4,9 @@
 // URL: https://povlab.yesbird.online/studio/
 //
 //
-#version 3.7;
+#version 3.8;
 global_settings{
-  assumed_gamma 2.2
+  assumed_gamma 1.8
 /*
   radiosity {
     pretrace_start 0.08           // start pretrace at this size
@@ -74,7 +74,7 @@ camera { perspective angle 50
 // -----------------------------------------------------------------------------------------
 //                      L I G H T S
 //------------------------------------------------------------------------------------------ 
-#declare power = 0.3;
+#declare power = 0.18;
 
 #declare light_camera =
 light_source {
