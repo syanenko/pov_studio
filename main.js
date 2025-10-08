@@ -1,5 +1,6 @@
 // TODO
 //
+// - Assign matcap to mesh on loading GLG with material tags
 // - 12 matcaps
 // - Allow replacing materials dialog
 // - Check GLB hierarchy (Ingenuity Mars Helicopter.glb)
@@ -175,6 +176,7 @@ async function loadModel(args)
   }
   
   bb = new THREE.Box3();
+  console.log(meshes); // DEBUG
   for (let i = 0; i < meshes.length; i++) {
     meshes[i].geometry.deleteAttribute( 'normal' );
     meshes[i].geometry = BufferGeometryUtils.mergeVertices(meshes[i].geometry);
@@ -183,13 +185,14 @@ async function loadModel(args)
     meshes[i].material = material.clone();
     meshes[i].material.needsUpdate = true;
     meshes[i].name = "part" + (i + 1);
-    if(meshes[i].userData.povray.material == undefined)
-       meshes[i].userData.povray.material = povmat;
+    if(meshes[i].userData.povray)
+      if(meshes[i].userData.povray.material == undefined)
+        meshes[i].userData.povray.material = povmat;
     model.push(meshes[i]);
     scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
   }
-  //console.log(model[0].userData); // DEBUG
+  // console.log(model[0].userData); // DEBUG
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
   //console.log(model.geometry.getAttribute( 'position' ));
