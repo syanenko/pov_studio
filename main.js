@@ -207,15 +207,32 @@ async function loadModel(args)
     meshes[i].material = material.clone();
     meshes[i].material.needsUpdate = true;
     meshes[i].name = "part" + (i + 1);
+
     if(!meshes[i].userData.povray)
       meshes[i].userData.povray = [];
-    if(meshes[i].userData.povray.material == undefined)
+    if(meshes[i].userData.povray.material == undefined) {
       meshes[i].userData.povray.material = povmat;
+    } else { // Load materials
+      if(meshes[i].material.matcap)
+        meshes[i].material.matcap.dispose();
+
+      let mc, path = PATH_MATCAPS + meshes[i].userData.povray.material + ".png";
+      try {
+        mc = await AsyncLoader.loadTextureAsync(path);
+      } catch(err) {}
+      
+      if(mc) {
+        meshes[i].material.matcap = mc;
+        meshes[i].material.matcap.colorSpace = THREE.SRGBColorSpace;
+        meshes[i].material.matcap.needsUpdate = true;
+      }
+    }
     model.push(meshes[i]);
     scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
   }
-  // console.log(model[0].userData); // DEBUG
+
+  //console.log(model[0].userData); // DEBUG
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
   //console.log(model.geometry.getAttribute( 'position' ));
@@ -309,7 +326,7 @@ async function updateVertexColors(checked) {
 window.updateVertexColors = updateVertexColors;
 
 //
-// Apply matcap
+// Select material
 //
 async function selectMat(button) {
   if(curMatcapBut)

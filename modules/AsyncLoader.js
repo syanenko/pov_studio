@@ -89,9 +89,7 @@ AsyncLoader.loadSTLAsync = (url) => {
 
 AsyncLoader.loadTextureAsync = (url) => {
     return new Promise((resolve, reject) => {
-        AsyncLoader.textureLoader.load(url, (tex) => {
-            resolve(tex);
-        })
+        AsyncLoader.textureLoader.load(url, (tex) => { resolve(tex); }, undefined, ( err ) => { reject( "Error loading texture" ); })
     });
 }
 
