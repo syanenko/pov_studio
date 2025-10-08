@@ -1,3 +1,8 @@
+// New in this release
+//
+// 1. Reduced accuracy to 6 digits in export to reduce file size ('kurtz le pirate')
+//
+
 // TODO
 //
 // - Check exported material with vertex colors ('skeleton' ?)
@@ -39,12 +44,13 @@ import { POVExporter } from './modules/POVExporter.js';
 // const DEFAULT_MODEL = 'data/models/teapot.glb';
 // const DEFAULT_MODEL = 'data/models/hubble.glb';
 // const DEFAULT_MODEL = 'data/models/cube.fbx';
-const DEFAULT_MODEL = 'data/models/onion.fbx';
+const DEFAULT_MODEL = 'data/models/pingouin.obj';
+//const DEFAULT_MODEL = 'data/models/onion.fbx';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/hand.obj';
 
 const PATH_MATCAPS   = './data/materials/';
-const DEFAULT_MATCAP = "skeleton";
+const DEFAULT_MATCAP = "M_bright_gold_metal";
 const DEFAULT_POVMAT = "M_bright_gold_metal";
 
 let container;
@@ -104,7 +110,7 @@ async function init() {
   // Load default model
   await createMaterial();
   await loadModel({model: DEFAULT_MODEL});
-  curMatcapBut = document.getElementById("skeleton");
+  curMatcapBut = document.getElementById("M_dark_gold_metal");
   await selectMatcap(curMatcapBut);
 
   // Defaults
@@ -178,7 +184,6 @@ async function loadModel(args)
   }
   
   bb = new THREE.Box3();
-  console.log(meshes); // DEBUG
   for (let i = 0; i < meshes.length; i++) {
     meshes[i].geometry.deleteAttribute( 'normal' );
     meshes[i].geometry = BufferGeometryUtils.mergeVertices(meshes[i].geometry);
@@ -308,8 +313,9 @@ async function selectMatcap(button) {
       model[i].material.matcap = matcap;
       model[i].material.matcap.colorSpace = THREE.SRGBColorSpace;
       model[i].material.matcap.needsUpdate = true;
-      if(model[i].userData.povray.material == undefined)
-         model[i].userData.povray.material = povmat;
+      if(!model[i].userData.povray)
+        model[i].userData.povray = [];
+      model[i].userData.povray.material = povmat;
     }
   }
 }
@@ -439,7 +445,6 @@ function saveString( text, filename ) {
 function download() {
   const exporter = new POVExporter();
   const result = exporter.parse( scene, material.flatShading, material.vertexColors, bb, bs );
-  console.log(material.vertexColors);
   saveString( result, 'model.inc' );
 }
 window.download = download;
