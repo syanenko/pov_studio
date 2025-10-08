@@ -41,22 +41,23 @@ global_settings{
 #default{ finish{ ambient 0.1 diffuse 0.9 }}
 
 
-//#include "colors.inc"
-//#include "stones.inc"
+#include "colors.inc"
+#include "stones.inc"
 #include "textures.inc"
-// #include "glass.inc"
+#include "glass.inc"
 
-//#include "materials/default_materials.inc" 
-//#include "materials/materials_wood.inc"
+#include "materials/default_materials.inc" 
+#include "materials/materials_wood.inc"
 
 
 // -----------------------------------------------------------------------------------------
 //                      M O D E L
 //------------------------------------------------------------------------------------------ 
 object {
-  #include "cube_vc.inc" // Not works - want to make it glassy.
+  // #include "cube_vc.inc" // Not works - want to make it glassy.
   // #include "cube.inc" // Works
-  material { M_Dark_Green_Glass }
+  #include "model.inc"
+  // material { M_Dark_Green_Glass }
   // pigment {rgb 1}     
 
   photons {target refraction on reflection on}
@@ -66,18 +67,18 @@ object {
 //                      C A M E R A 
 //------------------------------------------------------------------------------------------ 
 camera { perspective angle 50
-         location  <RADIUS, RADIUS, RADIUS> * 2
+         location  <RADIUS, RADIUS, RADIUS> * 1.4
          look_at   CENTER
          right     x * image_width / image_height }
 
 // -----------------------------------------------------------------------------------------
 //                      L I G H T S
 //------------------------------------------------------------------------------------------ 
-#declare power = 0.1;
+#declare power = 0.3;
 
-#declare light_left =
+#declare light_camera =
 light_source {
-    <0,0,0> 
+    <RADIUS, RADIUS, RADIUS> * 4
     #declare light_color = color red 1 green 1 blue 1 ;                      
     light_color * power
     area_light
@@ -89,15 +90,14 @@ light_source {
     orient                     
     fade_distance 600
     fade_power 2     
-    translate <0,0,1> * 4
     photons {reflection on refraction on }
 }   
-light_left
+light_camera
 
 
 #declare light_right =
 light_source {
-    <0,0,0> 
+    <0,0,1> * 10
     #declare light_color = color red 1 green 1 blue 1 ;                      
     light_color * power
     area_light
@@ -109,14 +109,13 @@ light_source {
     orient                     
     fade_distance 400
     fade_power 2     
-    translate <1,0,0> * 4
     photons {reflection on refraction on }
 }   
 light_right
 
-#declare light_top =
+#declare light_left =
 light_source {
-    <0,0,0> 
+    <0,0,1> * 10
     #declare light_color = color red 1 green 1 blue 1 ;                      
     light_color * power
     area_light
@@ -128,7 +127,25 @@ light_source {
     orient                     
     fade_distance 400
     fade_power 2     
-    translate <0,1,0> * 4
+    photons {reflection on refraction on }
+}   
+//light_left
+
+
+#declare light_top =
+light_source {
+     <0,1,0> * 10
+    #declare light_color = color red 1 green 1 blue 1 ;                      
+    light_color * power
+    area_light
+    <50, 0, 0> <0, 0, 50>         
+    4, 4                          
+    adaptive 0                    
+    jitter                        
+    circular                      
+    orient                     
+    fade_distance 400
+    fade_power 2     
     shadowless 
     photons {reflection on refraction on }
 }   

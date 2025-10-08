@@ -1588,11 +1588,14 @@ global_settings {
 //  486 - M_glass_swirl_A 
 //  481 - M_glass_green_water
 //  475 - M_glass_blue
+//  478 - M_glass_wripple
+//  479 - M_glass_gold_frost
+
   
 //----------------------------------------------------------
 //                      V I E W   T H I S   S A M P L E
 //----------------------------------------------------------
 // #declare current_sample = clock;
-#declare current_sample = 475;
+#declare current_sample = 39;
 #include "matcap.inc"  
 

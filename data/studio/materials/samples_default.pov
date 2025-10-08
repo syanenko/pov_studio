@@ -1589,6 +1589,6 @@ global_settings {
 //----------------------------------------------------------
 //                      V I E W   T H I S   S A M P L E
 //----------------------------------------------------------
-#declare current_sample = 294;
+#declare current_sample = 218;
 #include "view_samples.inc"  
 //#include "view_samples_vertical.inc"
