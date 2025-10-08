@@ -13,6 +13,8 @@ global_settings{ assumed_gamma 1.0 }
 
 object {
   #include "model.inc"
+  // rotate <200, -100, 200>
+  rotate <230, -90, 200>
 }
 
 camera { perspective angle 55
@@ -60,7 +62,7 @@ light_source {
     orient                     
     fade_distance 400
     fade_power 2     
-    translate <200,200,-150>
+    translate <200,-200,150>
 }   
 light_right 
 
@@ -79,10 +81,10 @@ light_source {
     orient                     
     fade_distance 400
     fade_power 2     
-    translate <-100,100,0> 
+    translate <0,100,0> 
     shadowless 
 }   
-//light_under 
+light_under 
 
 
 // Environment
