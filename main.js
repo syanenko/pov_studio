@@ -1,7 +1,9 @@
 // TODO
 //
+// - Check exported material with vertex colors ('skeleton' ?)
 // - Assign matcap to mesh on loading GLG with material tags
 // - 12 matcaps
+// - Reduce number of digits in export
 // - Allow replacing materials dialog
 // - Check GLB hierarchy (Ingenuity Mars Helicopter.glb)
 // - Help in about
@@ -32,12 +34,12 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-const DEFAULT_MODEL = './data/models/test_ring.glb';
+// const DEFAULT_MODEL = './data/models/test_ring.glb';
 // const DEFAULT_MODEL = 'data/models/emerald_ring.glb';
 // const DEFAULT_MODEL = 'data/models/teapot.glb';
 // const DEFAULT_MODEL = 'data/models/hubble.glb';
 // const DEFAULT_MODEL = 'data/models/cube.fbx';
-// const DEFAULT_MODEL = 'data/models/two_cubes_test.obj';
+const DEFAULT_MODEL = 'data/models/onion.fbx';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/hand.obj';
 
@@ -185,9 +187,10 @@ async function loadModel(args)
     meshes[i].material = material.clone();
     meshes[i].material.needsUpdate = true;
     meshes[i].name = "part" + (i + 1);
-    if(meshes[i].userData.povray)
-      if(meshes[i].userData.povray.material == undefined)
-        meshes[i].userData.povray.material = povmat;
+    if(!meshes[i].userData.povray)
+      meshes[i].userData.povray = [];
+    if(meshes[i].userData.povray.material == undefined)
+      meshes[i].userData.povray.material = povmat;
     model.push(meshes[i]);
     scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
@@ -276,6 +279,8 @@ window.updateShading = updateShading;
 // Update vertex colors
 //
 async function updateVertexColors(checked) {
+  material.vertexColors = checked;
+  material.needsUpdate = true;
   for(let i=0; i<model.length; i++) {
     model[i].material.vertexColors = checked;
     model[i].material.needsUpdate = true;
@@ -434,6 +439,7 @@ function saveString( text, filename ) {
 function download() {
   const exporter = new POVExporter();
   const result = exporter.parse( scene, material.flatShading, material.vertexColors, bb, bs );
+  console.log(material.vertexColors);
   saveString( result, 'model.inc' );
 }
 window.download = download;
@@ -459,6 +465,8 @@ function onMouseDown(event) {
       io.material.matcap = matcap;
       io.material.matcap.colorSpace = THREE.SRGBColorSpace;
       io.material.matcap.needsUpdate = true;
+      if(!io.userData.povray)
+        io.userData.povray = []
       io.userData.povray.material = povmat;
     }
   } else {

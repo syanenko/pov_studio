@@ -6,15 +6,15 @@
 //
 #version 3.7;
 global_settings{
-  assumed_gamma 1.0
+  assumed_gamma 2.2
 /*
   radiosity {
     pretrace_start 0.08           // start pretrace at this size
     pretrace_end   0.04           // end pretrace at this size
-    count 1                      // higher -> higher quality (1..1600) [35]
+    count 1600                    // higher -> higher quality (1..1600) [35]
 
-    nearest_count 5               // higher -> higher quality (1..10) [5]
-    error_bound 1.8               // higher -> smoother, less accurate [1.8]
+    nearest_count 10               // higher -> higher quality (1..10) [5]
+    error_bound 1.8               // higher -> smoother,   less accurate [1.8]
     recursion_limit 3             // how much interreflections are calculated (1..5+) [3]
 
     low_error_factor .5           // reduce error_bound during last pretrace step
@@ -30,46 +30,56 @@ global_settings{
     //always_sample off           // turn sampling in final trace off [on]
     //max_sample 1.0              // maximum brightness of samples
   }
-*/
+
   photons {
-    count 50000000
+    count 10000000
     autostop 0
     jitter 0.5
   }
+*/
 }
 #default{ finish{ ambient 0.1 diffuse 0.9 }}
 
-#include "materials/default_materials.inc" 
-#include "materials/materials_wood.inc"
+
+//#include "colors.inc"
+//#include "stones.inc"
+#include "textures.inc"
+// #include "glass.inc"
+
+//#include "materials/default_materials.inc" 
+//#include "materials/materials_wood.inc"
 
 
 // -----------------------------------------------------------------------------------------
 //                      M O D E L
 //------------------------------------------------------------------------------------------ 
 object {
-  #include "model.inc"
-  // rotate <200, -100, 200>
-  rotate <230, -90, 200>
+  #include "cube_vc.inc" // Not works - want to make it glassy.
+  // #include "cube.inc" // Works
+  material { M_Dark_Green_Glass }
+  // pigment {rgb 1}     
+
   photons {target refraction on reflection on}
 }
 
 // -----------------------------------------------------------------------------------------
 //                      C A M E R A 
 //------------------------------------------------------------------------------------------ 
-camera { perspective angle 55
-         location  <RADIUS, RADIUS, RADIUS> * 1.1
+camera { perspective angle 50
+         location  <RADIUS, RADIUS, RADIUS> * 2
          look_at   CENTER
          right     x * image_width / image_height }
 
 // -----------------------------------------------------------------------------------------
 //                      L I G H T S
 //------------------------------------------------------------------------------------------ 
+#declare power = 0.1;
 
 #declare light_left =
 light_source {
     <0,0,0> 
     #declare light_color = color red 1 green 1 blue 1 ;                      
-    light_color * 1                  
+    light_color * power
     area_light
     <50, 0, 0> <0, 0, 50>         
     4, 4                          
@@ -79,7 +89,7 @@ light_source {
     orient                     
     fade_distance 600
     fade_power 2     
-    translate <-200,100,150>
+    translate <0,0,1> * 4
     photons {reflection on refraction on }
 }   
 light_left
@@ -89,7 +99,7 @@ light_left
 light_source {
     <0,0,0> 
     #declare light_color = color red 1 green 1 blue 1 ;                      
-    light_color * 1                  
+    light_color * power
     area_light
     <50, 0, 0> <0, 0, 50>         
     4, 4                          
@@ -99,16 +109,16 @@ light_source {
     orient                     
     fade_distance 400
     fade_power 2     
-    translate <200,-200,150>
+    translate <1,0,0> * 4
     photons {reflection on refraction on }
 }   
 light_right
 
-#declare light_under =
+#declare light_top =
 light_source {
     <0,0,0> 
     #declare light_color = color red 1 green 1 blue 1 ;                      
-    light_color * .2                  
+    light_color * power
     area_light
     <50, 0, 0> <0, 0, 50>         
     4, 4                          
@@ -118,11 +128,11 @@ light_source {
     orient                     
     fade_distance 400
     fade_power 2     
-    translate <0,100,0> 
+    translate <0,1,0> * 4
     shadowless 
     photons {reflection on refraction on }
 }   
-light_under
+light_top
 
 // -----------------------------------------------------------------------------------------
 //                      S K Y
@@ -154,7 +164,7 @@ object {
 }  
 #end
 
-object { bg_sphere (<4000,4000,4000>, <0,100,0>, 275)
+object { bg_sphere (<4000,4000,4000>, <0,0,0>, 275)
   no_image 
-  scale <-1,1,1> }
+  scale <1,1,1> / 100}
 //------------------------------------------------------------------------------------------
