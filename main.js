@@ -3,7 +3,6 @@
 //
 // TODO
 //
-// - Display model stat 
 // - inc: header:
 // - save the pov-lines how to use the code in a docu-block in the upper part of the file
 //

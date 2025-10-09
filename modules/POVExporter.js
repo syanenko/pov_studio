@@ -58,7 +58,7 @@ class POVExporter {
           // transform the vertex to world space
           vertex.applyMatrix4( mesh.matrixWorld );
           // transform the vertex to export format
-          output += '  <' + vertex.x.toFixed(6) + ',' + vertex.y.toFixed(6) + ',' + vertex.z.toFixed(6) + '>,\n'
+          output += '  <' + vertex.x.toFixed(8) + ',' + vertex.y.toFixed(8) + ',' + vertex.z.toFixed(8) + '>,\n'
         }
       }
       output = output.slice(0, -2) + '  \n}\n';
@@ -87,7 +87,7 @@ class POVExporter {
 
           // transform the normal to export format
           // output += 'vn ' + normal.x + ' ' + normal.y + ' ' + normal.z + '\n';
-          output += '  <' + normal.x.toFixed(6) + ',' + normal.y.toFixed(6) + ',' + normal.z.toFixed(6) + '>,\n'
+          output += '  <' + normal.x.toFixed(8) + ',' + normal.y.toFixed(8) + ',' + normal.z.toFixed(8) + '>,\n'
         }
         output += '  }\n';
       }
@@ -98,7 +98,7 @@ class POVExporter {
         for ( let i = 0; i<colors.count; i++ ) {
           color.fromBufferAttribute( colors, i );
           ColorManagement.fromWorkingColorSpace( color, SRGBColorSpace );
-          output += 'texture{pigment{rgb <' + color.r.toFixed(6) + ',' + color.g.toFixed(6) + ',' + color.b.toFixed(6) +'>}}\n'
+          output += 'texture{pigment{rgb <' + color.r.toFixed(8) + ',' + color.g.toFixed(8) + ',' + color.b.toFixed(8) +'>}}\n'
         }
         output += '}\n';
       }
@@ -211,14 +211,14 @@ class POVExporter {
       indexVertex += nbVertex;
     }
  */
-    output += "#declare CENTER = <"+ bs.center.x.toFixed(6) + ", " + bs.center.y.toFixed(6) + ", " + bs.center.z.toFixed(6) + ">;\n";
-    output += "#declare RADIUS = " + bs.radius.toFixed(6) + ";\n";
-    output += "#declare XMIN = " + bb.min.x.toFixed(6) + ";\n";
-    output += "#declare XMAX =" + bb.max.x.toFixed(6) + ";\n";
-    output += "#declare YMIN =" + bb.min.y.toFixed(6) + ";\n";
-    output += "#declare YMAX =" + bb.max.y.toFixed(6) + ";\n";
-    output += "#declare ZMIN =" + bb.min.z.toFixed(6) + ";\n";
-    output += "#declare ZMAX =" + bb.max.z.toFixed(6) + ";\n\n";
+    output += "#declare CENTER = <"+ bs.center.x.toFixed(8) + ", " + bs.center.y.toFixed(8) + ", " + bs.center.z.toFixed(8) + ">;\n";
+    output += "#declare RADIUS = " + bs.radius.toFixed(8) + ";\n";
+    output += "#declare XMIN = " + bb.min.x.toFixed(8) + ";\n";
+    output += "#declare XMAX =" + bb.max.x.toFixed(8) + ";\n";
+    output += "#declare YMIN =" + bb.min.y.toFixed(8) + ";\n";
+    output += "#declare YMAX =" + bb.max.y.toFixed(8) + ";\n";
+    output += "#declare ZMIN =" + bb.min.z.toFixed(8) + ";\n";
+    output += "#declare ZMAX =" + bb.max.z.toFixed(8) + ";\n\n";
 
     object.traverse( function ( child ) {
       if ( child.isMesh === true && child.name.substring(0,4) == "part" ) {
