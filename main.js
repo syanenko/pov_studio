@@ -208,8 +208,8 @@ async function loadModel(args)
   }
   // Display stat
   document.getElementById("stat").innerHTML = "Meshes " + meshes.length +
-                                              " | Vertices " + vcount +
-                                              " | Faces " + fcount;
+                                              " / Vertices " + vcount +
+                                              " / Faces " + fcount;
   //console.log(meshes[i].userData); // DEBUG
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
