@@ -1,7 +1,6 @@
 //
 // Run: sudo /opt/lampp/manager-linux-x64.run
 //
-//
 // TODO
 //
 // - inc: header:
@@ -12,13 +11,6 @@
 //
 // - Help in about
 // - Display model stat 
-// - Save GLB/GLTF (with material tags)
-// {
-//  "povray": {
-//    "material": "M_glass_green_water"
-//  }
-// }
-//
 // - Check GLB hierarchy (Ingenuity Mars Helicopter.glb)
 // - Check selector shifting
 // - Materials: add gems
@@ -28,9 +20,8 @@ import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
-
 import { AsyncLoader } from './modules/AsyncLoader.js';
-import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
+import { GLTFExporter } from './modules/GLTFExporter.js';
 import { POVExporter } from './modules/POVExporter.js';
 
 const DEFAULT_MODEL = 'data/models/pingouin.obj'; 
