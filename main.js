@@ -1,33 +1,17 @@
 //
-// New in this release
+// Run: sudo /opt/lampp/manager-linux-x64.run
 //
-// 1. Start of materials library: 12 items from Mikes Miller's collection.
-// 2. Processing materials tags in "extras" section of GLB/GLTF to support external material assigment (for ex, in Blender).
-/*
-      "extras": {
-        "povray": {
-          "material": "M_glass_green_water"
-        }
-      },
-*/
-// 3. On export accuracy decreased to 6 digits to reduce file size (thanks to 'kurtz le pirate').
-// 4. Export format fixes (thanks to 'jr').
-
-//
-// Known issues:
-// 1. On import GLB/GLTF groups are not supported yes , so some issues are possibe
-//    (ex. 'Ingenuity Mars Helicopter.glb' from NASA collection)
 //
 // TODO
 //
-// - Check exported material with vertex colors ('skeleton' ?)
-// - Assign matcap to mesh on loading GLG with material tags
-// - 12 matcaps
-// - Reduce number of digits in export
-// - Allow replacing materials dialog
-// - Check GLB hierarchy (Ingenuity Mars Helicopter.glb)
-// - Help in about
+// - inc: header:
+// - save the pov-lines how to use the code in a docu-block in the upper part of the file
 //
+// - save the name of the original file also somewhere (have now many files in my
+//   download-folder like "model (4).inc" and dont know whats in it.
+//
+// - Help in about
+// - Display model stat 
 // - Save GLB/GLTF (with material tags)
 // {
 //  "povray": {
@@ -35,15 +19,9 @@
 //  }
 // }
 //
+// - Check GLB hierarchy (Ingenuity Mars Helicopter.glb)
 // - Check selector shifting
 // - Materials: add gems
-//
-// - inc: header:
-// - save the pov-lines how to use the code in a docu-block in the upper part of the file
-// - save the name of the original file also somewhere (have now many files in my
-//   download-folder like "model (4).inc" and dont know whats in it.
-//
-// - vertexColors Threejs vs ZBrush (?)
 // - vertexColors + flatShading (?)
 //
 import * as THREE from 'three';
@@ -54,13 +32,13 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-const DEFAULT_MODEL = './data/models/test_ring.glb';
+const DEFAULT_MODEL = 'data/models/pingouin.obj'; 
+// const DEFAULT_MODEL = './data/models/test_ring.glb';
 // const DEFAULT_MODEL = './data/models/test_ring.gltf';
 // const DEFAULT_MODEL = 'data/models/emerald_ring.glb';
 // const DEFAULT_MODEL = 'data/models/teapot.glb';
 // const DEFAULT_MODEL = 'data/models/hubble.glb';
 // const DEFAULT_MODEL = 'data/models/cube.fbx';
-// const DEFAULT_MODEL = 'data/models/pingouin.obj';
 // const DEFAULT_MODEL = 'data/models/onion.fbx';
 // const DEFAULT_MODEL = 'data/models/test_spiral.stl';
 // const DEFAULT_MODEL = 'data/models/hand.obj';
