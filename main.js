@@ -203,7 +203,7 @@ async function loadModel(args)
     scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
 
-    vcount += model[i].geometry.attributes.position.count;
+    vcount += model[i].geometry.index.count;
     fcount += model[i].geometry.index.count / 3;
   }
   // Display stat
