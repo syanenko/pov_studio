@@ -3,6 +3,7 @@
 //
 // TODO
 //
+// - Display model stat 
 // - inc: header:
 // - save the pov-lines how to use the code in a docu-block in the upper part of the file
 //
@@ -10,7 +11,6 @@
 //   download-folder like "model (4).inc" and dont know whats in it.
 //
 // - Help in about
-// - Display model stat 
 // - Check GLB hierarchy (Ingenuity Mars Helicopter.glb)
 // - Check selector shifting
 // - Materials: add gems
@@ -169,6 +169,7 @@ async function loadModel(args)
   }
   
   bb = new THREE.Box3();
+  let vcount = 0, fcount = 0;
   for (let i = 0; i < meshes.length; i++) {
     meshes[i].geometry.deleteAttribute( 'normal' );
     meshes[i].geometry = BufferGeometryUtils.mergeVertices(meshes[i].geometry);
@@ -202,8 +203,14 @@ async function loadModel(args)
     model.push(meshes[i]);
     scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
-  }
 
+    vcount += model[i].geometry.attributes.position.count;
+    fcount += model[i].geometry.index.count / 3;
+  }
+  // Display stat
+  document.getElementById("stat").innerHTML = "Meshes " + meshes.length +
+                                              " | Vertices " + vcount +
+                                              " | Faces " + fcount;
   //console.log(meshes[i].userData); // DEBUG
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);

@@ -22,7 +22,7 @@
     </script> 
 
     <img id="logo" src="data/images/logo_40x40.png" alt="Logo" width="40" height="40" onclick="about.inert=true;  about.showModal(); about.inert=false;">
-    <div id="text" onclick="about.inert=true;  about.showModal(); about.inert=false;">POV-Ray Studio 0.10b</div>
+    <div id="text" onclick="about.inert=true;  about.showModal(); about.inert=false;">POV-Ray Studio 0.11b</div>
     <img id="help" src="data/images/help.png" alt="Help" onclick="about.inert=true;  about.showModal(); about.inert=false;">
     <hr>
 
@@ -129,6 +129,11 @@
       <input id="upload_button"   type="image" src='data/images/upload_icon.png'   style='position: relative; padding-top: 15px;'>
       <input id="download_button" type="image" src='data/images/download_icon.png' onclick="download_dlg.inert=true; download_dlg.showModal(); download_dlg.inert=false;" style='position: relative; padding-top: 5px;'>
     </div>
+    <!-- Controls -->
+    <div style='position: absolute; top:65px; left:130px; width:800px; z-index:4; opacity:60%; font-size: 1.1rem;'>
+      <div id="stat">Meshes 0 | Vertices 0 | Faces 0</div>
+    </div>
+
     <!-- Parts -->
     <div id="parts" style="position: absolute; top:300px; left:20px; width:130px"></div>
 
