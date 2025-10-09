@@ -39,6 +39,15 @@
       </form>
     </dialog>
 
+    <!-- Download -->
+    <dialog id="download_dlg" class="dialog" style="text-align: center;">
+      <div style="font-size: 20px; font-style: italic; color:#ff9127; padding-bottom: 10px;">Download</div>
+      <button id="glb"  class="control" onclick="window.download(this.id);download_dlg.close()" title="GLB">GLB</button>
+      <button id="gltf" class="control" onclick="window.download(this.id);download_dlg.close()" title="GLTF">GLTF</button>
+      <button id="pov"  class="control" onclick="window.download(this.id);download_dlg.close()" title="POV">POV</button>
+      <button id="cancel" class="control" onclick="download_dlg.close()" title="Cancel">Cancel</button>
+    </dialog>
+
     <!-- Main -->
     <script type="module" src="main.js"></script>
  
@@ -118,7 +127,7 @@
     <!-- Controls -->
     <div style='position: absolute; top:65px; left:20px; width:90px; z-index:4;'>
       <input id="upload_button"   type="image" src='data/images/upload_icon.png'   style='position: relative; padding-top: 15px;'>
-      <input id="download_button" type="image" src='data/images/download_icon.png' onclick="window.download()" style='position: relative; padding-top: 5px;'>
+      <input id="download_button" type="image" src='data/images/download_icon.png' onclick="download_dlg.inert=true; download_dlg.showModal(); download_dlg.inert=false;" style='position: relative; padding-top: 5px;'>
     </div>
     <!-- Parts -->
     <div id="parts" style="position: absolute; top:300px; left:20px; width:130px"></div>

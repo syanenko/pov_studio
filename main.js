@@ -30,6 +30,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
 
 import { AsyncLoader } from './modules/AsyncLoader.js';
+import { GLTFExporter } from 'three/addons/exporters/GLTFExporter.js';
 import { POVExporter } from './modules/POVExporter.js';
 
 const DEFAULT_MODEL = 'data/models/pingouin.obj'; 
@@ -187,7 +188,8 @@ async function loadModel(args)
     meshes[i].name = "part" + (i + 1);
 
     if(!meshes[i].userData.povray)
-      meshes[i].userData.povray = [];
+      meshes[i].userData.povray = {};
+
     if(meshes[i].userData.povray.material == undefined) {
       meshes[i].userData.povray.material = povmat;
     } else { // Load materials
@@ -205,12 +207,13 @@ async function loadModel(args)
         meshes[i].material.matcap.needsUpdate = true;
       }
     }
+
     model.push(meshes[i]);
     scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
   }
 
-  //console.log(model[0].userData); // DEBUG
+  //console.log(meshes[i].userData); // DEBUG
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
   //console.log(model.geometry.getAttribute( 'position' ));
@@ -324,7 +327,7 @@ async function selectMat(button) {
       model[i].material.matcap.colorSpace = THREE.SRGBColorSpace;
       model[i].material.matcap.needsUpdate = true;
       if(!model[i].userData.povray)
-        model[i].userData.povray = [];
+        model[i].userData.povray = {};
       model[i].userData.povray.material = povmat;
     }
   }
@@ -435,27 +438,57 @@ function onWindowResize() {
   renderer.setSize( window.innerWidth, window.innerHeight );
 }
 
-//
 // Download
-//
 const link = document.createElement( 'a' );
 link.style.display = 'none';
 document.body.appendChild( link );
 
+// Save
 function save( blob, filename ) {
   link.href = URL.createObjectURL( blob );
   link.download = filename;
   link.click();
 }
 
+// Save string
 function saveString( text, filename ) {
   save( new Blob( [ text ], { type: 'text/plain' } ), filename );
 }
 
-function download() {
-  const exporter = new POVExporter();
-  const result = exporter.parse( scene, material.flatShading, material.vertexColors, bb, bs );
-  saveString( result, 'model.inc' );
+// download
+function download(type) {
+  if(type == "obj") { // OBJ
+    const exporter = new OBJExporter();
+    const result = exporter.parse( surface );
+    saveString( result, 'surface.obj' );
+  } else if(type == "glb") { // GLB
+    const exporter = new GLTFExporter();
+    const options = {
+        binary: true,
+    };
+    exporter.parse(scene, function (result) {
+      const blob = new Blob([result], { type: 'application/octet-stream' });
+      save( blob, 'model.glb' );
+    }, function (error) {
+        console.error('An error happened during GLB export:', error);
+    }, options);
+  } else if(type == "gltf") { // GLTF
+    const exporter = new GLTFExporter();
+    const options = {
+        binary: false,
+    };
+    exporter.parse(scene, function (result) {
+      const json = JSON.stringify(result, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      save( blob, 'model.gltf' );
+    }, function (error) {
+       console.error('An error happened during GLTF export:', error);
+    }, options);
+  } else if(type == "pov") { // POV
+    const exporter = new POVExporter();
+    const result = exporter.parse( scene, material.flatShading, material.vertexColors, bb, bs );
+    saveString( result, 'model.inc' );
+  }
 }
 window.download = download;
 
@@ -481,7 +514,7 @@ function onMouseDown(event) {
       io.material.matcap.colorSpace = THREE.SRGBColorSpace;
       io.material.matcap.needsUpdate = true;
       if(!io.userData.povray)
-        io.userData.povray = []
+        io.userData.povray = {}
       io.userData.povray.material = povmat;
     }
   } else {
