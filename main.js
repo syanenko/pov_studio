@@ -3,6 +3,7 @@
 //
 // TODO
 //
+// - Block raycasting when dialogs active
 // - inc: header:
 // - save the pov-lines how to use the code in a docu-block in the upper part of the file
 //
@@ -23,16 +24,17 @@ import { AsyncLoader } from './modules/AsyncLoader.js';
 import { GLTFExporter } from './modules/GLTFExporter.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-const DEFAULT_MODEL = 'data/models/pingouin.obj'; 
-// const DEFAULT_MODEL = './data/models/test_ring.glb';
-// const DEFAULT_MODEL = './data/models/test_ring.gltf';
-// const DEFAULT_MODEL = 'data/models/emerald_ring.glb';
-// const DEFAULT_MODEL = 'data/models/teapot.glb';
-// const DEFAULT_MODEL = 'data/models/hubble.glb';
-// const DEFAULT_MODEL = 'data/models/cube.fbx';
-// const DEFAULT_MODEL = 'data/models/onion.fbx';
-// const DEFAULT_MODEL = 'data/models/test_spiral.stl';
-// const DEFAULT_MODEL = 'data/models/hand.obj';
+// let DEFAULT_MODEL = 'pingouin.obj'; 
+// let DEFAULT_MODEL = 'test_ring.glb';
+// let DEFAULT_MODEL = 'test_ring.gltf';
+// let DEFAULT_MODEL = 'emerald_ring.glb';
+let DEFAULT_MODEL = 'teapot.glb';
+// let DEFAULT_MODEL = 'hubble.glb';
+// let DEFAULT_MODEL = 'cube.fbx';
+// let DEFAULT_MODEL = 'onion.fbx';
+// let DEFAULT_MODEL = 'test_spiral.stl';
+// let DEFAULT_MODEL = 'hand.obj';
+DEFAULT_MODEL = './data/models/' + DEFAULT_MODEL;
 
 const PATH_MATCAPS   = './data/materials/';
 const DEFAULT_POVMAT = "M_light_tan_dull";

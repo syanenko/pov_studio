@@ -13,13 +13,13 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js"
 const progress = document.getElementById('progress-bar');
 const progressContainer = document.getElementById('progress-container');
 const progressLabel = document.getElementById('progress-label');
-
 const loadingManager = new THREE.LoadingManager();
 
 loadingManager.onStart = function (url, loaded, total) {
   // console.log('Loading process has started!');
   // Display it on upload button click
-  // progressBarContainer.style.display = 'flex';
+  progressContainer.style.display = 'flex';
+
   progress.value = 0;
   progressLabel.innerHTML = "Parsing...";
 };

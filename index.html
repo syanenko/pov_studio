@@ -79,10 +79,10 @@
         var formData = new FormData();
 
         // Get the selected file
-        var model   = form.querySelector('[name="model"]'  ).files[0];
+        var model = form.querySelector('[name="model"]').files[0];
 
         // Add the file to the FormData object
-        formData.append('model',   model);
+        formData.append('model', model);
 
         // XMLHttpRequest object
         var xhr = new XMLHttpRequest();
@@ -124,11 +124,22 @@
 
     <!-- Model -->
     <div id="container"></div>
+
     <!-- Controls -->
     <div style='position: absolute; top:65px; left:20px; width:90px; z-index:4;'>
       <input id="upload_button"   type="image" src='data/images/upload_icon.png'   style='position: relative; padding-top: 15px;'>
       <input id="download_button" type="image" src='data/images/download_icon.png' onclick="download_dlg.inert=true; download_dlg.showModal(); download_dlg.inert=false;" style='position: relative; padding-top: 5px;'>
+      <input id="model_1" type="image" src='data/images/model_icon_1.png' class="icon" onclick="window.loadModel({model: './data/models/teapot.glb'})">
+      <input id="model_2" type="image" src='data/images/model_icon_1.png' class="icon" onclick="window.loadModel({model: './data/models/pingouin.obj'})">
+      <input id="model_3" type="image" src='data/images/model_icon_1.png' class="icon" onclick="window.loadModel({model: './data/models/test_ring.glb'})">
+      <input id="model_4" type="image" src='data/images/model_icon_1.png' class="icon" onclick="window.loadModel({model: './data/models/hand.obj'})">
     </div>
+    <script>
+      ub = document.getElementById("upload_button");
+      ub.onclick = function() { let form = document.getElementById("form_upload");
+                                form.style.visibility == "visible" ? form.style.visibility = 'hidden': form.style.visibility = "visible"; }
+    </script>
+
     <!-- Stat -->
     <div style='position: absolute; top:65px; left:130px; width:800px; z-index:4; opacity:60%; font-size: 1.1rem; font-style: italic;'>
       <div id="stat">Meshes 0 / Points 0 / Faces 0</div>
@@ -136,12 +147,6 @@
 
     <!-- Parts -->
     <div id="parts" style="position: absolute; top:300px; left:20px; width:130px"></div>
-
-    <script>
-      ub = document.getElementById("upload_button");
-      ub.onclick = function() { let form = document.getElementById("form_upload");
-                                form.style.visibility == "visible" ? form.style.visibility = 'hidden': form.style.visibility = "visible"; }
-    </script>
 
     <div style='position: absolute; top:65px; right:20px; width:200px; z-index:4;'>
 <!--  Saved
