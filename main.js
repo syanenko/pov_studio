@@ -4,6 +4,7 @@
 // TODO
 //
 // - Block raycasting when dialogs active, preserve icons
+//
 // - inc: header:
 // - save the pov-lines how to use the code in a docu-block in the upper part of the file
 //
@@ -24,11 +25,7 @@ import { AsyncLoader } from './modules/AsyncLoader.js';
 import { GLTFExporter } from './modules/GLTFExporter.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-let DEFAULT_MODEL = 'teapot.glb';
-// let DEFAULT_MODEL = 'ring.glb';
-// let DEFAULT_MODEL = 'hand.glb';
-
-DEFAULT_MODEL = './data/models/' + DEFAULT_MODEL;
+let DEFAULT_MODEL = './data/models/teapot.glb';
 
 const PATH_MATCAPS   = './data/materials/';
 const DEFAULT_POVMAT = "M_light_tan_dull";
@@ -220,7 +217,7 @@ async function loadModel(args)
   ocontrols.target.copy(bs.center);
   camera.position.set(bs.center.x,
                       bs.center.y,
-                      bs.center.z + bs.radius * 3);
+                      bs.center.z + bs.radius * 2.2);
 
   axis_len = bs.radius * 2.5;
   displayAxis(false);
