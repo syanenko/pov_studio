@@ -2,20 +2,19 @@
 // Run: sudo /opt/lampp/manager-linux-x64.run
 //
 // TODO
-//
 // - Block raycasting when dialogs active, preserve icons
 //
 // - inc: header:
 // - save the pov-lines how to use the code in a docu-block in the upper part of the file
-//
-// - save the name of the original file also somewhere (have now many files in my
-//   download-folder like "model (4).inc" and dont know whats in it.
 //
 // - Help in about
 // - Check GLB hierarchy (Ingenuity Mars Helicopter.glb)
 // - Check selector shifting
 // - Materials: add gems
 // - vertexColors + flatShading (?)
+//
+// -- In this release -- 
+// 1. Save source file name and usage instrucrions in export file's header (Maetes's request).
 //
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
