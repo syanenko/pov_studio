@@ -25,7 +25,8 @@ import { AsyncLoader } from './modules/AsyncLoader.js';
 import { GLTFExporter } from './modules/GLTFExporter.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-let DEFAULT_MODEL = './data/models/teapot.glb';
+const DEFAULT_MODEL = 'teapot.glb';
+let DEFAULT_MODEL_PATH = './data/models/teapot.glb';
 
 const PATH_MATCAPS   = './data/materials/';
 const DEFAULT_POVMAT = "M_light_tan_dull";
@@ -49,6 +50,7 @@ let cb_DisplayFloor;
 let cb_DisplayNormals;
 
 let fill = false;
+let fileUpload = DEFAULT_MODEL;
 
 //
 // Init
@@ -84,9 +86,19 @@ async function init() {
   cb_DisplayFloor = document.getElementById("display_floor");
   cb_DisplayNormals = document.getElementById("display_normals");
 
+  // Listen for uploaded file name
+  const fileInput = document.getElementById('model');
+  fileInput.addEventListener('change', (event) => {
+    const fileList = event.target.files;
+    if (fileList.length > 0) {
+      const firstFile = fileList[0];
+      fileUpload = firstFile.name;
+    }
+  });
+
   // Load default model
   await createMaterial();
-  await loadModel({model: DEFAULT_MODEL});
+  await loadModel({model: DEFAULT_MODEL_PATH});
   curMatcapBut = document.getElementById(DEFAULT_SELECTED);
   await selectMat(curMatcapBut);
 
@@ -209,7 +221,6 @@ async function loadModel(args)
   //console.log(model.geometry.getAttribute( 'position' ));
 
   // Set view
-  // TODO: calculate for all geometries max(dist from origin + radius)
   bs = new THREE.Sphere();
   bb.getBoundingSphere(bs);
 
@@ -476,7 +487,7 @@ function download(type) {
     }, options);
   } else if(type == "pov") { // POV
     const exporter = new POVExporter();
-    const result = exporter.parse( scene, material.flatShading, material.vertexColors, bb, bs );
+    const result = exporter.parse( scene, material.flatShading, material.vertexColors, bb, bs, fileUpload );
     saveString( result, 'model.inc' );
   }
 }
