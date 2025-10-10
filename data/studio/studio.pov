@@ -23,7 +23,7 @@ global_settings{
     brightness 1                  // brightness of radiosity effects (0..1) [1]
 
     adc_bailout 0.01/2
-    normal on                   // take surface normals into account [off]
+    normal on                     // take surface normals into account [off]
     //media on                    // take media into account [off]
     //save_file "file_name"       // save radiosity data
     //load_file "file_name"       // load saved radiosity data
@@ -59,7 +59,7 @@ object {
   #include "model.inc"
   // material { M_Dark_Green_Glass }
   // pigment {rgb 1}     
-
+  rotate y * 180
   photons {target refraction on reflection on}
 }
 

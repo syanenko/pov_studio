@@ -25,15 +25,9 @@ import { GLTFExporter } from './modules/GLTFExporter.js';
 import { POVExporter } from './modules/POVExporter.js';
 
 let DEFAULT_MODEL = 'teapot.glb';
-// let DEFAULT_MODEL = 'pingouin.glb'; 
-// let DEFAULT_MODEL = 'test_ring.glb';
-// let DEFAULT_MODEL = 'test_ring.gltf';
-// let DEFAULT_MODEL = 'emerald_ring.glb';
-// let DEFAULT_MODEL = 'hubble.glb';
-// let DEFAULT_MODEL = 'cube.fbx';
-// let DEFAULT_MODEL = 'onion.fbx';
-// let DEFAULT_MODEL = 'test_spiral.stl';
-// let DEFAULT_MODEL = 'hand.obj';
+// let DEFAULT_MODEL = 'ring.glb';
+// let DEFAULT_MODEL = 'hand.glb';
+
 DEFAULT_MODEL = './data/models/' + DEFAULT_MODEL;
 
 const PATH_MATCAPS   = './data/materials/';
@@ -100,7 +94,7 @@ async function init() {
   await selectMat(curMatcapBut);
 
   // Defaults
-  cb_DisplayAxis.click();
+  // cb_DisplayAxis.click();
   cb_DisplayFloor.click();
   // document.getElementById("flat").click();
 }
