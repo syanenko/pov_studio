@@ -3,7 +3,7 @@
 //
 // TODO
 //
-// - Block raycasting when dialogs active
+// - Block raycasting when dialogs active, preserve icons
 // - inc: header:
 // - save the pov-lines how to use the code in a docu-block in the upper part of the file
 //
@@ -24,11 +24,11 @@ import { AsyncLoader } from './modules/AsyncLoader.js';
 import { GLTFExporter } from './modules/GLTFExporter.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-// let DEFAULT_MODEL = 'pingouin.obj'; 
+let DEFAULT_MODEL = 'teapot.glb';
+// let DEFAULT_MODEL = 'pingouin.glb'; 
 // let DEFAULT_MODEL = 'test_ring.glb';
 // let DEFAULT_MODEL = 'test_ring.gltf';
 // let DEFAULT_MODEL = 'emerald_ring.glb';
-let DEFAULT_MODEL = 'teapot.glb';
 // let DEFAULT_MODEL = 'hubble.glb';
 // let DEFAULT_MODEL = 'cube.fbx';
 // let DEFAULT_MODEL = 'onion.fbx';
@@ -102,7 +102,7 @@ async function init() {
   // Defaults
   cb_DisplayAxis.click();
   cb_DisplayFloor.click();
-  document.getElementById("flat").click();
+  // document.getElementById("flat").click();
 }
 
 //
