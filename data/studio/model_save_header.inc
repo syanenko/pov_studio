@@ -1,4 +1,6 @@
 //
+// POV-Ray 'mesh2' file
+//
 // Prodiced by POV-Ray studio
 //
 // URL: https://povlab.yesbird.online/studio
@@ -7,7 +9,7 @@
 // Source: teapot.glb
 // Time:   11.10.2025 1:29
 //
-// -- How to use ------------------------------------------------------
+// -- How to use ------------------------------------------------------------
 // 
 // 1. Install POV-Ray: https://povray.org.
 //
@@ -20,7 +22,7 @@
 //
 // 5. Adjust rendering parameters in 'studio.pov' according your needs.
 //
-// --------------------------------------------------------------------
+// --------------------------------------------------------------------------
   
 #declare CENTER = <0.00000000, 16.93974097, 0.00000000>;
 #declare RADIUS = 43.34836909;
