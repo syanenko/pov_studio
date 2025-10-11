@@ -148,8 +148,18 @@ function getMeshes(obj) {
 //
 async function loadModel(args)
 {
-  // Cleanup
   displayNormals(false);
+
+  // Model cleanup
+  for(let i=0; i<model.length; i++) {
+    if (typeof model[i]) {
+      scene.remove( model[i] );
+      model[i].geometry.dispose();
+      model[i].material.dispose();
+    }
+  }
+
+  // Scene  cleanup
   scene.children.forEach(object => {
         if (object.geometry) {
             object.geometry.dispose();
@@ -164,6 +174,7 @@ async function loadModel(args)
         }
   });
   scene.clear();
+
   model.length = 0;
   renderer.renderLists.dispose();
   
@@ -178,6 +189,7 @@ async function loadModel(args)
   let sceneGLTF;
   let meshes = [];
   const ext = path.slice(-4);
+  let gltf = false;
   switch(ext)
   {
     case '.obj':
@@ -193,8 +205,10 @@ async function loadModel(args)
                  break;
     case '.glb': 
     case '.GLB': // meshes = getMeshes((await AsyncLoader.loadGLTFAsync(path)).scene);
-    case 'gltf': sceneGLTF = (await AsyncLoader.loadGLTFAsync(path)).scene;
-    case 'GLTF': meshes = getMeshes(sceneGLTF);
+    case 'gltf':
+    case 'GLTF': sceneGLTF = (await AsyncLoader.loadGLTFAsync(path)).scene;
+                 meshes = getMeshes(sceneGLTF);
+                 gltf = true;
                  break;
 
     default: console.error("Unknown file extention: '" + ext + "'");
@@ -233,14 +247,16 @@ async function loadModel(args)
     }
 
     model.push(meshes[i]);
+    if(!gltf)
+      scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
 
     vcount += model[i].geometry.index.count;
     fcount += model[i].geometry.index.count / 3;
   }
-
-  // DEBUG !
-  scene.add(sceneGLTF);
+  
+  if(gltf)
+    scene.add(sceneGLTF);
 
   // Display stat
 /*
@@ -537,7 +553,6 @@ let io = null;
 // Block / unblock
 function blockSelector(block) {
   selBlocked = block;
-  console.log(selBlocked);
 }
 window.blockSelector = blockSelector;
 
