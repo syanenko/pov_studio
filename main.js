@@ -8,7 +8,6 @@
 // - save the pov-lines how to use the code in a docu-block in the upper part of the file
 //
 // - Help in about
-// - Check GLB hierarchy (Ingenuity Mars Helicopter.glb)
 // - Check selector shifting
 // - Materials: add gems
 // - vertexColors + flatShading (?)
@@ -24,10 +23,11 @@ import { AsyncLoader } from './modules/AsyncLoader.js';
 import { GLTFExporter } from './modules/GLTFExporter.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-const DEFAULT_MODEL = 'teapot.glb';
-let DEFAULT_MODEL_PATH = './data/models/teapot.glb';
+//const DEFAULT_MODEL = 'teapot.glb';
+const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
+let DEFAULT_MODEL_PATH = './data/models/' + DEFAULT_MODEL;
 
-const PATH_MATCAPS   = './data/materials/';
+const PATH_MATCAPS = './data/materials/';
 const DEFAULT_POVMAT = "M_light_tan_dull";
 const DEFAULT_SELECTED = "M_yellow_green_gloss";
 
@@ -37,7 +37,6 @@ const FOV = 50;
 let ocontrols;
 
 let bb, bs;
-
 let material, model = [];
 let matcap;
 let povmat = DEFAULT_POVMAT; 
@@ -50,6 +49,8 @@ let cb_DisplayNormals;
 
 let fill = false;
 let fileUpload = DEFAULT_MODEL;
+
+let selBlocked = false;
 
 //
 // Init
@@ -146,6 +147,7 @@ async function loadModel(args)
   }
 
   // Load meshes
+  let sceneGLTF;
   let meshes = [];
   const ext = path.slice(-4);
   switch(ext)
@@ -161,11 +163,10 @@ async function loadModel(args)
     case '.fbx':
     case '.FBX': meshes = getMeshes((await AsyncLoader.loadFBXAsync(path)));
                  break;
-    case '.glb':
-    case '.GLB': meshes = getMeshes((await AsyncLoader.loadGLTFAsync(path)).scene);
-                 break;
-    case 'gltf':
-    case 'GLTF': meshes = getMeshes((await AsyncLoader.loadGLTFAsync(path)).scene);
+    case '.glb': 
+    case '.GLB': // meshes = getMeshes((await AsyncLoader.loadGLTFAsync(path)).scene);
+    case 'gltf': sceneGLTF = (await AsyncLoader.loadGLTFAsync(path)).scene;
+    case 'GLTF': meshes = getMeshes(sceneGLTF);
                  break;
 
     default: console.error("Unknown file extention: '" + ext + "'");
@@ -204,16 +205,22 @@ async function loadModel(args)
     }
 
     model.push(meshes[i]);
-    scene.add(meshes[i]);
     bb.expandByObject(meshes[i]);
 
     vcount += model[i].geometry.index.count;
     fcount += model[i].geometry.index.count / 3;
   }
+
+  // DEBUG !
+  scene.add(sceneGLTF);
+
   // Display stat
+/*
   document.getElementById("stat").innerHTML = "Meshes " + meshes.length +
                                               " / Points " + vcount +
                                               " / Faces " + fcount;
+*/
+  document.getElementById("stat").innerHTML = meshes.length + " meshes / " + vcount + " points / " + fcount + " faces";
   //console.log(meshes[i].userData); // DEBUG
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
@@ -493,13 +500,22 @@ function download(type) {
 window.download = download;
 
 //
-// Selection
+// Selector
 //
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 let io = null;
 
+// Block / unblock
+function blockSelector(block) {
+  selBlocked = block;
+  console.log(selBlocked);
+}
+window.blockSelector = blockSelector;
+
 function onMouseDown(event) {
+  if(selBlocked) return;
+
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
   mouse.y += 0.12; // DEBUG: Why ?

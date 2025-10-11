@@ -211,6 +211,33 @@ class POVExporter {
       indexVertex += nbVertex;
     }
  */
+  /*
+  //
+  // POV-Ray 'mesh2' file
+  //
+  // Prodiced by POV-Ray studio
+  //
+  // URL: https://povlab.yesbird.online/studio
+  // Email: yesbird65@gmail.com
+  //
+  // Source: teapot.glb
+  // Time:   11.10.2025 1:29
+  //
+  // -- How to use ------------------------------------------------------------
+  // 
+  // 1. Install POV-Ray: https://povray.org.
+  //
+  // 2. Download and unzip studio template:
+  //    https://povlab.yesbird.online/studio/data/download/studio.zip.
+  //
+  // 3. Save this file in the same directory as 'studio.pov' from 'studio.zip'.
+  //
+  // 4. Render 'studio.pov'.
+  //
+  // 5. Adjust rendering parameters in 'studio.pov' according your needs.
+  //
+  // --------------------------------------------------------------------------
+  */
     // Header
     const now = new Date();
     output += "//\n// Prodiced by POV-Ray studio\n//\n// URL: https://povlab.yesbird.online/studio\n//\n";
@@ -242,11 +269,28 @@ class POVExporter {
 */
     });
     
-    // Union
+    // Objects
+    let cntGroup = 0;
     output += 'union {\n';
-    for (let i=1; i<surCount; i++) {
-      output += '  object { part'+ i + '\n           material { ' + materials[i-1] + ' }\n  }\n';
-    }
+
+    object.traverse( function ( child ) {
+      if ( child.isMesh === true && child.name.substring(0,4) == "part" ) {
+        output += '  object { '+ child.name + '\n           material { ' + child.userData.povray.material + ' }\n  }\n';
+      } else if (child.isGroup) {
+        output += 'union {\n';
+        cntGroup++;
+      }
+
+      // Check for end of group (union)
+      if (child.parent && child.parent.children) {
+        const parentChildren = child.parent.children;
+        if (parentChildren[parentChildren.length - 1] === child && cntGroup > 0) {
+          output += '}\n';
+          cntGroup--;
+        }
+      }
+    })
+
     output += '}\n';
     return output;
   }
