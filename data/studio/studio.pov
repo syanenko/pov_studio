@@ -11,7 +11,7 @@ global_settings{
   radiosity {
     pretrace_start 0.08           // start pretrace at this size
     pretrace_end   0.04           // end pretrace at this size
-    count 1600                    // higher -> higher quality (1..1600) [35]
+    count 600                    // higher -> higher quality (1..1600) [35]
 
     nearest_count 10               // higher -> higher quality (1..10) [5]
     error_bound 1.8               // higher -> smoother,   less accurate [1.8]
@@ -30,7 +30,8 @@ global_settings{
     //always_sample off           // turn sampling in final trace off [on]
     //max_sample 1.0              // maximum brightness of samples
   }
-
+*/
+/*
   photons {
     count 10000000
     autostop 0
@@ -38,6 +39,7 @@ global_settings{
   }
 */
 }
+
 #default{ finish{ ambient 0.1 diffuse 0.9 }}
 
 
@@ -59,7 +61,7 @@ object {
   #include "model.inc"
   // material { M_Dark_Green_Glass }
   // pigment {rgb 1}     
-  rotate y * 180
+  rotate y * 90
   photons {target refraction on reflection on}
 }
 
@@ -67,20 +69,20 @@ object {
 //                      C A M E R A 
 //------------------------------------------------------------------------------------------ 
 camera { perspective angle 50
-         location  <RADIUS, RADIUS, RADIUS> * 1.3
-         look_at   CENTER
+         location  <RADIUS, RADIUS, RADIUS> * 1.4
+         look_at   CENTER + x * 0.6  - y * 0.3 
          right     x * image_width / image_height }
 
 // -----------------------------------------------------------------------------------------
 //                      L I G H T S
 //------------------------------------------------------------------------------------------ 
-#declare power = 0.5;
+#declare power = 0.6;
 
 #declare light_camera =
 light_source {
-    <RADIUS, RADIUS, RADIUS> * 100
+    <RADIUS, RADIUS, RADIUS> * 5
     #declare light_color = color red 1 green 1 blue 1 ;                      
-    light_color * power
+    light_color * power  / 6
     area_light
     <50, 0, 0> <0, 0, 50>         
     4, 4                          
@@ -92,14 +94,14 @@ light_source {
     fade_power 2     
     photons {reflection on refraction on }
 }   
-light_camera
+// light_camera
 
 
 #declare light_right =
 light_source {
-    <0,0,RADIUS> * 1000
+    <0,0,RADIUS> * 3
     #declare light_color = color red 1 green 1 blue 1 ;                      
-    light_color * power
+    light_color * power / 5
     area_light
     <50, 0, 0> <0, 0, 50>         
     4, 4                          
@@ -115,9 +117,9 @@ light_right
 
 #declare light_left =
 light_source {
-    <0,0,-RADIUS> * 120
+    <0,0,-RADIUS> * 7
     #declare light_color = color red 1 green 1 blue 1 ;                      
-    light_color * power
+    light_color * power / 4
     area_light
     <50, 0, 0> <0, 0, 50>         
     4, 4                          
@@ -129,14 +131,14 @@ light_source {
     fade_power 2     
     photons {reflection on refraction on }
 }   
-// light_left
+light_left
 
 
 #declare light_top =
 light_source {
-     <0,RADIUS,0> * 10
+     <0,RADIUS,0> * 4
     #declare light_color = color red 1 green 1 blue 1 ;                      
-    light_color * power
+    light_color * power / 1.4
     area_light
     <50, 0, 0> <0, 0, 50>         
     4, 4                          
@@ -181,7 +183,7 @@ object {
 }  
 #end
 
-object { bg_sphere (<4000,4000,4000>, <0,0,0>, 275)
+object { bg_sphere (<4000,4000,4000>, <30,30,30>, 275)
   no_image 
   scale <1,1,1> / 100}
 //------------------------------------------------------------------------------------------
