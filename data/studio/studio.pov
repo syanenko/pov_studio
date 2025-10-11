@@ -67,18 +67,18 @@ object {
 //                      C A M E R A 
 //------------------------------------------------------------------------------------------ 
 camera { perspective angle 50
-         location  <RADIUS, RADIUS, RADIUS> * 1.4
+         location  <RADIUS, RADIUS, RADIUS> * 1.3
          look_at   CENTER
          right     x * image_width / image_height }
 
 // -----------------------------------------------------------------------------------------
 //                      L I G H T S
 //------------------------------------------------------------------------------------------ 
-#declare power = 0.18;
+#declare power = 0.5;
 
 #declare light_camera =
 light_source {
-    <RADIUS, RADIUS, RADIUS> * 4
+    <RADIUS, RADIUS, RADIUS> * 100
     #declare light_color = color red 1 green 1 blue 1 ;                      
     light_color * power
     area_light
@@ -97,7 +97,7 @@ light_camera
 
 #declare light_right =
 light_source {
-    <0,0,1> * 10
+    <0,0,RADIUS> * 1000
     #declare light_color = color red 1 green 1 blue 1 ;                      
     light_color * power
     area_light
@@ -115,7 +115,7 @@ light_right
 
 #declare light_left =
 light_source {
-    <0,0,1> * 10
+    <0,0,-RADIUS> * 120
     #declare light_color = color red 1 green 1 blue 1 ;                      
     light_color * power
     area_light
@@ -129,12 +129,12 @@ light_source {
     fade_power 2     
     photons {reflection on refraction on }
 }   
-//light_left
+// light_left
 
 
 #declare light_top =
 light_source {
-     <0,1,0> * 10
+     <0,RADIUS,0> * 10
     #declare light_color = color red 1 green 1 blue 1 ;                      
     light_color * power
     area_light
