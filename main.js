@@ -3,10 +3,6 @@
 //
 // TODO
 // - Block raycasting when dialogs active, preserve icons
-//
-// - inc: header:
-// - save the pov-lines how to use the code in a docu-block in the upper part of the file
-//
 // - Help in about
 // - Check selector shifting
 // - Materials: add gems
@@ -23,8 +19,8 @@ import { AsyncLoader } from './modules/AsyncLoader.js';
 import { GLTFExporter } from './modules/GLTFExporter.js';
 import { POVExporter } from './modules/POVExporter.js';
 
-//const DEFAULT_MODEL = 'teapot.glb';
-const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
+const DEFAULT_MODEL = 'teapot.glb';
+//const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
 let DEFAULT_MODEL_PATH = './data/models/' + DEFAULT_MODEL;
 
 const PATH_MATCAPS = './data/materials/';
@@ -129,13 +125,20 @@ async function loadModel(args)
 {
   // Cleanup
   displayNormals(false);
-  for(let i=0; i<model.length; i++) {
-    if (typeof model[i]) {
-      scene.remove( model[i] );
-      model[i].geometry.dispose();
-      model[i].material.dispose();
-    }
-  }
+  scene.children.forEach(object => {
+        if (object.geometry) {
+            object.geometry.dispose();
+        }
+        if (object.material) {
+            // Handle single material or array of materials
+            if (Array.isArray(object.material)) {
+                object.material.forEach(material => material.dispose());
+            } else {
+                object.material.dispose();
+            }
+        }
+  });
+  scene.clear();
   model.length = 0;
   renderer.renderLists.dispose();
   
