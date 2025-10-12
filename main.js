@@ -57,9 +57,16 @@ const DEFAULT_POVMAT = "M_light_tan_dull";
 const DEFAULT_SELECTED = "M_yellow_green_gloss";
 
 let container;
-let camera, pmatrix, scene, renderer;
+let camera, scene, renderer;
 const FOV = 50;
 let ocontrols;
+
+ // XR
+let beam;
+const beam_color = 0xffffff;
+const beam_hilight_color = 0x222222;
+let controller;
+let pmatrix;
 
 let bb, bs;
 let material, model = [];
@@ -128,6 +135,7 @@ async function init() {
   await selectMat(curMatcapBut);
 
   // XR
+  /*
   let vr = VRButtonIcon.createButton( renderer ); 
   vr.style.visibility = "visible";
   vr.style.zIndex = "999";
@@ -155,7 +163,15 @@ async function init() {
     crot.copy(camera.quaternion);
 
     // TODO: Set model's scale
-    // console.log(model);
+    console.log(model);
+
+    // const group = new THREE.Group();
+    // for(let i=0; i<model.length; i++) {
+    //   // group.add(model[i]);
+    //    // model[i].scale.set(0.005, 0.005, 0.005);
+    //    model[i].position.z += 20; 
+    // }
+
     // mpos.copy(model.position);
     // mrot.copy(model.quaternion);
     // model[0].rotation.x = 0.3;
@@ -172,15 +188,17 @@ async function init() {
     camera.quaternion.copy(crot);
     camera.fov = FOV;
 
-/*  Restore model's scale
-    rotate = false;
-    model.position.copy(mpos);
-    model.quaternion.copy(mrot);
-*/
+    // Restore model's scale
+    // rotate = false;
+    // model.position.copy(mpos);
+    // model.quaternion.copy(mrot);
+
     onWindowResize();
     //gui_mesh.visible = false;
   });
 
+  await initController();
+*/
 
   // Defaults
   // cb_DisplayAxis.click();
@@ -538,6 +556,78 @@ async function setFill(checked) {
   fill = checked;
 }
 window.setFill = setFill;
+
+//
+// Init controller
+//
+async function initController()
+{
+
+  // Init XR controller
+  controller = renderer.xr.getController( 0 );
+  // Grip 
+  const controllerModelFactory = new XRControllerModelFactory();
+  const controllerGrip1 = renderer.xr.getControllerGrip( 0 );
+  controllerGrip1.add( controllerModelFactory.createControllerModel( controllerGrip1 ) );
+  scene.add( controllerGrip1 );
+
+  // Beam
+  const beam_geom = new THREE.CylinderGeometry( 0.003, 0.005, 1, 4, 1, true);
+  const textureLoader = new THREE.TextureLoader();
+  const alpha = textureLoader.load('./modules/webxr/beam_alpha.png');
+  const beam_mat = new THREE.MeshStandardMaterial({ transparent: true,
+                                                    alphaMap:alpha,
+                                                    lightMapIntensity:0,
+                                                    opacity: 0.8,
+                                                    color: beam_color,
+                                                    // emissive: 0xffffff
+                                                    alphaTest:0.01
+                                                    });
+  beam = new THREE.Mesh(beam_geom, beam_mat);
+  beam.name = 'beam';
+  beam.receiveShadow = false;
+
+  // Alight beam to grip
+  beam.rotateX(Math.PI / 2);
+  beam.translateY(-0.5);
+  controller.add(beam);
+  scene.add( controller );
+
+  // Hilight controller
+  const light = new THREE.PointLight( 0xffffff, 2, 1, 0);
+  light.position.set( 0, 0, 0 );
+  scene.add( light );
+
+  controller.addEventListener( 'selectstart', onSelectStart );
+  controller.addEventListener( 'selectend', onSelectEnd );
+}
+
+//
+//  Controller events
+//
+function onSelectStart( event )
+{
+  // Hilight beam
+  const controller = event.target;
+  let beam = controller.getObjectByName( 'beam' );
+  beam.material.color.set(beam_hilight_color);
+  beam.material.emissive.g = 0.5;
+  
+  rotX = controller.rotation.x;
+  rotY = controller.rotation.y;
+  rotate = true;
+}
+
+function onSelectEnd( event )
+{
+  // Unhighlight beam
+  const controller = event.target;
+  beam = controller.getObjectByName( 'beam' );
+  beam.material.color.set(beam_color);
+  beam.material.emissive.g = 0;
+
+  rotate = false;
+}
 
 // Resize
 function onWindowResize() {
