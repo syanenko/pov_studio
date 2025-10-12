@@ -2,9 +2,11 @@
 // Run: sudo /opt/lampp/manager-linux-x64.run
 //
 // TODO
-// - Block raycasting when dialogs active, preserve icons
+//
+// - Export arrays (optional - two exporters)
 // - Help in about
 // - Check selector shifting
+// - Materials: fix black line in matcaps 
 // - Materials: add gems
 // - vertexColors + flatShading (?)
 //
@@ -35,7 +37,6 @@
 //
 // --------------------------------------------------------------------------
 
-
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -43,6 +44,9 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { GLTFExporter } from './modules/GLTFExporter.js';
 import { POVExporter } from './modules/POVExporter.js';
+
+import { VRButtonIcon } from './modules/webxr/VRButtonIcon.js';
+import { XRControllerModelFactory } from './modules/webxr/XRControllerModelFactory.js';
 
 const DEFAULT_MODEL = 'teapot.glb';
 //const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
@@ -53,7 +57,7 @@ const DEFAULT_POVMAT = "M_light_tan_dull";
 const DEFAULT_SELECTED = "M_yellow_green_gloss";
 
 let container;
-let camera, scene, renderer;
+let camera, pmatrix, scene, renderer;
 const FOV = 50;
 let ocontrols;
 
@@ -119,9 +123,64 @@ async function init() {
 
   // Load default model
   await createMaterial();
-  await loadModel({model: DEFAULT_MODEL_PATH});
+  await loadModel(DEFAULT_MODEL_PATH);
   curMatcapBut = document.getElementById(DEFAULT_SELECTED);
   await selectMat(curMatcapBut);
+
+  // XR
+  let vr = VRButtonIcon.createButton( renderer ); 
+  vr.style.visibility = "visible";
+  vr.style.zIndex = "999";
+  vr.style.position = "absolute";
+  vr.style.top = "10px";
+  vr.style.right = "450px";
+  document.body.appendChild(vr);
+
+  renderer.xr.enabled = true;
+  renderer.xr.setReferenceSpaceType( 'local' );
+  renderer.xr.setFramebufferScaleFactor( 4.0 );
+
+  let cpos = new THREE.Vector3();
+  let crot = new THREE.Quaternion();
+
+  let mpos = new THREE.Vector3();
+  let mrot = new THREE.Quaternion();
+
+  // XR start
+  renderer.xr.addEventListener( 'sessionstart', function ( event ) {
+    renderer.setClearColor(new THREE.Color(0x000), 1);
+
+    pmatrix = camera.projectionMatrix.clone();
+    cpos.copy(camera.position);
+    crot.copy(camera.quaternion);
+
+    // TODO: Set model's scale
+    // console.log(model);
+    // mpos.copy(model.position);
+    // mrot.copy(model.quaternion);
+    // model[0].rotation.x = 0.3;
+
+    // gui_mesh.visible = true;
+  });
+
+  // XR end
+  renderer.xr.addEventListener( 'sessionend', function ( event ) {
+    renderer.setClearColor(new THREE.Color(0x000), 0);
+
+    camera.projectionMatrix.copy(pmatrix);
+    camera.position.copy(cpos);
+    camera.quaternion.copy(crot);
+    camera.fov = FOV;
+
+/*  Restore model's scale
+    rotate = false;
+    model.position.copy(mpos);
+    model.quaternion.copy(mrot);
+*/
+    onWindowResize();
+    //gui_mesh.visible = false;
+  });
+
 
   // Defaults
   // cb_DisplayAxis.click();
@@ -146,8 +205,13 @@ function getMeshes(obj) {
 //
 // Load model
 //
-async function loadModel(args)
+async function loadModel(path)
 {
+  if(!path) {
+    console.error('No model path specified');
+    return;
+  }
+
   displayNormals(false);
 
   // Model cleanup
@@ -177,13 +241,6 @@ async function loadModel(args)
 
   model.length = 0;
   renderer.renderLists.dispose();
-  
-  if(args.model) {
-    var path = args['model'];
-  } else {
-    console.error('No model in function argumets');
-    return;
-  }
 
   // Load meshes
   let sceneGLTF;

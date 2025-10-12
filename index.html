@@ -23,7 +23,13 @@
 
     <img id="logo" src="data/images/logo_40x40.png" alt="Logo" width="40" height="40" onclick="window.blockSelector(true); about.inert=true; about.showModal(); about.inert=false;">
     <div id="text" onclick="window.blockSelector(true); about.inert=true;  about.showModal(); about.inert=false;">POV-Ray Studio 0.12b</div>
-    <img id="help" src="data/images/help.png" alt="Help" onclick="window.blockSelector(true); about.inert=true;  about.showModal(); about.inert=false;">
+    <img id="help" src="data/images/help_36x36.png" alt="Help" onclick="window.blockSelector(true); about.inert=true;  about.showModal(); about.inert=false;">
+    <img id="help" src="data/images/6.png" alt="Model6" onclick="window.loadModel('./data/models/venus.glb')">
+    <img id="help" src="data/images/5.png" alt="Model5" onclick="window.loadModel('./data/models/viking_lander.glb')">
+    <img id="help" src="data/images/4.png" alt="Model4" onclick="window.loadModel('./data/models/cassini_huygens.glb')">
+    <img id="help" src="data/images/3.png" alt="Model3" onclick="window.loadModel('./data/models/pingouin.glb')">
+    <img id="help" src="data/images/2.png" alt="Model2" onclick="window.loadModel('./data/models/frog.glb')">
+    <img id="help" src="data/images/1.png" alt="Model1" onclick="window.loadModel('./data/models/ring.glb')">
     <hr>
 
     <!-- About -->
@@ -108,7 +114,7 @@
 
         xhr.onload = function() {
           if (xhr.status === 200) {
-            window.loadModel(xhr.response);
+            window.loadModel(xhr.response.model);
           } else {
             alert("Error loading model: " + xhr.status);
             document.getElementById('progress-container').style.display = 'none';

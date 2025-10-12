@@ -6,7 +6,7 @@
 //
 #version 3.8;
 global_settings{
-  assumed_gamma 1.8
+  assumed_gamma 1
 /*
   radiosity {
     pretrace_start 0.08           // start pretrace at this size
@@ -55,22 +55,18 @@ global_settings{
 // -----------------------------------------------------------------------------------------
 //                      M O D E L
 //------------------------------------------------------------------------------------------ 
-object {
-  // #include "cube_vc.inc" // Not works - want to make it glassy.
-  // #include "cube.inc" // Works
-  #include "model.inc"
-  // material { M_Dark_Green_Glass }
-  // pigment {rgb 1}     
-  rotate y * 90
-  photons {target refraction on reflection on}
-}
+//object {
+  #include "model_arrays_template.inc"
+  //rotate y * 90
+  //photons {target refraction on reflection on}
+//}
 
 // -----------------------------------------------------------------------------------------
 //                      C A M E R A 
 //------------------------------------------------------------------------------------------ 
 camera { perspective angle 50
-         location  <RADIUS, RADIUS, RADIUS> * 1.4
-         look_at   CENTER + x * 0.6  - y * 0.3 
+         location  <RADIUS, RADIUS, RADIUS> * 2
+         look_at   CENTER
          right     x * image_width / image_height }
 
 // -----------------------------------------------------------------------------------------
