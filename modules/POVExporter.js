@@ -12,7 +12,7 @@ import {
 } from 'three';
 
 class POVExporter {
-  parse( object, flat_shading, vertex_colors, bb, bs, fileUpload ) {
+  parse( object, flat_shading, vertex_colors, bb, bs, sourceFile ) {
 
     let output = '';
     let surCount = 1;
@@ -242,7 +242,7 @@ class POVExporter {
     // Header
     const now = new Date();
     output += "//\n// Prodiced by POV-Ray studio\n// https://povlab.yesbird.online/studio\n//\n";
-    output += "// Source: " + fileUpload + "\n";
+    output += "// Source: " + sourceFile + "\n";
     output += "// Time: " + now.getDate() +  "." + (now.getMonth() + 1) + "." + now.getFullYear() + " " +
                           + now.getHours() + ":" + now.getMinutes() + "\n";
     output += "//\n"

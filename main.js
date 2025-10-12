@@ -51,7 +51,7 @@ import { XRControllerModelFactory } from './modules/webxr/XRControllerModelFacto
 
 const DEFAULT_MODEL = 'teapot.glb';
 //const DEFAULT_MODEL = 'ring.glb';
-// const DEFAULT_MODEL = 'cube.fbx';
+//const DEFAULT_MODEL = 'cube.fbx';
 //const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
 let DEFAULT_MODEL_PATH = './data/models/' + DEFAULT_MODEL;
 
@@ -83,7 +83,7 @@ let cb_DisplayFloor;
 let cb_DisplayNormals;
 
 let fill = false;
-let fileUpload = DEFAULT_MODEL;
+let sourceFile = DEFAULT_MODEL;
 
 let selBlocked = false;
 
@@ -127,7 +127,7 @@ async function init() {
     const fileList = event.target.files;
     if (fileList.length > 0) {
       const firstFile = fileList[0];
-      fileUpload = firstFile.name;
+      sourceFile = firstFile.name;
     }
   });
 
@@ -686,8 +686,13 @@ function download(type) {
        console.error('An error happened during GLTF export:', error);
     }, options);
   } else if(type == "pov") { // POV
-    const exporter = new POVAExporter();
-    const result = exporter.parse( scene, material.flatShading, material.vertexColors, bb, bs, fileUpload );
+    let exporter;
+    if(document.getElementById("export_arrays").checked)
+      exporter = new POVAExporter();
+    else
+      exporter = new POVExporter();
+
+    const result = exporter.parse( scene, material.flatShading, material.vertexColors, bb, bs, sourceFile );
     saveString( result, 'model.inc' );
   }
 }

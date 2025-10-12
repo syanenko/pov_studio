@@ -12,7 +12,7 @@ import {
 } from 'three';
 
 class POVAExporter {
-  parse( object, flat_shading, vertex_colors, bb, bs, fileUpload ) {
+  parse( object, flat_shading, vertex_colors, bb, bs, sourceFile ) {
 
     let output = '';
     let meshCount = 0;
@@ -46,11 +46,8 @@ class POVAExporter {
       const colors = geometry.getAttribute( 'color' );
       const indices = geometry.getIndex();
 
-      // name of the mesh object
       meshCount++;
-      output += '#declare m' + meshCount + ' = mesh2 {\n'
-
-      // Vertices 
+      // Vertices array
       if ( vertices !== undefined ) {
         output += '#declare v' + meshCount + ' = array[' + vertices.count + '] {\n';
         for ( let i = 0, l = vertices.count; i < l; i ++, nbVertex ++ ) {
@@ -61,7 +58,49 @@ class POVAExporter {
           output += '  <' + vertex.x.toFixed(8) + ',' + vertex.y.toFixed(8) + ',' + vertex.z.toFixed(8) + '>,\n'
         }
         output = output.slice(0, -2) + '  \n}\n';
+      }
 
+      // Normals array
+      if ((normals !== undefined) && (!flat_shading)) {
+        output += '#declare n' + meshCount + ' = array[' + normals.count + '] {\n';
+        normalMatrixWorld.getNormalMatrix( mesh.matrixWorld );
+
+        for ( let i = 0, l = normals.count; i < l; i ++, nbNormals ++ ) {
+          normal.fromBufferAttribute( normals, i );
+          normal.applyMatrix3( normalMatrixWorld ).normalize();
+          output += '  <' + normal.x.toFixed(8) + ',' + normal.y.toFixed(8) + ',' + normal.z.toFixed(8) + '>,\n'
+        }
+        output = output.slice(0, -2) + '  \n}\n';
+      }
+
+      // Mesh
+      output += '\n#declare m' + meshCount + ' = mesh2 {\n'
+
+      // TODO: uvs - put in array (?)
+      if ( uvs !== undefined ) {
+        output += 'uv_vectors {\n  ' + uvs.count + ',\n';
+        for ( let i = 0, l = uvs.count; i < l; i ++, nbVertexUvs ++ ) {
+          uv.fromBufferAttribute( uvs, i );
+          // transform the uv to export format
+          // output += 'vt ' + uv.x + ' ' + uv.y + '\n';
+          output += '  <' + uv.x + ',' + uv.y + '>,\n'
+        }
+        output += '  }\n';
+      }
+
+      // TODO: texture list - put in array (?)
+      if ( colors !== undefined && vertex_colors) {
+        output += 'texture_list {\n  ' + (colors.count) + ',\n';
+        for ( let i = 0; i<colors.count; i++ ) {
+          color.fromBufferAttribute( colors, i );
+          ColorManagement.fromWorkingColorSpace( color, SRGBColorSpace );
+          output += 'texture{pigment{rgb <' + color.r.toFixed(8) + ',' + color.g.toFixed(8) + ',' + color.b.toFixed(8) +'>}}\n'
+        }
+        output += '}\n';
+      }
+
+      // Vertex vectors
+      if ( vertices !== undefined ) {
         output += 'vertex_vectors {\n  ' + vertices.count + ',\n  ';
         for ( let i = 0, l = vertices.count; i < l; i ++) {
           output += 'v' + meshCount + '[' + i + '],';
@@ -74,23 +113,13 @@ class POVAExporter {
         else
           output = output.slice(0, -1);
         output += '\n}\n';
-      }
+      } 
 
-      // Normals 
+      // Normal vectors
       if ((normals !== undefined) && (!flat_shading)) {
-        output += '#declare n' + meshCount + ' = array[' + normals.count + '] {\n';
-        normalMatrixWorld.getNormalMatrix( mesh.matrixWorld );
-
-        for ( let i = 0, l = normals.count; i < l; i ++, nbNormals ++ ) {
-          normal.fromBufferAttribute( normals, i );
-          normal.applyMatrix3( normalMatrixWorld ).normalize();
-          output += '  <' + vertex.x.toFixed(8) + ',' + vertex.y.toFixed(8) + ',' + vertex.z.toFixed(8) + '>,\n'
-        }
-        output = output.slice(0, -2) + '  \n}\n';
-
         output += 'normal_vectors {\n  ' + normals.count + ',\n  ';
         for ( let i = 0, l = normals.count; i < l; i ++) {
-          output += 'v' + meshCount + '[' + i + '],';
+          output += 'n' + meshCount + '[' + i + '],';
           if(((i + 1) % 10) == 0)
             output += '\n  ';
         }
@@ -102,30 +131,7 @@ class POVAExporter {
         output += '\n}\n';
       }
 
-      // uvs
-      if ( uvs !== undefined ) {
-        output += 'uv_vectors {\n  ' + uvs.count + ',\n';
-        for ( let i = 0, l = uvs.count; i < l; i ++, nbVertexUvs ++ ) {
-          uv.fromBufferAttribute( uvs, i );
-          // transform the uv to export format
-          // output += 'vt ' + uv.x + ' ' + uv.y + '\n';
-          output += '  <' + uv.x + ',' + uv.y + '>,\n'
-        }
-        output += '  }\n';
-      }
-
-      // texture list
-      if ( colors !== undefined && vertex_colors) {
-        output += 'texture_list {\n  ' + (colors.count) + ',\n';
-        for ( let i = 0; i<colors.count; i++ ) {
-          color.fromBufferAttribute( colors, i );
-          ColorManagement.fromWorkingColorSpace( color, SRGBColorSpace );
-          output += 'texture{pigment{rgb <' + color.r.toFixed(8) + ',' + color.g.toFixed(8) + ',' + color.b.toFixed(8) +'>}}\n'
-        }
-        output += '}\n';
-      }
-
-      // faces
+      // Faces
       if ( indices !== null ) {
         output += 'face_indices {\n  ' + (indices.count / 3) + ',\n';
         for ( let i = 0, l = indices.count; i < l; i += 3 ) {
@@ -139,7 +145,8 @@ class POVAExporter {
           output +=  '\n';
         }
         output += '  }\n'; 
-      } else { // Not implemented (Mesh1 ?)
+      }
+      /* else { // Not implemented (Mesh1 ?)
         for ( let i = 0, l = vertices.count; i < l; i += 3 ) {
           for ( let m = 0; m < 3; m ++ ) {
             const j = i + m + 1;
@@ -147,7 +154,7 @@ class POVAExporter {
           }
           output += 'f ' + face.join( ' ' ) + '\n';
         }
-      }
+      }*/
       output += '}\n';
 
       // Save POV material name
@@ -263,7 +270,7 @@ class POVAExporter {
     // Header
     const now = new Date();
     output += "//\n// Prodiced by POV-Ray studio\n// https://povlab.yesbird.online/studio\n//\n";
-    output += "// Source: " + fileUpload + "\n";
+    output += "// Source: " + sourceFile + "\n";
     output += "// Time: " + now.getDate() +  "." + (now.getMonth() + 1) + "." + now.getFullYear() + " " +
                           + now.getHours() + ":" + now.getMinutes() + "\n";
     output += "//\n"
