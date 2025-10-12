@@ -89,7 +89,8 @@ class POVExporter {
           // output += 'vn ' + normal.x + ' ' + normal.y + ' ' + normal.z + '\n';
           output += '  <' + normal.x.toFixed(8) + ',' + normal.y.toFixed(8) + ',' + normal.z.toFixed(8) + '>,\n'
         }
-        output += '  }\n';
+        // output += '  }\n';
+        output = output.slice(0, -2) + '  \n}\n';
       }
 
       // texture list
@@ -240,10 +241,10 @@ class POVExporter {
   */
     // Header
     const now = new Date();
-    output += "//\n// Prodiced by POV-Ray studio\n//\n// URL: https://povlab.yesbird.online/studio\n//\n";
+    output += "//\n// Prodiced by POV-Ray studio\n// https://povlab.yesbird.online/studio\n//\n";
     output += "// Source: " + fileUpload + "\n";
-    output += "// Time:   " + now.getDate() +  "." + (now.getMonth() + 1) + "." + now.getFullYear() + " " +
-                            + now.getHours() + ":" + now.getMinutes() + "\n";
+    output += "// Time: " + now.getDate() +  "." + (now.getMonth() + 1) + "." + now.getFullYear() + " " +
+                          + now.getHours() + ":" + now.getMinutes() + "\n";
     output += "//\n"
     output += "#declare CENTER = <"+ bs.center.x.toFixed(8) + ", " + bs.center.y.toFixed(8) + ", " + bs.center.z.toFixed(8) + ">;\n";
     output += "#declare RADIUS = " + bs.radius.toFixed(8) + ";\n";
