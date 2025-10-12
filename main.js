@@ -44,11 +44,14 @@ import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js
 import { AsyncLoader } from './modules/AsyncLoader.js';
 import { GLTFExporter } from './modules/GLTFExporter.js';
 import { POVExporter } from './modules/POVExporter.js';
+import { POVAExporter } from './modules/POVAExporter.js';
 
-import { VRButtonIcon } from './modules/webxr/VRButtonIcon.js';
+// import { VRButtonIcon } from './modules/webxr/VRButtonIcon.js';
 import { XRControllerModelFactory } from './modules/webxr/XRControllerModelFactory.js';
 
 const DEFAULT_MODEL = 'teapot.glb';
+//const DEFAULT_MODEL = 'ring.glb';
+// const DEFAULT_MODEL = 'cube.fbx';
 //const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
 let DEFAULT_MODEL_PATH = './data/models/' + DEFAULT_MODEL;
 
@@ -683,7 +686,7 @@ function download(type) {
        console.error('An error happened during GLTF export:', error);
     }, options);
   } else if(type == "pov") { // POV
-    const exporter = new POVExporter();
+    const exporter = new POVAExporter();
     const result = exporter.parse( scene, material.flatShading, material.vertexColors, bb, bs, fileUpload );
     saveString( result, 'model.inc' );
   }
