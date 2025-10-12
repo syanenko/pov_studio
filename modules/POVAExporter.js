@@ -107,7 +107,6 @@ class POVAExporter {
           if(((i + 1) % 10) == 0)
             output += '\n  ';
         }
-        console.log(output.slice(-1)); 
         if(output.slice(-1) == '\n')
           output = output.slice(0, -2);
         else

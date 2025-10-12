@@ -31,13 +31,13 @@ global_settings{
     //max_sample 1.0              // maximum brightness of samples
   }
 */
-/*
+/* */
   photons {
     count 10000000
     autostop 0
     jitter 0.5
   }
-*/
+
 }
 
 #default{ finish{ ambient 0.1 diffuse 0.9 }}
@@ -56,7 +56,8 @@ global_settings{
 //                      M O D E L
 //------------------------------------------------------------------------------------------ 
 //object {
-  #include "model_arrays_template.inc"
+  // #include "model_arrays_template.inc"
+  #include "model.inc"
   //rotate y * 90
   //photons {target refraction on reflection on}
 //}
@@ -65,14 +66,14 @@ global_settings{
 //                      C A M E R A 
 //------------------------------------------------------------------------------------------ 
 camera { perspective angle 50
-         location  <RADIUS, RADIUS, RADIUS> * 2
-         look_at   CENTER
+         location  <RADIUS, RADIUS, RADIUS> * 0.6
+         look_at   CENTER - x * 2.2 - y * 0.3
          right     x * image_width / image_height }
 
 // -----------------------------------------------------------------------------------------
 //                      L I G H T S
 //------------------------------------------------------------------------------------------ 
-#declare power = 0.6;
+#declare power = 0.5;
 
 #declare light_camera =
 light_source {
@@ -90,7 +91,7 @@ light_source {
     fade_power 2     
     photons {reflection on refraction on }
 }   
-// light_camera
+light_camera
 
 
 #declare light_right =
