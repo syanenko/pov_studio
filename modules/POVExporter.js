@@ -12,7 +12,7 @@ import {
 } from 'three';
 
 class POVExporter {
-  parse( object, flat_shading, vertex_colors, bb, bs, sourceFile ) {
+  parse( object, flat_shading, vertex_colors, bb, bs, camera, sourceFile ) {
 
     let output = '';
     let surCount = 1;
@@ -114,11 +114,12 @@ class POVExporter {
           }
           output += '  <' + face[0] + ',' + face[1] + ',' + face[2] + '>,';
           if ( colors !== undefined && vertex_colors)
-            output += ', ' + face[0] + ', ' + face[1] + ', ' + face[2];
+            output += ' ' + face[0] + ', ' + face[1] + ', ' + face[2] + ',';
           output +=  '\n';
         }
-        output += '  }\n'; 
-      } else { // Not implemented (Mesh1 ?)
+        output = output.slice(0, -2) + '\n}\n';
+      }
+      /* else { // Not implemented (Mesh1 ?)
         for ( let i = 0, l = vertices.count; i < l; i += 3 ) {
           for ( let m = 0; m < 3; m ++ ) {
             const j = i + m + 1;
@@ -126,7 +127,7 @@ class POVExporter {
           }
           output += 'f ' + face.join( ' ' ) + '\n';
         }
-      }
+      }*/
       output += '}\n';
 
       // Save POV material name
