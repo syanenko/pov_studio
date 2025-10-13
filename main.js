@@ -2,9 +2,11 @@
 // Run: sudo /opt/lampp/manager-linux-x64.run
 //
 // TODO
-//
+//  - 3.740
+// - Model rotation in XR (not ocontrols)
+// - Check scene for doubles, etc
 // - XR mode - model move/scale
-// - Scene tweaking
+// - POV scene tweaking
 // - Extend materials library
 // - Pass camera params to 'model.ini'
 // - Server-side previw rendering (?)
@@ -53,7 +55,8 @@ import { POVAExporter } from './modules/POVAExporter.js';
 import { VRButtonIcon } from './modules/webxr/VRButtonIcon.js';
 import { XRControllerModelFactory } from './modules/webxr/XRControllerModelFactory.js';
 
-const DEFAULT_MODEL = 'teapot.glb';
+//const DEFAULT_MODEL = 'teapot.glb';
+const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
 //const DEFAULT_MODEL = 'ring.glb';
 //const DEFAULT_MODEL = 'cube.fbx';
 //const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
@@ -72,7 +75,10 @@ let ocontrols;
 let beam;
 const beam_color = 0xffffff;
 const beam_hilight_color = 0x222222;
-let controller;
+let controller, rotX, rotY;
+const rotTH = 0.005;
+const rotK = 3;
+let rotate = false;
 let cpmatrix;
 let vrButton;
 
@@ -138,8 +144,9 @@ async function init() {
     }
   });
 
-  // Load default model
   group = new THREE.Group();
+
+  // Load default model
   await createMaterial();
   await loadModel(DEFAULT_MODEL_PATH);
   curMatcapBut = document.getElementById(DEFAULT_SELECTED);
@@ -239,13 +246,24 @@ async function loadModel(path)
 
   displayNormals(false);
 
-  // DEBUG: group
-  for(let i=0; i<model.length; i++) {
-    group.remove(model[i]);
-  }
+  // Clear up model group
+  group.traverse(obj => {
+    if (obj.geometry) {
+        obj.geometry.dispose();
+    }
+    if (obj.material) {
+        // Handle single material or array of materials
+        if (Array.isArray(obj.material)) {
+            obj.material.forEach(material => material.dispose());
+        } else {
+            obj.material.dispose();
+        }
+    }
+  });
+  group.clear();
   scene.remove(group);
 
-  // Model cleanup
+  // Model cleanup (?)
   for(let i=0; i<model.length; i++) {
     if (typeof model[i]) {
       scene.remove( model[i] );
@@ -253,25 +271,8 @@ async function loadModel(path)
       model[i].material.dispose();
     }
   }
-
-  // Scene  cleanup
-  scene.children.forEach(object => {
-    if (object.geometry) {
-        object.geometry.dispose();
-    }
-    if (object.material) {
-        // Handle single material or array of materials
-        if (Array.isArray(object.material)) {
-            object.material.forEach(material => material.dispose());
-        } else {
-            object.material.dispose();
-        }
-    }
-  });
-  scene.clear();
-  console.log(scene);
-
   model.length = 0;
+
   renderer.renderLists.dispose();
   
   // Load meshes
@@ -336,24 +337,23 @@ async function loadModel(path)
     }
 
     model.push(meshes[i]);
-    if(!gltf)
-      scene.add(meshes[i]);
+    // Fill group by meshes
+    if(!gltf) {
+      group.add(meshes[i]);
+    }
 
     bb.expandByObject(meshes[i]);
 
     vcount += model[i].geometry.index.count;
     fcount += model[i].geometry.index.count / 3;
   }
-  
+
+  // DEBUG: XR group  
   if(gltf)
-    scene.add(sceneGLTF);
-
-  // DEBUG: group
-  for(let i=0; i<model.length; i++) {
-    group.add(model[i]);
-  }
+    group = sceneGLTF;
+  
+  group.name = "model";
   scene.add(group);
-
   console.log(scene); // DEBUG
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
@@ -708,7 +708,7 @@ function download(type) {
     else
       exporter = new POVExporter();
 
-    const result = exporter.parse( scene, material.flatShading, material.vertexColors, bb, bs, sourceFile );
+    const result = exporter.parse( scene, material.flatShading, material.vertexColors, bb, bs, camera, sourceFile );
     saveString( result, 'model.inc' );
   }
 }
@@ -766,6 +766,22 @@ function animate() {
 // Render
 //
 function render() {
+
+  if(rotate) {
+    let dX = (rotX - controller.rotation.x) * rotK;
+    let dY = (rotY - controller.rotation.y) * rotK;
+
+    if(Math.abs(dX) > rotTH) {
+      group.rotation.x += dX;
+      rotX = controller.rotation.x;
+    }
+
+    if(Math.abs(dY) > rotTH) {
+      group.rotation.y += dY;
+      rotY = controller.rotation.y;
+    }
+  }
+
   ocontrols.update();
   renderer.render(scene, camera);
 }
