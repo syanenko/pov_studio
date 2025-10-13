@@ -2,7 +2,9 @@
 // Run: sudo /opt/lampp/manager-linux-x64.run
 //
 // TODO
-//  - 3.740
+// - uv and texture as arrays
+// - XR-menu from Mathview
+// - Separate XR to external module
 // - Model rotation in XR (not ocontrols)
 // - Check scene for doubles, etc
 // - XR mode - model move/scale
@@ -55,8 +57,9 @@ import { POVAExporter } from './modules/POVAExporter.js';
 import { VRButtonIcon } from './modules/webxr/VRButtonIcon.js';
 import { XRControllerModelFactory } from './modules/webxr/XRControllerModelFactory.js';
 
-//const DEFAULT_MODEL = 'teapot.glb';
-const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
+const DEFAULT_MODEL = 'teapot.glb';
+//const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
+//const DEFAULT_MODEL = 'onion.fbx';
 //const DEFAULT_MODEL = 'ring.glb';
 //const DEFAULT_MODEL = 'cube.fbx';
 //const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
