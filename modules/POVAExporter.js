@@ -12,7 +12,7 @@ import {
 } from 'three';
 
 class POVAExporter {
-  parse( object, flat_shading, vertex_colors, bb, bs, sourceFile ) {
+  parse( object, flat_shading, vertex_colors, bb, bs, camera, sourceFile ) {
 
     let output = '';
     let meshCount = 0;
@@ -76,29 +76,6 @@ class POVAExporter {
       // Mesh
       output += '\n#declare m' + meshCount + ' = mesh2 {\n'
 
-      // TODO: uvs - put in array (?)
-      if ( uvs !== undefined ) {
-        output += 'uv_vectors {\n  ' + uvs.count + ',\n';
-        for ( let i = 0, l = uvs.count; i < l; i ++, nbVertexUvs ++ ) {
-          uv.fromBufferAttribute( uvs, i );
-          // transform the uv to export format
-          // output += 'vt ' + uv.x + ' ' + uv.y + '\n';
-          output += '  <' + uv.x + ',' + uv.y + '>,\n'
-        }
-        output += '  }\n';
-      }
-
-      // TODO: texture list - put in array (?)
-      if ( colors !== undefined && vertex_colors) {
-        output += 'texture_list {\n  ' + (colors.count) + ',\n';
-        for ( let i = 0; i<colors.count; i++ ) {
-          color.fromBufferAttribute( colors, i );
-          ColorManagement.fromWorkingColorSpace( color, SRGBColorSpace );
-          output += 'texture{pigment{rgb <' + color.r.toFixed(8) + ',' + color.g.toFixed(8) + ',' + color.b.toFixed(8) +'>}}\n'
-        }
-        output += '}\n';
-      }
-
       // Vertex vectors
       if ( vertices !== undefined ) {
         output += 'vertex_vectors {\n  ' + vertices.count + ',\n  ';
@@ -130,6 +107,29 @@ class POVAExporter {
         output += '\n}\n';
       }
 
+      // TODO: uvs - put in array (?)
+      if ( uvs !== undefined ) {
+        output += 'uv_vectors {\n  ' + uvs.count + ',\n';
+        for ( let i = 0, l = uvs.count; i < l; i ++, nbVertexUvs ++ ) {
+          uv.fromBufferAttribute( uvs, i );
+          // transform the uv to export format
+          // output += 'vt ' + uv.x + ' ' + uv.y + '\n';
+          output += '  <' + uv.x + ',' + uv.y + '>,\n'
+        }
+        output += '  }\n';
+      }
+
+      // TODO: texture list - put in array (?)
+      if ( colors !== undefined && vertex_colors) {
+        output += 'texture_list {\n  ' + (colors.count) + ',\n';
+        for ( let i = 0; i<colors.count; i++ ) {
+          color.fromBufferAttribute( colors, i );
+          ColorManagement.fromWorkingColorSpace( color, SRGBColorSpace );
+          output += 'texture{pigment{rgb <' + color.r.toFixed(8) + ',' + color.g.toFixed(8) + ',' + color.b.toFixed(8) +'>}}\n'
+        }
+        output += '}\n';
+      }
+
       // Faces
       if ( indices !== null ) {
         output += 'face_indices {\n  ' + (indices.count / 3) + ',\n';
@@ -140,7 +140,7 @@ class POVAExporter {
           }
           output += '  <' + face[0] + ',' + face[1] + ',' + face[2] + '>,';
           if ( colors !== undefined && vertex_colors)
-            output += ', ' + face[0] + ', ' + face[1] + ', ' + face[2];
+            output += ' ' + face[0] + ', ' + face[1] + ', ' + face[2] + ',';
           output +=  '\n';
         }
         output += '  }\n'; 
