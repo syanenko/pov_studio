@@ -86,6 +86,7 @@ let curMatcapBut;
 let cb_VertexColors;
 let cb_DisplayAxis;
 let cb_DisplayFloor;
+let cb_DisplayFloorStatus;
 let cb_DisplayNormals;
 
 let fill = false;
@@ -169,6 +170,11 @@ async function init() {
     group.position.set(0, -bs.radius / 8, -bs.radius * 2);
     // group.scale.set(1, 1, 1);
 
+    // Switch off floor
+    cb_DisplayFloorStatus = cb_DisplayFloor.checked;
+    if(cb_DisplayFloorStatus)
+      cb_DisplayFloor.click();
+
     // gui_mesh.visible = true;
   });
 
@@ -185,6 +191,10 @@ async function init() {
     group.position.set(0, 0, 0);
     // group.scale.set(1, 1, 1);
 
+    // Restore floor
+    if(cb_DisplayFloorStatus)
+      cb_DisplayFloor.click();
+
     onWindowResize();
     //gui_mesh.visible = false;
   });
@@ -193,7 +203,7 @@ async function init() {
 
   // Defaults
   // cb_DisplayAxis.click();
-  cb_DisplayFloor.click();
+  // cb_DisplayFloor.click();
   // document.getElementById("flat").click();
 }
 
@@ -369,7 +379,6 @@ async function loadModel(path)
   normals_len = bs.radius / 30;
   displayNormals(cb_DisplayNormals.checked);
 
-  displayFloor(false);
   displayFloor(cb_DisplayFloor.checked);
   ocontrols.update();
 }
