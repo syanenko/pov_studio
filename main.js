@@ -74,6 +74,7 @@ const beam_color = 0xffffff;
 const beam_hilight_color = 0x222222;
 let controller;
 let cpmatrix;
+let vrButton;
 
 let bb, bs;
 let material, model = [];
@@ -144,13 +145,7 @@ async function init() {
   await selectMat(curMatcapBut);
 
   // XR
-  let vr = VRButtonIcon.createButton( renderer ); 
-  vr.style.visibility = "visible";
-  vr.style.zIndex = "999";
-  vr.style.position = "absolute";
-  vr.style.top = "10px";
-  vr.style.right = "450px";
-  document.body.appendChild(vr);
+  vrButton = VRButtonIcon.createButton( renderer ); 
 
   renderer.xr.enabled = true;
   renderer.xr.setReferenceSpaceType( 'local' );
@@ -201,6 +196,14 @@ async function init() {
   cb_DisplayFloor.click();
   // document.getElementById("flat").click();
 }
+
+//
+// Enter XR
+//
+function enterXR() {
+  vrButton.click();
+}
+window.enterXR = enterXR;
 
 //
 // Get geometry

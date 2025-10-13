@@ -132,7 +132,7 @@ background-color:white;
   cursor: pointer;
 }
 
-#help {
+.buttons {
   display:inline;
   float: right;
   vertical-align:middle;
