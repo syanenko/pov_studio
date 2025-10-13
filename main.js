@@ -711,7 +711,8 @@ function download(type) {
     else
       exporter = new POVExporter();
 
-    const result = exporter.parse( scene, material.flatShading, material.vertexColors, bb, bs, camera, sourceFile );
+    const reverseVertices = document.getElementById("reverse_vertices").checked;
+    const result = exporter.parse( scene, material.flatShading, material.vertexColors, reverseVertices, bb, bs, camera, sourceFile );
     saveString( result, 'model.inc' );
   }
 }

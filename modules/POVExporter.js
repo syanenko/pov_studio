@@ -12,7 +12,7 @@ import {
 } from 'three';
 
 class POVExporter {
-  parse( object, flat_shading, vertex_colors, bb, bs, camera, sourceFile ) {
+  parse( object, flat_shading, vertex_colors, reverseVertices,  bb, bs, camera, sourceFile ) {
 
     let output = '';
     let surCount = 1;
@@ -112,9 +112,17 @@ class POVExporter {
             const j = indices.getX( i + m );
             face[ m ] = ( indexVertex + j );
           }
-          output += '  <' + face[2] + ',' + face[1] + ',' + face[0] + '>,';
+
+          if(reverseVertices)
+            output += '  <' + face[2] + ',' + face[1] + ',' + face[0] + '>,';
+          else
+            output += '  <' + face[0] + ',' + face[1] + ',' + face[2] + '>,';
+
           if ( colors !== undefined && vertex_colors)
-            output += ' ' + face[2] + ', ' + face[1] + ', ' + face[0] + ',';
+            if(reverseVertices)
+              output += ' ' + face[2] + ', ' + face[1] + ', ' + face[0] + ',';
+            else
+              output += ' ' + face[0] + ', ' + face[1] + ', ' + face[2] + ','; 
           output +=  '\n';
         }
         output = output.slice(0, -2) + '\n}\n';
