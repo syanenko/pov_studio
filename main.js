@@ -3,7 +3,11 @@
 //
 // TODO
 //
-// - Export arrays (optional - two exporters)
+// - XR mode - model move/scale
+// - Scene tweaking
+// - Extend materials library
+// - Pass camera params to 'model.ini'
+// - Server-side previw rendering (?)
 // - Help in about
 // - Check selector shifting
 // - Materials: fix black line in matcaps 
@@ -46,7 +50,7 @@ import { GLTFExporter } from './modules/GLTFExporter.js';
 import { POVExporter } from './modules/POVExporter.js';
 import { POVAExporter } from './modules/POVAExporter.js';
 
-// import { VRButtonIcon } from './modules/webxr/VRButtonIcon.js';
+import { VRButtonIcon } from './modules/webxr/VRButtonIcon.js';
 import { XRControllerModelFactory } from './modules/webxr/XRControllerModelFactory.js';
 
 const DEFAULT_MODEL = 'teapot.glb';
@@ -69,10 +73,11 @@ let beam;
 const beam_color = 0xffffff;
 const beam_hilight_color = 0x222222;
 let controller;
-let pmatrix;
+let cpmatrix;
 
 let bb, bs;
 let material, model = [];
+let group;
 let matcap;
 let povmat = DEFAULT_POVMAT; 
 let curMatcapBut;
@@ -132,13 +137,13 @@ async function init() {
   });
 
   // Load default model
+  group = new THREE.Group();
   await createMaterial();
   await loadModel(DEFAULT_MODEL_PATH);
   curMatcapBut = document.getElementById(DEFAULT_SELECTED);
   await selectMat(curMatcapBut);
 
   // XR
-  /*
   let vr = VRButtonIcon.createButton( renderer ); 
   vr.style.visibility = "visible";
   vr.style.zIndex = "999";
@@ -161,23 +166,13 @@ async function init() {
   renderer.xr.addEventListener( 'sessionstart', function ( event ) {
     renderer.setClearColor(new THREE.Color(0x000), 1);
 
-    pmatrix = camera.projectionMatrix.clone();
+    cpmatrix = camera.projectionMatrix.clone();
     cpos.copy(camera.position);
     crot.copy(camera.quaternion);
 
-    // TODO: Set model's scale
-    console.log(model);
-
-    // const group = new THREE.Group();
-    // for(let i=0; i<model.length; i++) {
-    //   // group.add(model[i]);
-    //    // model[i].scale.set(0.005, 0.005, 0.005);
-    //    model[i].position.z += 20; 
-    // }
-
-    // mpos.copy(model.position);
-    // mrot.copy(model.quaternion);
-    // model[0].rotation.x = 0.3;
+    // Put model into view
+    group.position.set(0, -bs.radius / 8, -bs.radius * 2);
+    // group.scale.set(1, 1, 1);
 
     // gui_mesh.visible = true;
   });
@@ -186,22 +181,20 @@ async function init() {
   renderer.xr.addEventListener( 'sessionend', function ( event ) {
     renderer.setClearColor(new THREE.Color(0x000), 0);
 
-    camera.projectionMatrix.copy(pmatrix);
+    camera.projectionMatrix.copy(cpmatrix);
     camera.position.copy(cpos);
     camera.quaternion.copy(crot);
     camera.fov = FOV;
 
-    // Restore model's scale
-    // rotate = false;
-    // model.position.copy(mpos);
-    // model.quaternion.copy(mrot);
+    // Restore model's scale and position
+    group.position.set(0, 0, 0);
+    // group.scale.set(1, 1, 1);
 
     onWindowResize();
     //gui_mesh.visible = false;
   });
 
   await initController();
-*/
 
   // Defaults
   // cb_DisplayAxis.click();
@@ -223,9 +216,7 @@ function getMeshes(obj) {
   return meshes;
 }
 
-//
 // Load model
-//
 async function loadModel(path)
 {
   if(!path) {
@@ -234,6 +225,12 @@ async function loadModel(path)
   }
 
   displayNormals(false);
+
+  // DEBUG: group
+  for(let i=0; i<model.length; i++) {
+    group.remove(model[i]);
+  }
+  scene.remove(group);
 
   // Model cleanup
   for(let i=0; i<model.length; i++) {
@@ -246,23 +243,24 @@ async function loadModel(path)
 
   // Scene  cleanup
   scene.children.forEach(object => {
-        if (object.geometry) {
-            object.geometry.dispose();
+    if (object.geometry) {
+        object.geometry.dispose();
+    }
+    if (object.material) {
+        // Handle single material or array of materials
+        if (Array.isArray(object.material)) {
+            object.material.forEach(material => material.dispose());
+        } else {
+            object.material.dispose();
         }
-        if (object.material) {
-            // Handle single material or array of materials
-            if (Array.isArray(object.material)) {
-                object.material.forEach(material => material.dispose());
-            } else {
-                object.material.dispose();
-            }
-        }
+    }
   });
   scene.clear();
+  console.log(scene);
 
   model.length = 0;
   renderer.renderLists.dispose();
-
+  
   // Load meshes
   let sceneGLTF;
   let meshes = [];
@@ -282,7 +280,7 @@ async function loadModel(path)
     case '.FBX': meshes = getMeshes((await AsyncLoader.loadFBXAsync(path)));
                  break;
     case '.glb': 
-    case '.GLB': // meshes = getMeshes((await AsyncLoader.loadGLTFAsync(path)).scene);
+    case '.GLB':
     case 'gltf':
     case 'GLTF': sceneGLTF = (await AsyncLoader.loadGLTFAsync(path)).scene;
                  meshes = getMeshes(sceneGLTF);
@@ -327,6 +325,7 @@ async function loadModel(path)
     model.push(meshes[i]);
     if(!gltf)
       scene.add(meshes[i]);
+
     bb.expandByObject(meshes[i]);
 
     vcount += model[i].geometry.index.count;
@@ -336,17 +335,19 @@ async function loadModel(path)
   if(gltf)
     scene.add(sceneGLTF);
 
-  // Display stat
-/*
-  document.getElementById("stat").innerHTML = "Meshes " + meshes.length +
-                                              " / Points " + vcount +
-                                              " / Faces " + fcount;
-*/
-  document.getElementById("stat").innerHTML = meshes.length + " meshes / " + vcount + " points / " + fcount + " faces";
-  //console.log(meshes[i].userData); // DEBUG
+  // DEBUG: group
+  for(let i=0; i<model.length; i++) {
+    group.add(model[i]);
+  }
+  scene.add(group);
+
+  console.log(scene); // DEBUG
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
   //console.log(model.geometry.getAttribute( 'position' ));
+
+  // Display stat
+  document.getElementById("stat").innerHTML = meshes.length + " meshes / " + vcount + " points / " + fcount + " faces";
 
   // Set view
   bs = new THREE.Sphere();
@@ -452,11 +453,14 @@ async function selectMat(button) {
     for(let i=0; i<model.length; i++) {
       if(model[i].material.matcap)
         model[i].material.matcap.dispose();
+
       model[i].material.matcap = matcap;
       model[i].material.matcap.colorSpace = THREE.SRGBColorSpace;
       model[i].material.matcap.needsUpdate = true;
+
       if(!model[i].userData.povray)
         model[i].userData.povray = {};
+
       model[i].userData.povray.material = povmat;
     }
   }
