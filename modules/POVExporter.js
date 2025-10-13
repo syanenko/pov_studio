@@ -112,9 +112,9 @@ class POVExporter {
             const j = indices.getX( i + m );
             face[ m ] = ( indexVertex + j );
           }
-          output += '  <' + face[0] + ',' + face[1] + ',' + face[2] + '>,';
+          output += '  <' + face[2] + ',' + face[1] + ',' + face[0] + '>,';
           if ( colors !== undefined && vertex_colors)
-            output += ' ' + face[0] + ', ' + face[1] + ', ' + face[2] + ',';
+            output += ' ' + face[2] + ', ' + face[1] + ', ' + face[0] + ',';
           output +=  '\n';
         }
         output = output.slice(0, -2) + '\n}\n';
