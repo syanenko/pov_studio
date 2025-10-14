@@ -3,11 +3,12 @@
 //
 // TODO
 //
+// - uv and texture as arrays
+// - XR-menu from Mathview
+// - XR: Click, drug out of the window - sticks to model.
 // - Unblock selector on Cancel in dialogs
 // - Save textures from GLB
 // - Check raycast after dialog closed
-// - uv and texture as arrays
-// - XR-menu from Mathview
 // - Separate XR to external module
 // - Model rotation in XR (not ocontrols)
 // - Check scene for doubles, etc
@@ -61,8 +62,8 @@ import { POVAExporter } from './modules/POVAExporter.js';
 import { VRButtonIcon } from './modules/webxr/VRButtonIcon.js';
 import { XRControllerModelFactory } from './modules/webxr/XRControllerModelFactory.js';
 
-const DEFAULT_MODEL = 'teapot.glb';
-//const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
+//const DEFAULT_MODEL = 'teapot.glb';
+const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
 //const DEFAULT_MODEL = 'onion.fbx';
 //const DEFAULT_MODEL = 'ring.glb';
 //const DEFAULT_MODEL = 'cube.fbx';
@@ -219,7 +220,7 @@ async function init() {
   // cb_DisplayAxis.click();
   // cb_DisplayFloor.click();
   // document.getElementById("flat").click();
-  document.getElementById("reverse_vertices").click();
+  // document.getElementById("reverse_vertices").click();
   document.getElementById("export_arrays").click();
 }
 
@@ -718,7 +719,8 @@ function download(type) {
     else
       exporter = new POVExporter();
 
-    const reverseVertices = document.getElementById("reverse_vertices").checked;
+    //const reverseVertices = document.getElementById("reverse_vertices").checked;
+    const reverseVertices = true;
     const result = exporter.parse( scene, material.flatShading, material.vertexColors, reverseVertices, bb, bs, camera, sourceFile );
     saveString( result, 'model.inc' );
   }

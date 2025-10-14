@@ -100,7 +100,7 @@
         var xhr = new XMLHttpRequest();
 
         // Set the request url - check it before publishing
-        xhr.open('POST', 'http://localhost:8085/upload.php');
+        xhr.open('POST', 'http://127.0.0.1:8085/upload.php');
         // xhr.open('POST', 'https://povlab.yesbird.online/studio/upload.php');
 
         // Set the request onload event listener
@@ -187,10 +187,10 @@
 
       <input type="checkbox" id="export_arrays">
       <label for="export_arrays">Export arrays</label><br>
-
+<!--
       <input type="checkbox" id="reverse_vertices">
       <label for="reverse_vertices">Reverse vertices</label><br>
-
+-->
       <input type="checkbox" id="display_axis" onclick="window.displayAxis(this.checked)">
       <label for="display_axis">Display axis</label><br>
 

@@ -280,28 +280,11 @@ class POVExporter {
     });
     
     // Objects
-    let cntGroup = 0;
-    output += 'union {\n';
-
     object.traverse( function ( child ) {
       if ( child.isMesh === true && child.name.substring(0,4) == "part" ) {
-        output += '  object { '+ child.name + '\n           material { ' + child.userData.povray.material + ' }\n  }\n';
-      } else if (child.isGroup) {
-        output += 'union {\n';
-        cntGroup++;
-      }
-
-      // Check for end of group (union)
-      if (child.parent && child.parent.children) {
-        const parentChildren = child.parent.children;
-        if (parentChildren[parentChildren.length - 1] === child && cntGroup > 0) {
-          output += '}\n';
-          cntGroup--;
-        }
+        output += 'object { '+ child.name + '\n           material { ' + child.userData.povray.material + ' }\n}\n';
       }
     })
-
-    output += '}\n';
     return output;
   }
 }
