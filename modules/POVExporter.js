@@ -31,12 +31,7 @@ class POVExporter {
     
     function parseMesh( mesh ) {
 
-      let nbVertex = 0;
-      let nbNormals = 0;
-      let nbVertexUvs = 0;
-
       const geometry = mesh.geometry;
-
       const normalMatrixWorld = new Matrix3();
 
       // shortcuts
@@ -53,7 +48,7 @@ class POVExporter {
       // vertices
       output += 'vertex_vectors {\n  ' + vertices.count + ',\n';
       if ( vertices !== undefined ) {
-        for ( let i = 0, l = vertices.count; i < l; i ++, nbVertex ++ ) {
+        for ( let i = 0; i < vertices.count; i ++ ) {
           vertex.fromBufferAttribute( vertices, i );
           // transform the vertex to world space
           vertex.applyMatrix4( mesh.matrixWorld );
@@ -66,7 +61,7 @@ class POVExporter {
       // uvs
       if ( uvs !== undefined ) {
         output += 'uv_vectors {\n  ' + uvs.count + ',\n';
-        for ( let i = 0, l = uvs.count; i < l; i ++, nbVertexUvs ++ ) {
+        for ( let i = 0; i < uvs.count; i ++ ) {
           uv.fromBufferAttribute( uvs, i );
           // transform the uv to export format
           // output += 'vt ' + uv.x + ' ' + uv.y + '\n';
@@ -79,7 +74,7 @@ class POVExporter {
       if ( (normals !== undefined) && (!flat_shading) ) {
         output += 'normal_vectors {\n  ' + normals.count + ',\n';
         normalMatrixWorld.getNormalMatrix( mesh.matrixWorld );
-        for ( let i = 0, l = normals.count; i < l; i ++, nbNormals ++ ) {
+        for ( let i = 0; i < normals.count; i ++ ) {
           normal.fromBufferAttribute( normals, i );
 
           // transform the normal to world space
@@ -107,7 +102,7 @@ class POVExporter {
       // faces
       if ( indices !== null ) {
         output += 'face_indices {\n  ' + (indices.count / 3) + ',\n';
-        for ( let i = 0, l = indices.count; i < l; i += 3 ) {
+        for ( let i = 0; i < indices.count; i += 3 ) {
           for ( let m = 0; m < 3; m ++ ) {
             const j = indices.getX( i + m );
             face[ m ] = ( indexVertex + j );
@@ -282,7 +277,7 @@ class POVExporter {
     // Objects
     object.traverse( function ( child ) {
       if ( child.isMesh === true && child.name.substring(0,4) == "part" ) {
-        output += 'object { '+ child.name + '\n           material { ' + child.userData.povray.material + ' }\n}\n';
+        output += 'object { '+ child.name + '\n         material { ' + child.userData.povray.material + ' }\n}\n';
       }
     })
     return output;
