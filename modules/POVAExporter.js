@@ -2,6 +2,7 @@
 // Exports all meshes in scene to POV-Ray mesh2: https://www.povray.org/documentation/view/3.60/68/ 
 // Mesh attributes: vertices, faces, normals, UVs, vertice colors
 //
+import * as THREE from 'three';
 import {
 	Color,
 	ColorManagement,
@@ -274,6 +275,15 @@ class POVAExporter {
   // --------------------------------------------------------------------------
   */
     // Header
+
+    // 
+    // DEBUG: (ocontrols.target.copy(bs.center)) ...
+    // https://stackoverflow.com/questions/15696963/three-js-set-and-read-camera-look-vector/15697227#15697227
+    const x = 10;
+    let lookAt = new THREE.Vector3( 0, 0, -x );
+    lookAt.applyQuaternion( camera.quaternion ).add( camera.position );
+    console.log(lookAt);
+
     const now = new Date();
     output += "//\n// Prodiced by POV-Ray studio\n// https://povlab.yesbird.online/studio\n//\n";
     output += "// Source: " + sourceFile + "\n";
@@ -287,7 +297,16 @@ class POVAExporter {
     output += "#declare YMIN =" + bb.min.y.toFixed(8) + ";\n";
     output += "#declare YMAX =" + bb.max.y.toFixed(8) + ";\n";
     output += "#declare ZMIN =" + bb.min.z.toFixed(8) + ";\n";
-    output += "#declare ZMAX =" + bb.max.z.toFixed(8) + ";\n\n";
+    output += "#declare ZMAX =" + bb.max.z.toFixed(8) + ";\n";
+    output += "#declare CAM_POSX = " + camera.position.x + ";\n";
+    output += "#declare CAM_POSY = " + camera.position.y + ";\n";
+    output += "#declare CAM_POSZ = " + camera.position.z + ";\n";
+    output += "#declare CAM_LAX = " + lookAt.x + ";\n";
+    output += "#declare CAM_LAY = " + lookAt.y + ";\n";
+    output += "#declare CAM_LAZ = " + lookAt.z + ";\n";
+    output += "#declare CAM_UPX = " + camera.up.x + ";\n";
+    output += "#declare CAM_UPY = " + camera.up.y + ";\n";
+    output += "#declare CAM_UPZ = " + camera.up.z + ";\n\n";
 
     object.traverse( function ( child ) {
       if ( child.isMesh === true && child.name.substring(0,4) == "part" ) {

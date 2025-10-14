@@ -219,6 +219,7 @@ async function init() {
   // cb_DisplayAxis.click();
   // cb_DisplayFloor.click();
   // document.getElementById("flat").click();
+  document.getElementById("reverse_vertices").click();
   document.getElementById("export_arrays").click();
 }
 
