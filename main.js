@@ -7,7 +7,7 @@
 // - XR-menu from Mathview
 // - XR: Click, drug out of the window - sticks to model.
 // - Unblock selector on Cancel in dialogs
-// - Save textures from GLB
+// - Save textures from GLB (keep original material), zip. 
 // - Check raycast after dialog closed
 // - Separate XR to external module
 // - Model rotation in XR (not ocontrols)
@@ -23,6 +23,10 @@
 // - Materials: add gems
 // - vertexColors + flatShading (?)
 //
+// Update: 0.16b "UV"
+// 1. Export Textures and UVs as arrays
+// 2. Unions excluded from export: now exporting only list of objects with materials.
+
 //---- model.ini --------------------------------------------------------------------------------
 //
 // POV-Ray 'mesh2' file
@@ -49,7 +53,6 @@
 // 5. Adjust rendering parameters in 'studio.pov' according your needs.
 //
 // --------------------------------------------------------------------------
-
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -58,15 +61,13 @@ import { AsyncLoader } from './modules/AsyncLoader.js';
 import { GLTFExporter } from './modules/GLTFExporter.js';
 import { POVExporter } from './modules/POVExporter.js';
 import { POVAExporter } from './modules/POVAExporter.js';
+import { initXR } from './modules/XR.js';
 
-import { VRButtonIcon } from './modules/webxr/VRButtonIcon.js';
-import { XRControllerModelFactory } from './modules/webxr/XRControllerModelFactory.js';
-
-//const DEFAULT_MODEL = 'teapot.glb';
-const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
+const DEFAULT_MODEL = 'teapot.glb';
+// const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
 //const DEFAULT_MODEL = 'onion.fbx';
 //const DEFAULT_MODEL = 'ring.glb';
-//const DEFAULT_MODEL = 'cube.fbx';
+//const DEFAULT_MODEL = 'cube_uv.fbx';
 //const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
 let DEFAULT_MODEL_PATH = './data/models/' + DEFAULT_MODEL;
 
@@ -79,20 +80,14 @@ let camera, scene, renderer;
 const FOV = 50;
 let ocontrols;
 
- // XR
-let beam;
-const beam_color = 0xffffff;
-const beam_hilight_color = 0x222222;
-let controller, rotX, rotY;
+// XR
 const rotTH = 0.005;
 const rotK = 3;
-let rotate = false;
-let cpmatrix;
-let vrButton;
+window.rotX, window.rotY;
+window.rotate = false;
 
 let bb, bs;
 let material, model = [];
-let group;
 let matcap;
 let povmat = DEFAULT_POVMAT; 
 let curMatcapBut;
@@ -152,71 +147,15 @@ async function init() {
     }
   });
 
-  group = new THREE.Group();
+  window.group = new THREE.Group();
 
-  // Load default model
   await createMaterial();
   await loadModel(DEFAULT_MODEL_PATH);
   curMatcapBut = document.getElementById(DEFAULT_SELECTED);
   await selectMat(curMatcapBut);
+  await initXR(scene, camera, renderer);
 
-  // XR
-  vrButton = VRButtonIcon.createButton( renderer ); 
-
-  renderer.xr.enabled = true;
-  renderer.xr.setReferenceSpaceType( 'local' );
-  renderer.xr.setFramebufferScaleFactor( 4.0 );
-
-  let cpos = new THREE.Vector3();
-  let crot = new THREE.Quaternion();
-
-  let mpos = new THREE.Vector3();
-  let mrot = new THREE.Quaternion();
-
-  // XR start
-  renderer.xr.addEventListener( 'sessionstart', function ( event ) {
-    renderer.setClearColor(new THREE.Color(0x000), 1);
-
-    cpmatrix = camera.projectionMatrix.clone();
-    cpos.copy(camera.position);
-    crot.copy(camera.quaternion);
-
-    // Put model into view
-    group.position.set(0, -bs.radius / 8, -bs.radius * 2);
-    // group.scale.set(1, 1, 1);
-
-    // Switch off floor
-    cb_DisplayFloorStatus = cb_DisplayFloor.checked;
-    if(cb_DisplayFloorStatus)
-      cb_DisplayFloor.click();
-
-    // gui_mesh.visible = true;
-  });
-
-  // XR end
-  renderer.xr.addEventListener( 'sessionend', function ( event ) {
-    renderer.setClearColor(new THREE.Color(0x000), 0);
-
-    camera.projectionMatrix.copy(cpmatrix);
-    camera.position.copy(cpos);
-    camera.quaternion.copy(crot);
-    camera.fov = FOV;
-
-    // Restore model's scale and position
-    group.position.set(0, 0, 0);
-    // group.scale.set(1, 1, 1);
-
-    // Restore floor
-    if(cb_DisplayFloorStatus)
-      cb_DisplayFloor.click();
-
-    onWindowResize();
-    //gui_mesh.visible = false;
-  });
-
-  await initController();
-
-  // Defaults
+  // GUI defaults
   // cb_DisplayAxis.click();
   // cb_DisplayFloor.click();
   // document.getElementById("flat").click();
@@ -224,6 +163,7 @@ async function init() {
   document.getElementById("export_arrays").click();
 }
 
+/*
 //
 // Enter XR
 //
@@ -231,6 +171,7 @@ function enterXR() {
   vrButton.click();
 }
 window.enterXR = enterXR;
+*/
 
 //
 // Get geometry
@@ -257,7 +198,7 @@ async function loadModel(path)
   displayNormals(false);
 
   // Clear up model group
-  group.traverse(obj => {
+  window.group.traverse(obj => {
     if (obj.geometry) {
         obj.geometry.dispose();
     }
@@ -270,8 +211,8 @@ async function loadModel(path)
         }
     }
   });
-  group.clear();
-  scene.remove(group);
+  window.group.clear();
+  scene.remove(window.group);
 
   // Model cleanup (?)
   for(let i=0; i<model.length; i++) {
@@ -349,7 +290,7 @@ async function loadModel(path)
     model.push(meshes[i]);
     // Fill group by meshes
     if(!gltf) {
-      group.add(meshes[i]);
+      window.group.add(meshes[i]);
     }
 
     bb.expandByObject(meshes[i]);
@@ -358,14 +299,13 @@ async function loadModel(path)
     fcount += model[i].geometry.index.count / 3;
   }
 
-  // DEBUG: XR group  
   if(gltf)
-    group = sceneGLTF;
+    window.group = sceneGLTF;
   
-  group.name = "model";
-  scene.add(group);
+  window.group.name = "model";
+  scene.add(window.group);
 
-  //console.log(scene); // DEBUG
+  // console.log(scene); // DEBUG
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
   //console.log(model.geometry.getAttribute( 'position' ));
@@ -374,8 +314,9 @@ async function loadModel(path)
   document.getElementById("stat").innerHTML = meshes.length + " meshes / " + vcount + " points / " + fcount + " faces";
 
   // Set view
-  bs = new THREE.Sphere();
+  let bs = new THREE.Sphere();
   bb.getBoundingSphere(bs);
+  window.bs = bs;
 
   ocontrols.reset();
   ocontrols.target.copy(bs.center);
@@ -587,84 +528,13 @@ async function setFill(checked) {
 }
 window.setFill = setFill;
 
-//
-// Init controller
-//
-async function initController()
-{
-
-  // Init XR controller
-  controller = renderer.xr.getController( 0 );
-  // Grip 
-  const controllerModelFactory = new XRControllerModelFactory();
-  const controllerGrip1 = renderer.xr.getControllerGrip( 0 );
-  controllerGrip1.add( controllerModelFactory.createControllerModel( controllerGrip1 ) );
-  scene.add( controllerGrip1 );
-
-  // Beam
-  const beam_geom = new THREE.CylinderGeometry( 0.003, 0.005, 1, 4, 1, true);
-  const textureLoader = new THREE.TextureLoader();
-  const alpha = textureLoader.load('./modules/webxr/beam_alpha.png');
-  const beam_mat = new THREE.MeshStandardMaterial({ transparent: true,
-                                                    alphaMap:alpha,
-                                                    lightMapIntensity:0,
-                                                    opacity: 0.8,
-                                                    color: beam_color,
-                                                    // emissive: 0xffffff
-                                                    alphaTest:0.01
-                                                    });
-  beam = new THREE.Mesh(beam_geom, beam_mat);
-  beam.name = 'beam';
-  beam.receiveShadow = false;
-
-  // Alight beam to grip
-  beam.rotateX(Math.PI / 2);
-  beam.translateY(-0.5);
-  controller.add(beam);
-  scene.add( controller );
-
-  // Hilight controller
-  const light = new THREE.PointLight( 0xffffff, 2, 1, 0);
-  light.position.set( 0, 0, 0 );
-  scene.add( light );
-
-  controller.addEventListener( 'selectstart', onSelectStart );
-  controller.addEventListener( 'selectend', onSelectEnd );
-}
-
-//
-//  Controller events
-//
-function onSelectStart( event )
-{
-  // Hilight beam
-  const controller = event.target;
-  let beam = controller.getObjectByName( 'beam' );
-  beam.material.color.set(beam_hilight_color);
-  beam.material.emissive.g = 0.5;
-  
-  rotX = controller.rotation.x;
-  rotY = controller.rotation.y;
-  rotate = true;
-}
-
-function onSelectEnd( event )
-{
-  // Unhighlight beam
-  const controller = event.target;
-  beam = controller.getObjectByName( 'beam' );
-  beam.material.color.set(beam_color);
-  beam.material.emissive.g = 0;
-
-  rotate = false;
-}
-
 // Resize
 function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize( window.innerWidth, window.innerHeight );
 }
+window.onWindowResize = onWindowResize;
 
 // Download
 const link = document.createElement( 'a' );
@@ -780,18 +650,18 @@ function animate() {
 //
 function render() {
 
-  if(rotate) {
-    let dX = (rotX - controller.rotation.x) * rotK;
-    let dY = (rotY - controller.rotation.y) * rotK;
+  if(window.rotate) {
+    let dX = (window.rotX - window.controller.rotation.x) * rotK;
+    let dY = (window.rotY - window.controller.rotation.y) * rotK;
 
     if(Math.abs(dX) > rotTH) {
-      group.rotation.x += dX;
-      rotX = controller.rotation.x;
+      window.group.rotation.x += dX;
+      rotX = window.controller.rotation.x;
     }
 
     if(Math.abs(dY) > rotTH) {
-      group.rotation.y += dY;
-      rotY = controller.rotation.y;
+      window.group.rotation.y += dY;
+      rotY = window.controller.rotation.y;
     }
   }
 
