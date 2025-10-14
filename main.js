@@ -2,6 +2,10 @@
 // Run: sudo /opt/lampp/manager-linux-x64.run
 //
 // TODO
+//
+// - Unblock selector on Cancel in dialogs
+// - Save textures from GLB
+// - Check raycast after dialog closed
 // - uv and texture as arrays
 // - XR-menu from Mathview
 // - Separate XR to external module
@@ -215,6 +219,7 @@ async function init() {
   // cb_DisplayAxis.click();
   // cb_DisplayFloor.click();
   // document.getElementById("flat").click();
+  document.getElementById("export_arrays").click();
 }
 
 //
@@ -246,7 +251,7 @@ async function loadModel(path)
     console.error('No model path specified');
     return;
   }
-
+  sourceFile = path;
   displayNormals(false);
 
   // Clear up model group
@@ -357,7 +362,8 @@ async function loadModel(path)
   
   group.name = "model";
   scene.add(group);
-  console.log(scene); // DEBUG
+
+  //console.log(scene); // DEBUG
   //console.log(model.geometry.attributes);
   //console.log(model.geometry);
   //console.log(model.geometry.getAttribute( 'position' ));
