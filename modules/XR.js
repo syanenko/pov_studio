@@ -6,8 +6,8 @@ import { XRControllerModelFactory } from './webxr/XRControllerModelFactory.js';
 import { VRButtonIcon } from './webxr/VRButtonIcon.js';
 
 let vrButton;
-let scene, renderer;
-let camera, cpmatrix, fov;
+let cpmatrix, fov;
+
 let beam;
 const beam_color = 0xffffff;
 const beam_hilight_color = 0x222222;
@@ -15,12 +15,8 @@ const beam_hilight_color = 0x222222;
 let cb_DisplayFloor;
 let cb_DisplayFloorStatus;
 
-async function initXR(_scene, _camera, _renderer) {
-  scene = _scene;
-  camera = _camera;
-  renderer = _renderer;
-
-  vrButton = VRButtonIcon.createButton( renderer ); 
+async function initXR() {
+  vrButton = VRButtonIcon.createButton(renderer); 
 
   renderer.xr.enabled = true;
   renderer.xr.setReferenceSpaceType( 'local' );
@@ -43,8 +39,8 @@ async function initXR(_scene, _camera, _renderer) {
     fov = camera.fov;
 
     // Put model into view
-    window.group.position.set(0, -window.bs.radius / 8, -window.bs.radius * 2);
-    // window.group.scale.set(1, 1, 1);
+    group.position.set(0, -bs.radius / 8, -bs.radius * 2);
+    // group.scale.set(1, 1, 1);
 
     // Switch off floor
     cb_DisplayFloor = document.getElementById("display_floor");
@@ -64,9 +60,10 @@ async function initXR(_scene, _camera, _renderer) {
     camera.quaternion.copy(crot);
     camera.fov = fov;
 
-    // Restore model's scale and position
-    window.group.position.set(0, 0, 0);
-    // window.group.scale.set(1, 1, 1);
+    // Restore model's state
+    group.position.set(0, 0, 0);
+    group.scale.set(1, 1, 1);
+    group.rotation.set(0, 0, 0);
 
     // Restore floor
     if(cb_DisplayFloorStatus)
@@ -93,7 +90,7 @@ window.enterXR = enterXR;
 async function initController()
 {
   // Init XR controller
-  const controller = renderer.xr.getController( 0 );
+  window.controller = renderer.xr.getController( 0 );
   // Grip 
   const controllerModelFactory = new XRControllerModelFactory();
   const controllerGrip1 = renderer.xr.getControllerGrip( 0 );
@@ -129,8 +126,6 @@ async function initController()
 
   controller.addEventListener( 'selectstart', onSelectStart );
   controller.addEventListener( 'selectend', onSelectEnd );
-
-  window.controller = controller;
 }
 
 //
@@ -144,9 +139,9 @@ function onSelectStart( event )
   beam.material.color.set(beam_hilight_color);
   beam.material.emissive.g = 0.5;
   
-  window.rotX = controller.rotation.x;
-  window.rotY = controller.rotation.y;
-  window.rotate = true;
+  rotX = controller.rotation.x;
+  rotY = controller.rotation.y;
+  rotate = true;
 }
 
 function onSelectEnd( event )
@@ -157,7 +152,7 @@ function onSelectEnd( event )
   beam.material.color.set(beam_color);
   beam.material.emissive.g = 0;
 
-  window.rotate = false;
+  rotate = false;
 }
 
 export { initXR };

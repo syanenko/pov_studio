@@ -3,24 +3,18 @@
 //
 // TODO
 //
-// - uv and texture as arrays
 // - XR-menu from Mathview
-// - XR: Click, drug out of the window - sticks to model.
+// - Pass camera params to 'model.ini'
+// - XR: click, drug out of the window - sticks to model (!).
 // - Unblock selector on Cancel in dialogs
 // - Save textures from GLB (keep original material), zip. 
-// - Check raycast after dialog closed
-// - Separate XR to external module
 // - Model rotation in XR (not ocontrols)
-// - Check scene for doubles, etc
-// - XR mode - model move/scale
+// - Help in about (+/-)
 // - POV scene tweaking
-// - Extend materials library
-// - Pass camera params to 'model.ini'
-// - Server-side previw rendering (?)
-// - Help in about
-// - Check selector shifting
 // - Materials: fix black line in matcaps 
-// - Materials: add gems
+// - Extend materials library (add gems, etc)
+// - Server-side previw rendering (?)
+// - Check selector shifting (?)
 // - vertexColors + flatShading (?)
 //
 // Update: 0.16b "UV"
@@ -76,14 +70,14 @@ const DEFAULT_POVMAT = "M_light_tan_dull";
 const DEFAULT_SELECTED = "M_yellow_green_gloss";
 
 let container;
-let camera, scene, renderer;
+// let camera, scene, renderer;
 const FOV = 50;
 let ocontrols;
 
 // XR
 const rotTH = 0.005;
 const rotK = 3;
-window.rotX, window.rotY;
+window.rotX = window.rotY = 0;
 window.rotate = false;
 
 let material, model = [];
@@ -106,10 +100,10 @@ let selBlocked = false;
 // Init
 //
 async function init() {
-  camera = new THREE.PerspectiveCamera( FOV, window.innerWidth / window.innerHeight, 0.1, 8000 );
+  window.camera = new THREE.PerspectiveCamera( FOV, window.innerWidth / window.innerHeight, 0.1, 8000 );
   camera.position.set( 0, 2, 3 );
 
-  scene = new THREE.Scene();
+  window.scene = new THREE.Scene();
   scene.add( camera );
 
   const ambientLight = new THREE.AmbientLight(0xffffff, 2.5); // White light, 50% intensity
@@ -117,7 +111,7 @@ async function init() {
 
   window.addEventListener( 'resize', onWindowResize );
 
-  renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
+  window.renderer = new THREE.WebGLRenderer({alpha: true, antialias: true});
   renderer.setSize( window.innerWidth, window.innerHeight);
   renderer.setPixelRatio( window.devicePixelRatio );
   container = document.getElementById("container");
@@ -163,16 +157,6 @@ async function init() {
   // document.getElementById("reverse_vertices").click();
   document.getElementById("export_arrays").click();
 }
-
-/*
-//
-// Enter XR
-//
-function enterXR() {
-  vrButton.click();
-}
-window.enterXR = enterXR;
-*/
 
 //
 // Get geometry
@@ -520,7 +504,7 @@ async function switchRotation(checked) {
 window.switchRotation = switchRotation;
 
 //
-// Switch normals
+// Fill model with matcap
 //
 async function setFill(checked) {
   fill = checked;
@@ -649,18 +633,18 @@ function animate() {
 //
 function render() {
 
-  if(window.rotate) {
-    let dX = (window.rotX - window.controller.rotation.x) * rotK;
-    let dY = (window.rotY - window.controller.rotation.y) * rotK;
+  if(rotate) {
+    let dX = (rotX - controller.rotation.x) * rotK;
+    let dY = (rotY - controller.rotation.y) * rotK;
 
     if(Math.abs(dX) > rotTH) {
       group.rotation.x += dX;
-      rotX = window.controller.rotation.x;
+      rotX = controller.rotation.x;
     }
 
     if(Math.abs(dY) > rotTH) {
       group.rotation.y += dY;
-      rotY = window.controller.rotation.y;
+      rotY = controller.rotation.y;
     }
   }
 
