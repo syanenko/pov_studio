@@ -85,6 +85,17 @@ class POVAExporter {
         output = output.slice(0, -2) + '\n}\n\n';
       }
 
+      // UV array
+        if ( uvs !== undefined ) {
+        output += '#declare uv' + meshCount + ' = array[' + uvs.count + '] {\n';
+         for ( let i = 0, l = uvs.count; i < l; i ++, nbVertexUvs ++ ) {
+          uv.fromBufferAttribute( uvs, i );
+          output += '  <' + uv.x + ',' + uv.y + '>,\n'
+          //output += '  texture{pigment{rgb <' + color.r.toFixed(8) + ',' + color.g.toFixed(8) + ',' + color.b.toFixed(8) +'>}},\n'
+        }
+        output = output.slice(0, -2) + '\n}\n\n';
+      }
+
       // Mesh
       output += '#declare m' + meshCount + ' = mesh2 {\n'
       // Vertex vectors
@@ -118,16 +129,20 @@ class POVAExporter {
         output += '\n}\n\n';
       }
 
-      // TODO: uvs - put in array (?)
+      // UV vectors
       if ( uvs !== undefined ) {
-        output += 'uv_vectors {\n  ' + uvs.count + ',\n';
-        for ( let i = 0, l = uvs.count; i < l; i ++, nbVertexUvs ++ ) {
-          uv.fromBufferAttribute( uvs, i );
-          // transform the uv to export format
-          // output += 'vt ' + uv.x + ' ' + uv.y + '\n';
-          output += '  <' + uv.x + ',' + uv.y + '>,\n'
+        output += 'uv_vectors {\n  ' + uvs.count + ',\n  ';
+        for ( let i = 0; i < uvs.count; i++ ) {
+          output += 'uv' + meshCount + '[' + i + '],';
+          if(((i + 1) % 10) == 0)
+            output += '\n  ';
         }
-        output += '  }\n';
+
+        if(output.slice(-1) == '\n')
+          output = output.slice(0, -2);
+        else
+          output = output.slice(0, -1);
+        output += '\n}\n\n';
       }
 
       // Texture list
