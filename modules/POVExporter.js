@@ -12,7 +12,7 @@ import {
 } from 'three';
 
 class POVExporter {
-  parse( object, flat_shading, vertex_colors, reverseVertices,  bb, bs, camera, sourceFile ) {
+  parse( object, flat_shading, vertex_colors, reverseVertices, camera, sourceFile ) {
 
     let output = '';
     let surCount = 1;

@@ -13,7 +13,7 @@ import {
 } from 'three';
 
 class POVAExporter {
-  parse( object, flat_shading, vertex_colors, reverseVertices, bb, bs, camera, sourceFile ) {
+  parse( object, flat_shading, vertex_colors, reverseVertices, camera, sourceFile ) {
 
     let output = '';
     let meshCount = 0;

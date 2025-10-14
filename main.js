@@ -86,7 +86,6 @@ const rotK = 3;
 window.rotX, window.rotY;
 window.rotate = false;
 
-let bb, bs;
 let material, model = [];
 let matcap;
 let povmat = DEFAULT_POVMAT; 
@@ -147,6 +146,8 @@ async function init() {
     }
   });
 
+  window.bb = new THREE.Box3();
+  window.bs = new THREE.Sphere();
   window.group = new THREE.Group();
 
   await createMaterial();
@@ -198,7 +199,7 @@ async function loadModel(path)
   displayNormals(false);
 
   // Clear up model group
-  window.group.traverse(obj => {
+  group.traverse(obj => {
     if (obj.geometry) {
         obj.geometry.dispose();
     }
@@ -211,8 +212,8 @@ async function loadModel(path)
         }
     }
   });
-  window.group.clear();
-  scene.remove(window.group);
+  group.clear();
+  scene.remove(group);
 
   // Model cleanup (?)
   for(let i=0; i<model.length; i++) {
@@ -255,7 +256,7 @@ async function loadModel(path)
     default: console.error("Unknown file extention: '" + ext + "'");
   }
   
-  bb = new THREE.Box3();
+  bb.setFromArray([0,0,0,0,0,0]);
   let vcount = 0, fcount = 0;
   for (let i = 0; i < meshes.length; i++) {
     meshes[i].geometry.deleteAttribute( 'normal' );
@@ -290,7 +291,7 @@ async function loadModel(path)
     model.push(meshes[i]);
     // Fill group by meshes
     if(!gltf) {
-      window.group.add(meshes[i]);
+      group.add(meshes[i]);
     }
 
     bb.expandByObject(meshes[i]);
@@ -300,10 +301,10 @@ async function loadModel(path)
   }
 
   if(gltf)
-    window.group = sceneGLTF;
+    group = sceneGLTF;
   
-  window.group.name = "model";
-  scene.add(window.group);
+  group.name = "model";
+  scene.add(group);
 
   // console.log(scene); // DEBUG
   //console.log(model.geometry.attributes);
@@ -314,9 +315,7 @@ async function loadModel(path)
   document.getElementById("stat").innerHTML = meshes.length + " meshes / " + vcount + " points / " + fcount + " faces";
 
   // Set view
-  let bs = new THREE.Sphere();
   bb.getBoundingSphere(bs);
-  window.bs = bs;
 
   ocontrols.reset();
   ocontrols.target.copy(bs.center);
@@ -591,7 +590,7 @@ function download(type) {
 
     //const reverseVertices = document.getElementById("reverse_vertices").checked;
     const reverseVertices = true;
-    const result = exporter.parse( scene, material.flatShading, material.vertexColors, reverseVertices, bb, bs, camera, sourceFile );
+    const result = exporter.parse( scene, material.flatShading, material.vertexColors, reverseVertices, camera, sourceFile );
     saveString( result, 'model.inc' );
   }
 }
@@ -655,12 +654,12 @@ function render() {
     let dY = (window.rotY - window.controller.rotation.y) * rotK;
 
     if(Math.abs(dX) > rotTH) {
-      window.group.rotation.x += dX;
+      group.rotation.x += dX;
       rotX = window.controller.rotation.x;
     }
 
     if(Math.abs(dY) > rotTH) {
-      window.group.rotation.y += dY;
+      group.rotation.y += dY;
       rotY = window.controller.rotation.y;
     }
   }
