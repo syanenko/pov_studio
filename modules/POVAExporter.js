@@ -32,12 +32,7 @@ class POVAExporter {
     
     function parseMesh( mesh ) {
 
-      let nbVertex = 0;
-      let nbNormals = 0;
-      let nbVertexUvs = 0;
-
       const geometry = mesh.geometry;
-
       const normalMatrixWorld = new Matrix3();
 
       // shortcuts
@@ -51,7 +46,7 @@ class POVAExporter {
       // Vertices array
       if ( vertices !== undefined ) {
         output += '#declare v' + meshCount + ' = array[' + vertices.count + '] {\n';
-        for ( let i = 0, l = vertices.count; i < l; i ++, nbVertex ++ ) {
+        for ( let i = 0; i < vertices.count; i ++) {
           vertex.fromBufferAttribute( vertices, i );
           // transform the vertex to world space
           vertex.applyMatrix4( mesh.matrixWorld );
@@ -66,7 +61,7 @@ class POVAExporter {
         output += '#declare n' + meshCount + ' = array[' + normals.count + '] {\n';
         normalMatrixWorld.getNormalMatrix( mesh.matrixWorld );
 
-        for ( let i = 0, l = normals.count; i < l; i ++, nbNormals ++ ) {
+        for ( let i = 0; i < normals.count; i ++ ) {
           normal.fromBufferAttribute( normals, i );
           normal.applyMatrix3( normalMatrixWorld ).normalize();
           output += '  <' + normal.x.toFixed(8) + ',' + normal.y.toFixed(8) + ',' + normal.z.toFixed(8) + '>,\n'
@@ -88,7 +83,7 @@ class POVAExporter {
       // UV array
         if ( uvs !== undefined ) {
         output += '#declare uv' + meshCount + ' = array[' + uvs.count + '] {\n';
-         for ( let i = 0, l = uvs.count; i < l; i ++, nbVertexUvs ++ ) {
+         for ( let i = 0; i < uvs.count; i++ ) {
           uv.fromBufferAttribute( uvs, i );
           output += '  <' + uv.x + ',' + uv.y + '>,\n'
           //output += '  texture{pigment{rgb <' + color.r.toFixed(8) + ',' + color.g.toFixed(8) + ',' + color.b.toFixed(8) +'>}},\n'
@@ -159,7 +154,7 @@ class POVAExporter {
       // Faces
       if ( indices !== null ) {
         output += 'face_indices {\n  ' + (indices.count / 3) + ',\n';
-        for ( let i = 0, l = indices.count; i < l; i += 3 ) {
+        for ( let i = 0; i < indices.count; i += 3 ) {
           for ( let m = 0; m < 3; m ++ ) {
             const j = indices.getX( i + m );
             face[ m ] = ( indexVertex + j );
@@ -353,7 +348,7 @@ class POVAExporter {
     object.traverse( function ( child ) {
       if ( child.isMesh === true && child.name.substring(0,4) == "part" ) {
         mcount++;
-        output += 'object { m'+ mcount + '\n           material { ' + child.userData.povray.material + ' }\n}\n';
+        output += 'object { m'+ mcount + '\n         material { ' + child.userData.povray.material + ' }\n}\n';
       }
     })
     return output;
