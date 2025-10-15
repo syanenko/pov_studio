@@ -12,38 +12,6 @@
 // - Server-side previw rendering (?)
 // - Check selector shifting (?)
 //
-// -- BUGS
-//
-// Update: 0.16b "UV"
-// 1. Export Textures and UVs as arrays
-// 2. Unions excluded from export: now exporting only list of objects with materials.
-
-//---- model.ini --------------------------------------------------------------------------------
-//
-// POV-Ray 'mesh2' file
-//
-// Prodiced by POV-Ray studio
-//
-// URL: https://povlab.yesbird.online/studio
-// Email: yesbird65@gmail.com
-//
-// Source: teapot.glb
-// Time:   11.10.2025 1:29
-//
-// -- How to use ------------------------------------------------------------
-// 
-// 1. Install POV-Ray: https://povray.org.
-//
-// 2. Download and unzip studio template:
-//    https://povlab.yesbird.online/studio/data/download/studio.zip.
-//
-// 3. Save this file in the same directory as 'studio.pov' from 'studio.zip'.
-//
-// 4. Render 'studio.pov'.
-//
-// 5. Adjust rendering parameters in 'studio.pov' according your needs.
-//
-// --------------------------------------------------------------------------
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';

@@ -2,7 +2,7 @@
 // Init XR
 //
 import * as THREE from 'three';
-import { XRControllerModelFactory } from './webxr/XRControllerModelFactory.js';
+import { XRControllerModelFactory } from 'three/addons/webxr/XRControllerModelFactory.js';
 import { VRButtonIcon } from './webxr/VRButtonIcon.js';
 
 let vrButton;
@@ -30,7 +30,6 @@ async function initXR() {
 
   // XR start
   renderer.xr.addEventListener( 'sessionstart', function ( event ) {
-    console.log("Start");
     renderer.setClearColor(new THREE.Color(0x000), 1);
 
     cpmatrix = camera.projectionMatrix.clone();
