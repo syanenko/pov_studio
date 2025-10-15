@@ -12,6 +12,10 @@
 // - Server-side previw rendering (?)
 // - Check selector shifting (?)
 //
+// -- Bugs
+// -- gearbox.fbx on render
+// 
+
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
