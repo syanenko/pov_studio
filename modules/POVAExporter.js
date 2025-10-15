@@ -84,8 +84,7 @@ class POVAExporter {
         output += '#declare uv' + meshCount + ' = array[' + uvs.count + '] {\n';
          for ( let i = 0; i < uvs.count; i++ ) {
           uv.fromBufferAttribute( uvs, i );
-          output += '  <' + uv.x + ',' + uv.y + '>,\n'
-          //output += '  texture{pigment{rgb <' + color.r.toFixed(8) + ',' + color.g.toFixed(8) + ',' + color.b.toFixed(8) +'>}},\n'
+          output += '  <' + uv.x.toFixed(8) + ',' + uv.y.toFixed(8) + '>,\n'
         }
         output = output.slice(0, -2) + '\n}\n\n';
       }
