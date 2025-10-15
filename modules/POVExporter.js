@@ -61,8 +61,6 @@ class POVExporter {
         output += 'uv_vectors {\n  ' + uvs.count + ',\n';
         for ( let i = 0; i < uvs.count; i ++ ) {
           uv.fromBufferAttribute( uvs, i );
-          // transform the uv to export format
-          // output += 'vt ' + uv.x + ' ' + uv.y + '\n';
           output += '  <' + uv.x.toFixed(8) + ',' + uv.y.toFixed(8) + '>,\n'
         }
         output += '  }\n';
