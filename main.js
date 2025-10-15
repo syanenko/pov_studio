@@ -241,7 +241,6 @@ async function loadModel(path)
   let vcount = 0, fcount = 0;
   for (let i = 0; i < meshes.length; i++) {
     meshes[i].geometry.deleteAttribute( 'normal' );
-    console.log(meshes[i].geometry);
     try {
       meshes[i].geometry = BufferGeometryUtils.mergeVertices(meshes[i].geometry);
     } catch(err) {
