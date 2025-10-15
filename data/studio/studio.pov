@@ -1,7 +1,8 @@
 //
-// POV-Ray studio
-// https://povlab.yesbird.online/studio/
-//
+// POV-Ray studio environment
+// 
+// Studio: https://povlab.yesbird.online/studio/
+// Environment: https://povlab.yesbird.online/studio/data/download/studio.zip
 //
 // Author: Yesbird (https://yesbird.online)
 // Date: 15.10.25 
