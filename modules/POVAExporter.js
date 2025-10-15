@@ -18,10 +18,6 @@ class POVAExporter {
     let output = '';
     let meshCount = 0;
 
-    let indexVertex = 0;
-    let indexVertexUvs = 0;
-    let indexNormals = 0;
-
     const vertex = new Vector3();
     const color = new Color();
     const normal = new Vector3();
@@ -157,7 +153,7 @@ class POVAExporter {
         for ( let i = 0; i < indices.count; i += 3 ) {
           for ( let m = 0; m < 3; m ++ ) {
             const j = indices.getX( i + m );
-            face[ m ] = ( indexVertex + j );
+            face[ m ] = ( j );
           }
           if( reverseVertices )
             output += '  <' + face[2] + ',' + face[1] + ',' + face[0] + '>,';
