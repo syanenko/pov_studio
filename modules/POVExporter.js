@@ -1,6 +1,8 @@
 //
-// Exports all meshes in scene to POV-Ray mesh2: https://www.povray.org/documentation/view/3.60/68/ 
-// Mesh attributes: vertices, faces, normals, UVs, vertice colors
+// Exports all meshes in scene to POV-Ray 'mesh2' format
+//
+// Supported attributes: vertices, faces, normals, UVs, vertice colors.
+// Mesh2 format: https://www.povray.org/documentation/view/3.60/68/ 
 //
 import {
 	Color,
@@ -12,7 +14,7 @@ import {
 } from 'three';
 
 class POVExporter {
-  parse( object, flat_shading, vertex_colors, reverseVertices, camera, sourceFile ) {
+  parse( object, flat_shading, vertex_colors, reverseVertices, sourceFile ) {
 
     let output = '';
     let surCount = 1;
@@ -118,134 +120,24 @@ class POVExporter {
         }
         output = output.slice(0, -2) + '\n}\n';
       }
-      /* else { // Not implemented (Mesh1 ?)
-        for ( let i = 0, l = vertices.count; i < l; i += 3 ) {
-          for ( let m = 0; m < 3; m ++ ) {
-            const j = i + m + 1;
-            face[ m ] = ( indexVertex + j ) + ( normals || uvs ? '/' + ( uvs ? ( indexVertexUvs + j ) : '' ) + ( normals ? '/' + ( indexNormals + j ) : '' ) : '' );
-          }
-          output += 'f ' + face.join( ' ' ) + '\n';
-        }
-      }*/
       output += '}\n';
 
       // Save POV material name
       materials.push(mesh.userData.povray.material);
     }
-    /*
-    function parseLine( line ) {
-      let nbVertex = 0;
-      const geometry = line.geometry;
-      const type = line.type;
 
-      // shortcuts
-      const vertices = geometry.getAttribute( 'position' );
-
-      // name of the line object
-      output += 'o ' + line.name + '\n';
-      if ( vertices !== undefined ) {
-        for ( let i = 0, l = vertices.count; i < l; i ++, nbVertex ++ ) {
-          vertex.fromBufferAttribute( vertices, i );
-
-          // transform the vertex to world space
-          vertex.applyMatrix4( line.matrixWorld );
-
-          // transform the vertex to export format
-          output += 'v ' + vertex.x + ' ' + vertex.y + ' ' + vertex.z + '\n';
-        }
-      }
-
-      if ( type === 'Line' ) {
-        output += 'l ';
-
-        for ( let j = 1, l = vertices.count; j <= l; j ++ ) {
-          output += ( indexVertex + j ) + ' ';
-        }
-
-        output += '\n';
-      }
-
-      if ( type === 'LineSegments' ) {
-        for ( let j = 1, k = j + 1, l = vertices.count; j < l; j += 2, k = j + 1 ) {
-          output += 'l ' + ( indexVertex + j ) + ' ' + ( indexVertex + k ) + '\n';
-        }
-      }
-
-      // update index
-      indexVertex += nbVertex;
-    }
-
-    function parsePoints( points ) {
-
-      let nbVertex = 0;
-
-      const geometry = points.geometry;
-
-      const vertices = geometry.getAttribute( 'position' );
-      const colors = geometry.getAttribute( 'color' );
-
-      output += 'o ' + points.name + '\n';
-
-      if ( vertices !== undefined ) {
-        for ( let i = 0, l = vertices.count; i < l; i ++, nbVertex ++ ) {
-
-          vertex.fromBufferAttribute( vertices, i );
-          vertex.applyMatrix4( points.matrixWorld );
-
-          output += 'v ' + vertex.x + ' ' + vertex.y + ' ' + vertex.z;
-          if ( colors !== undefined ) {
-            color.fromBufferAttribute( colors, i );
-            ColorManagement.fromWorkingColorSpace( color, SRGBColorSpace );
-            output += ' ' + color.r + ' ' + color.g + ' ' + color.b;
-          }
-          output += '\n';
-        }
-
-        output += 'p ';
-        for ( let j = 1, l = vertices.count; j <= l; j ++ ) {
-          output += ( indexVertex + j ) + ' ';
-        }
-        output += '\n';
-      }
-
-      // update index
-      indexVertex += nbVertex;
-    }
- */
-  /*
-  //
-  // POV-Ray 'mesh2' file
-  //
-  // Prodiced by POV-Ray studio
-  //
-  // URL: https://povlab.yesbird.online/studio
-  // Email: yesbird65@gmail.com
-  //
-  // Source: teapot.glb
-  // Time:   11.10.2025 1:29
-  //
-  // -- How to use ------------------------------------------------------------
-  // 
-  // 1. Install POV-Ray: https://povray.org.
-  //
-  // 2. Download and unzip studio template:
-  //    https://povlab.yesbird.online/studio/data/download/studio.zip.
-  //
-  // 3. Save this file in the same directory as 'studio.pov' from 'studio.zip'.
-  //
-  // 4. Render 'studio.pov'.
-  //
-  // 5. Adjust rendering parameters in 'studio.pov' according your needs.
-  //
-  // --------------------------------------------------------------------------
-  */
     // Header
     const now = new Date();
-    output += "//\n// Prodiced by POV-Ray studio\n// https://povlab.yesbird.online/studio\n//\n";
-    output += "// Source: " + sourceFile + "\n";
-    output += "// Time: " + now.getDate() +  "." + (now.getMonth() + 1) + "." + now.getFullYear() + " " +
+    output += "//\n// Model file to use with POV-Ray studio environment\n//\n";
+    output += "// Source file: " + sourceFile + "\n";
+    output += "// Creation time: " + now.getDate() +  "." + (now.getMonth() + 1) + "." + now.getFullYear() + " " +
                           + now.getHours() + ":" + now.getMinutes() + "\n";
+    output += "//\n// Prodiced by POV-Ray studio: https://povlab.yesbird.online/studio\n//\n";
+    output += "// Download environment: https://povlab.yesbird.online/studio/data/download/studio.zip\n//\n";
+    output += "// Author: Yesbird (https://yesbird.online)\n";
+    output += "// Date: 15.10.25\n";
     output += "//\n"
+
     output += "#declare CENTER = <"+ bs.center.x.toFixed(8) + ", " + bs.center.y.toFixed(8) + ", " + bs.center.z.toFixed(8) + ">;\n";
     output += "#declare RADIUS = " + bs.radius.toFixed(8) + ";\n";
     output += "#declare XMIN = " + bb.min.x.toFixed(8) + ";\n";

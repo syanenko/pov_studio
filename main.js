@@ -574,7 +574,7 @@ function download(type) {
 
     //const reverseVertices = document.getElementById("reverse_vertices").checked;
     const reverseVertices = true;
-    const result = exporter.parse( scene, material.flatShading, material.vertexColors, reverseVertices, camera, sourceFile );
+    const result = exporter.parse( scene, material.flatShading, material.vertexColors, reverseVertices, sourceFile );
     saveString( result, 'model.inc' );
   }
 }
