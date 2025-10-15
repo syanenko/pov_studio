@@ -1576,19 +1576,40 @@ global_settings {
 #declare mat_array [953][0] = "M_ground_dirty_sand" ;
 #declare mat_array [953][1] = M_ground_dirty_sand 
 
-//  951 - M_ground_mud
-//  416 - M_copper_old 
-//  622 - M_shroom_A 
-//  554 - M_spotted_weed_B 
-//  477 - M_glass_frosted
-//  488 - M_glass_block
-//  486 - M_glass_swirl_A 
-//  481 - M_glass_green_water
-//  475 - M_glass_blue
-  
+ 
 //----------------------------------------------------------
-//                      V I E W   T H I S   S A M P L E
+//                      V I E W   S A M P L E
 //----------------------------------------------------------
+//
+// -- Featured
+//
+// 951 - M_ground_mud
+// 416 - M_copper_old 
+// 622 - M_shroom_A 
+// 554 - M_spotted_weed_B 
+// 477 - M_glass_frosted
+// 488 - M_glass_block
+// 486 - M_glass_swirl_A 
+// 481 - M_glass_green_water
+// 475 - M_glass_blue
+//
+
 #declare current_sample = 218;
+
+// 
+// Render a set of materials samples,
+// comment it out when making matcap
+//
 #include "view_samples.inc"  
 //#include "view_samples_vertical.inc"
+
+//
+// Render matcap image
+//
+// Recomended image size: 512x512
+// Icon size: 90x90
+//
+// Uncomment to make matcap material
+//
+// #include "make_matcap.inc"
+//

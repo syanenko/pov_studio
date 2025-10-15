@@ -1,53 +1,17 @@
 //
 // POV-Ray studio
+// https://povlab.yesbird.online/studio/
 //
-// URL: https://povlab.yesbird.online/studio/
 //
+// Author: Yesbird (https://yesbird.online)
+// Date: 15.10.25 
 //
 #version 3.8;
-global_settings{
-  assumed_gamma 1
-/*
-  radiosity {
-    pretrace_start 0.08           // start pretrace at this size
-    pretrace_end   0.04           // end pretrace at this size
-    count 600                    // higher -> higher quality (1..1600) [35]
+global_settings{ assumed_gamma 1 }
 
-    nearest_count 10               // higher -> higher quality (1..10) [5]
-    error_bound 1.8               // higher -> smoother,   less accurate [1.8]
-    recursion_limit 3             // how much interreflections are calculated (1..5+) [3]
-
-    low_error_factor .5           // reduce error_bound during last pretrace step
-    gray_threshold 0.0            // increase for weakening colors (0..1) [0]
-    minimum_reuse 0.015           // reuse of old radiosity samples [0.015]
-    brightness 1                  // brightness of radiosity effects (0..1) [1]
-
-    adc_bailout 0.01/2
-    normal on                     // take surface normals into account [off]
-    //media on                    // take media into account [off]
-    //save_file "file_name"       // save radiosity data
-    //load_file "file_name"       // load saved radiosity data
-    //always_sample off           // turn sampling in final trace off [on]
-    //max_sample 1.0              // maximum brightness of samples
-  }
-*/
-/* */
-  photons {
-    count 10000000
-    autostop 0
-    jitter 0.5
-  }
-
-}
-
-#default{ finish{ ambient 0.1 diffuse 0.9 }}
-
-
-#include "colors.inc"
-#include "stones.inc"
-#include "textures.inc"
-#include "glass.inc"
-
+//
+// Mike Miller's materials collection
+//
 #include "materials/default_materials.inc" 
 #include "materials/materials_wood.inc"
 
@@ -55,31 +19,47 @@ global_settings{
 // -----------------------------------------------------------------------------------------
 //                      M O D E L
 //------------------------------------------------------------------------------------------ 
-//object {
-  // #include "model_arrays_template.inc"
-  #include "model.inc"
-  //rotate y * 90
-  //photons {target refraction on reflection on}
-//}
+#include "model.inc"
+
+//
+// Experiments with vertex array (select checkbox 'Export arrays' in studio GUI to get them) 
+//
+/*
+#declare Index = 0;
+#while (Index < dimension_size(v1, 1))
+    #declare cv = v1[Index];
+    sphere { cv,  pow((cv.y / 20), 3) pigment { rgb cv / 40 - 0.1} }
+
+    #declare Index = Index + 1;
+#end
+
+#declare Index = 0;
+#while (Index < dimension_size(v2, 1))
+    #declare cv = v2[Index];
+    sphere { cv,  5.0 - cv.y / 10  pigment { rgb cv / 50 } }
+
+    #declare Index = Index + 1;
+#end
+*/
 
 // -----------------------------------------------------------------------------------------
 //                      C A M E R A 
 //------------------------------------------------------------------------------------------ 
 camera { perspective angle 50
-         location  <RADIUS, RADIUS, RADIUS> * 0.6
-         look_at   CENTER - x * 2.2 - y * 0.3
+         location  <RADIUS, RADIUS, RADIUS> * 1.5
+         look_at   CENTER
          right     x * image_width / image_height }
 
 // -----------------------------------------------------------------------------------------
 //                      L I G H T S
 //------------------------------------------------------------------------------------------ 
-#declare power = 0.5;
+#declare power = 0.6;
 
 #declare light_camera =
 light_source {
     <RADIUS, RADIUS, RADIUS> * 5
     #declare light_color = color red 1 green 1 blue 1 ;                      
-    light_color * power  / 6
+    light_color * power * 0.1
     area_light
     <50, 0, 0> <0, 0, 50>         
     4, 4                          
@@ -98,7 +78,7 @@ light_camera
 light_source {
     <0,0,RADIUS> * 3
     #declare light_color = color red 1 green 1 blue 1 ;                      
-    light_color * power / 5
+    light_color * power * 0.5
     area_light
     <50, 0, 0> <0, 0, 50>         
     4, 4                          
@@ -116,7 +96,7 @@ light_right
 light_source {
     <0,0,-RADIUS> * 7
     #declare light_color = color red 1 green 1 blue 1 ;                      
-    light_color * power / 4
+    light_color * power * 0.8
     area_light
     <50, 0, 0> <0, 0, 50>         
     4, 4                          
@@ -130,12 +110,11 @@ light_source {
 }   
 light_left
 
-
 #declare light_top =
 light_source {
      <0,RADIUS,0> * 4
     #declare light_color = color red 1 green 1 blue 1 ;                      
-    light_color * power / 1.4
+    light_color * power / 8
     area_light
     <50, 0, 0> <0, 0, 50>         
     4, 4                          
@@ -149,6 +128,25 @@ light_source {
     photons {reflection on refraction on }
 }   
 light_top
+
+#declare light_bottom =
+light_source {
+     <0,-RADIUS,0> * 4
+    #declare light_color = color red 1 green 1 blue 1 ;                      
+    light_color * power * 0.3
+    area_light
+    <50, 0, 0> <0, 0, 50>         
+    4, 4                          
+    adaptive 0                    
+    jitter                        
+    circular                      
+    orient                     
+    fade_distance 400
+    fade_power 2     
+    shadowless 
+    photons {reflection on refraction on }
+}   
+light_bottom
 
 // -----------------------------------------------------------------------------------------
 //                      S K Y
@@ -182,5 +180,6 @@ object {
 
 object { bg_sphere (<4000,4000,4000>, <30,30,30>, 275)
   no_image 
-  scale <1,1,1> / 100}
+  scale <1,1,1>}
+
 //------------------------------------------------------------------------------------------
