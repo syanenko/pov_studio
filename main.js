@@ -1,21 +1,18 @@
 //
 // Run: sudo /opt/lampp/manager-linux-x64.run
 //
-// TODO
-//
-// - XR-menu from Mathview
-// - Pass camera params to 'model.ini'
-// - XR: click, drug out of the window - sticks to model (!).
+// -- TODO
+// - Make standart materials set of 12 (add gems, etc).
 // - Unblock selector on Cancel in dialogs
-// - Save textures from GLB (keep original material), zip. 
-// - Model rotation in XR (not ocontrols)
+//
+// - XR: click, drug out of the window - sticks to model (!).
 // - Help in about (+/-)
-// - POV scene tweaking
-// - Materials: fix black line in matcaps 
-// - Extend materials library (add gems, etc)
+// - POV scene tweaking (+/-)
+//
 // - Server-side previw rendering (?)
 // - Check selector shifting (?)
-// - vertexColors + flatShading (?)
+//
+// -- BUGS
 //
 // Update: 0.16b "UV"
 // 1. Export Textures and UVs as arrays
@@ -244,7 +241,12 @@ async function loadModel(path)
   let vcount = 0, fcount = 0;
   for (let i = 0; i < meshes.length; i++) {
     meshes[i].geometry.deleteAttribute( 'normal' );
-    meshes[i].geometry = BufferGeometryUtils.mergeVertices(meshes[i].geometry);
+    console.log(meshes[i].geometry);
+    try {
+      meshes[i].geometry = BufferGeometryUtils.mergeVertices(meshes[i].geometry);
+    } catch(err) {
+      console.error("BufferGeometryUtils.mergeVertices: " +  err);
+    }
     meshes[i].geometry.computeVertexNormals();
     meshes[i].material.dispose();
     meshes[i].material = material.clone();
