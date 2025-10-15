@@ -15,7 +15,6 @@ global_settings{ assumed_gamma 1 }
 #include "materials/default_materials.inc" 
 #include "materials/materials_wood.inc"
 
-
 // -----------------------------------------------------------------------------------------
 //                      M O D E L
 //------------------------------------------------------------------------------------------ 
