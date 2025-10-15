@@ -55,10 +55,9 @@ import { POVAExporter } from './modules/POVAExporter.js';
 import { initXR } from './modules/XR.js';
 
 const DEFAULT_MODEL = 'teapot.glb';
-// const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
-//const DEFAULT_MODEL = 'onion.fbx';
 //const DEFAULT_MODEL = 'ring.glb';
 //const DEFAULT_MODEL = 'cube_uv.fbx';
+//const DEFAULT_MODEL = 'viking_lander.glb';
 //const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
 let DEFAULT_MODEL_PATH = './data/models/' + DEFAULT_MODEL;
 
