@@ -2,20 +2,15 @@
 // Run: sudo /opt/lampp/manager-linux-x64.run
 //
 // -- TODO
-// - Make standart materials set of 12 (add gems, etc).
-// - Unblock selector on Cancel in dialogs
-//
-// - XR: click, drug out of the window - sticks to model (!).
-// - Help in about (+/-)
-// - POV scene tweaking (+/-)
-//
-// - Server-side previw rendering (?)
+// - Zoom in XR
+// - Help in about
 // - Check selector shifting (?)
 //
 // -- Bugs
-// -- gearbox.fbx on render
-// 
-
+// - Unblock selector on Cancel dialogs
+// - XR: click, drug out of the window - sticks to model (!)
+// - gearbox.fbx on render
+//
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -56,7 +51,6 @@ let curMatcapBut;
 let cb_VertexColors;
 let cb_DisplayAxis;
 let cb_DisplayFloor;
-let cb_DisplayFloorStatus;
 let cb_DisplayNormals;
 
 let fill = false;
@@ -120,10 +114,10 @@ async function init() {
 
   // GUI defaults
   // cb_DisplayAxis.click();
-  // cb_DisplayFloor.click();
+  cb_DisplayFloor.click();
   // document.getElementById("flat").click();
   // document.getElementById("reverse_vertices").click();
-  document.getElementById("export_arrays").click();
+  // document.getElementById("export_arrays").click();
 }
 
 //
@@ -166,6 +160,7 @@ async function loadModel(path)
   });
   group.clear();
   scene.remove(group);
+  scene.remove( grid_helper );
 
   // Model cleanup (?)
   for(let i=0; i<model.length; i++) {
