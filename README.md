@@ -3,6 +3,7 @@
 Translates formats <i>obj, fbx, glb, gltf, stl</i> to <i>mesh2</i>, assigns materials to the parts of the model, supports XR mode.<br>
 Live: https://povlab.yesbird.online/studio<br>
 
+<img width="640" height="360" alt="image" src="https://github.com/user-attachments/assets/3fb4292b-aecb-4b12-8e22-c49016a0825d" /><br><br>
 How to use:<br>
 
 1. Install POV-Ray if not installed yet from: http://www.povray.org/.<br>
