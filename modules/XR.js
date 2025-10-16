@@ -2,7 +2,7 @@
 // Init XR
 //
 import * as THREE from 'three';
-import { XRControllerModelFactory } from 'three/addons/webxr/XRControllerModelFactory.js';
+import { XRControllerModelFactory } from './webxr/XRControllerModelFactory.js';
 import { VRButtonIcon } from './webxr/VRButtonIcon.js';
 
 let vrButton;
