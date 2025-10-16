@@ -1,4 +1,4 @@
 adb devices
-adb reverse tcp:3000 tcp:3000
+adb reverse tcp:8085 tcp:8085
 npm start
 

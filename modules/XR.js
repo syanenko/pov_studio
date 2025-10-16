@@ -123,6 +123,9 @@ async function initController()
   light.position.set( 0, 0, 0 );
   scene.add( light );
 
+  controller.addEventListener('connected', (e) => {
+    controller.gamepad = e.data.gamepad;
+  });
   controller.addEventListener( 'selectstart', onSelectStart );
   controller.addEventListener( 'selectend', onSelectEnd );
 }
@@ -138,9 +141,11 @@ function onSelectStart( event )
   beam.material.color.set(beam_hilight_color);
   beam.material.emissive.g = 0.5;
   
-  rotX = controller.rotation.x;
-  rotY = controller.rotation.y;
-  rotate = true;
+  //rotX = controller.rotation.x;
+  //rotY = controller.rotation.y;
+  //rotate = true;
+
+  posZ = controller.rotation.x;
 }
 
 function onSelectEnd( event )
@@ -151,7 +156,7 @@ function onSelectEnd( event )
   beam.material.color.set(beam_color);
   beam.material.emissive.g = 0;
 
-  rotate = false;
+  //rotate = false;
 }
 
 export { initXR };
