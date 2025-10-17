@@ -13,7 +13,7 @@ import {
 	MotionController
 } from 'three/addons/libs/motion-controllers.module.js';
 
-const DEFAULT_PROFILES_PATH = '/modules/webxr/@webxr-input-profiles/assets/dist/profiles';
+const DEFAULT_PROFILES_PATH = './modules/webxr/@webxr-input-profiles/assets/dist/profiles';
 const DEFAULT_PROFILE = 'generic-trigger';
 
 class XRControllerModel extends Object3D {
