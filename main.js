@@ -208,7 +208,8 @@ async function loadModel(path)
       console.error("BufferGeometryUtils.mergeVertices: " +  err);
     }
     meshes[i].geometry.computeVertexNormals();
-    meshes[i].material.dispose();
+    if(meshes[i].material instanceof THREE.Material)
+      meshes[i].material.dispose();
     meshes[i].material = material.clone();
     meshes[i].material.needsUpdate = true;
     meshes[i].name = "part" + (i + 1);
