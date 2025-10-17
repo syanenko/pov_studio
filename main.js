@@ -8,11 +8,19 @@ import { POVExporter } from './modules/POVExporter.js';
 import { POVAExporter } from './modules/POVAExporter.js';
 import { initXR } from './modules/XR.js';
 
-const DEFAULT_MODEL = 'teapot.glb';
+// Set default model
+let DEFAULT_MODEL = 'teapot.glb';
 //const DEFAULT_MODEL = 'ring.glb';
 //const DEFAULT_MODEL = 'cube_uv.fbx';
 //const DEFAULT_MODEL = 'viking_lander.glb';
 //const DEFAULT_MODEL = 'Ingenuity_Mars_Helicopter.glb';
+
+const query = window.location.search;
+const params = new URLSearchParams(query);
+const m = params.get('m')
+if(m != undefined)
+  DEFAULT_MODEL = m;
+
 let DEFAULT_MODEL_PATH = './data/models/' + DEFAULT_MODEL;
 
 const PATH_MATCAPS = './data/materials/';
