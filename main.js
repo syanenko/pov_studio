@@ -1,16 +1,3 @@
-//
-// Run: sudo /opt/lampp/manager-linux-x64.run
-//
-// -- TODO
-// - Zoom in XR
-// - Help in about
-// - Check selector shifting (?)
-//
-// -- Bugs
-// - Unblock selector on Cancel dialogs
-// - XR: click, drug out of the window - sticks to model (!)
-// - gearbox.fbx on render
-//
 import * as THREE from 'three';
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -595,12 +582,59 @@ function animate() {
   renderer.setAnimationLoop( render );
 }
 
+// Listen for controller updates
+function checkControllerInput() {
+  const session = renderer.xr.getSession();
+  if (session) {
+    const inputSources = session.inputSources;
+    inputSources.forEach((source) => {
+      if (source.gamepad) {
+        // console.log(inputSources);
+        // selected = true;
+        const gamepad = source.gamepad;
+        if (gamepad.axes.length > 1) {
+          if ( (Math.abs(gamepad.axes[0]) > 0) || Math.abs(gamepad.axes[1]) > 0 ||
+               (Math.abs(gamepad.axes[2]) > 0) || Math.abs(gamepad.axes[3]) > 0) {
+               // console.log("QQ1");
+               return true;
+          }
+        }
+      }
+    });
+  }
+  return false;
+}
+
 //
 // Render
 //
-function render() {
+window.posZ = 0;
 
-  if(rotate) {
+function render() {
+  // DEBUG ! 
+  let selected = false;
+  const session = renderer.xr.getSession();
+  if (session) {
+    const inputSources = session.inputSources;
+    console.log(inputSources);
+    inputSources.forEach((source) => {
+      if (source.gamepad) {
+        const gamepad = source.gamepad;
+        if (gamepad.axes.length > 1) {
+          if ( (Math.abs(gamepad.axes[0]) > 0) || Math.abs(gamepad.axes[1]) > 0 ||
+               (Math.abs(gamepad.axes[2]) > 0) || Math.abs(gamepad.axes[3]) > 0) {
+               selected = true;
+          }
+        }
+      }
+    });
+  }
+ 
+  // DEBUG
+  group.position.z -= posZ;
+   
+  if(selected) {
+
     let dX = (rotX - controller.rotation.x) * rotK;
     let dY = (rotY - controller.rotation.y) * rotK;
 
