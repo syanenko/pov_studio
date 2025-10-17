@@ -591,59 +591,27 @@ function animate() {
   renderer.setAnimationLoop( render );
 }
 
-// Listen for controller updates
-function checkControllerInput() {
-  const session = renderer.xr.getSession();
-  if (session) {
-    const inputSources = session.inputSources;
-    inputSources.forEach((source) => {
-      if (source.gamepad) {
-        // console.log(inputSources);
-        // selected = true;
-        const gamepad = source.gamepad;
-        if (gamepad.axes.length > 1) {
-          if ( (Math.abs(gamepad.axes[0]) > 0) || Math.abs(gamepad.axes[1]) > 0 ||
-               (Math.abs(gamepad.axes[2]) > 0) || Math.abs(gamepad.axes[3]) > 0) {
-               // console.log("QQ1");
-               return true;
-          }
-        }
-      }
-    });
-  }
-  return false;
-}
-
 //
 // Render
 //
-window.posZ = 0;
-
 function render() {
-  // DEBUG ! 
-  let selected = false;
+  // XR:Distance
   const session = renderer.xr.getSession();
   if (session) {
     const inputSources = session.inputSources;
-    console.log(inputSources);
     inputSources.forEach((source) => {
       if (source.gamepad) {
         const gamepad = source.gamepad;
         if (gamepad.axes.length > 1) {
-          if ( (Math.abs(gamepad.axes[0]) > 0) || Math.abs(gamepad.axes[1]) > 0 ||
-               (Math.abs(gamepad.axes[2]) > 0) || Math.abs(gamepad.axes[3]) > 0) {
-               selected = true;
-          }
+          if( Math.abs(gamepad.axes[1]) > 0)
+            group.position.z = (defDistance) - ((defDistance) * gamepad.axes[1] );
         }
       }
     });
   }
- 
-  // DEBUG
-  group.position.z -= posZ;
-   
-  if(selected) {
 
+  // XR:Rotate
+  if(rotate) {
     let dX = (rotX - controller.rotation.x) * rotK;
     let dY = (rotY - controller.rotation.y) * rotK;
 

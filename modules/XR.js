@@ -15,6 +15,9 @@ const beam_hilight_color = 0x222222;
 let cb_DisplayFloor;
 let cb_DisplayFloorStatus;
 
+//
+// Init
+//
 async function initXR() {
   vrButton = VRButtonIcon.createButton(renderer); 
 
@@ -28,7 +31,10 @@ async function initXR() {
   let mpos = new THREE.Vector3();
   let mrot = new THREE.Quaternion();
 
+  //
   // XR start
+  //
+  window.defDistance = -bs.radius * 2;
   renderer.xr.addEventListener( 'sessionstart', function ( event ) {
     renderer.setClearColor(new THREE.Color(0x000), 1);
 
@@ -38,8 +44,7 @@ async function initXR() {
     fov = camera.fov;
 
     // Put model into view
-    group.position.set(0, -bs.radius / 8, -bs.radius * 2);
-    // group.scale.set(1, 1, 1);
+    group.position.z = defDistance;
 
     // Switch off floor
     cb_DisplayFloor = document.getElementById("display_floor");
@@ -50,7 +55,9 @@ async function initXR() {
     // gui_mesh.visible = true;
   });
 
+  // 
   // XR end
+  // 
   renderer.xr.addEventListener( 'sessionend', function ( event ) {
     renderer.setClearColor(new THREE.Color(0x000), 0);
 
@@ -141,11 +148,9 @@ function onSelectStart( event )
   beam.material.color.set(beam_hilight_color);
   beam.material.emissive.g = 0.5;
   
-  //rotX = controller.rotation.x;
-  //rotY = controller.rotation.y;
-  //rotate = true;
-
-  posZ = controller.rotation.x;
+  rotX = controller.rotation.x;
+  rotY = controller.rotation.y;
+  rotate = true;
 }
 
 function onSelectEnd( event )
@@ -156,7 +161,7 @@ function onSelectEnd( event )
   beam.material.color.set(beam_color);
   beam.material.emissive.g = 0;
 
-  //rotate = false;
+  rotate = false;
 }
 
 export { initXR };
