@@ -4,10 +4,8 @@
     <title>Studio</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-<!--
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="expires" content="timestamp">
--->
     <link type="text/css" rel="stylesheet" href="main.css">
   </head>
 
@@ -68,16 +66,14 @@
       <form encType="multipart/form-data" style="text-align:left">
         <h3>Upload model (obj,fbx,glb,gltf,stl)</h3>
         <input type="file" id="model" name="model"  accept=".obj,.fbx,.glb,.gltf,.stl"/><br/><br/>
-        <input type="submit"  value="Upload" />&nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="button"  value="Cancel" onclick="parentElement.parentElement.style.visibility = 'hidden'"/>
+        <input type="submit"  id="Upload" value="Upload" />&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="button"  id="Cancel" value="Cancel" onclick="window.blockSelector(false); console.log('QQ');
+                                                                  parentElement.parentElement.style.visibility = 'hidden'"/>
       </form>
     </div>
 
     <script>
       var form = document.getElementById('form_upload');
-      form.addEventListener('cancel', (event) => { window.blockSelector(false); });
-      form.addEventListener('unload', (event) => { window.blockSelector(false); });
-
       form.addEventListener('submit', function(e) {
         // Display progress bar
         document.getElementById('progress-label').innerHTML = "Loading...";
