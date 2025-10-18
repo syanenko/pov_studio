@@ -47,6 +47,7 @@ let cb_VertexColors;
 let cb_DisplayAxis;
 let cb_DisplayFloor;
 let cb_DisplayNormals;
+let animation = false;
 
 let fill = false;
 let sourceFile = DEFAULT_MODEL;
@@ -137,6 +138,8 @@ async function loadModel(path)
     return;
   }
   sourceFile = path;
+
+  animation = false;
   displayNormals(false);
 
   // Clear up model group
@@ -279,6 +282,10 @@ async function loadModel(path)
 
   displayFloor(cb_DisplayFloor.checked);
   ocontrols.update();
+
+  // Animation for gears only (!)
+  if(sourceFile == "./data/models/gears.glb")
+    animation = true;
 }
 window.loadModel = loadModel;
 
@@ -499,7 +506,26 @@ function saveString( text, filename ) {
   save( new Blob( [ text ], { type: 'text/plain' } ), filename );
 }
 
-// download
+//
+// Stop animation (for gears only (!))
+//
+function stopAnimation() {
+  if(animation) {
+    model[0].rotation.set(THREE.MathUtils.degToRad(-180),
+                          THREE.MathUtils.degToRad(0),
+                          THREE.MathUtils.degToRad(-129.31));
+
+    model[1].rotation.set(THREE.MathUtils.degToRad(-90),
+                          THREE.MathUtils.degToRad(47.73),
+                          THREE.MathUtils.degToRad(180));
+  }
+  animation = false;
+}
+window.stopAnimation = stopAnimation;
+
+//
+// Download
+//
 function download(type) {
   if(type == "obj") { // OBJ
     const exporter = new OBJExporter();
@@ -624,6 +650,15 @@ function render() {
       group.rotation.y += dY;
       rotY = controller.rotation.y;
     }
+  }
+
+  // Animate
+  if(animation) {
+    if(model[0])
+      model[0].rotation.z = (model[0].rotation.z + 0.05) % ( 2 * Math.PI);
+
+    if(model[1]) 
+      model[1].rotation.y = (model[1].rotation.y - 0.01) % ( 2 * Math.PI);
   }
 
   ocontrols.update();

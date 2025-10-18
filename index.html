@@ -19,16 +19,16 @@
     }
     </script> 
     <div>
-    <img id="logo" src="data/images/logo_40x40.png" alt="Logo" width="40" height="40" onclick="window.blockSelector(true); about.inert=true; about.showModal(); about.inert=false;">
-    <div id="text" onclick="window.blockSelector(true); about.inert=true;  about.showModal(); about.inert=false;">POV-Ray Studio 0.18</div>
-    <img id="help" class="buttons" src="data/images/help_36x36.png" alt="Help" onclick="window.blockSelector(true); about.inert=true;  about.showModal(); about.inert=false;">
-    <img id="xr" class="buttons" src="data/images/xr_36x36.png" alt="XR" title="Enter XR" onclick="window.enterXR()">    
-    <img id="b6" class="buttons" src="data/images/6.png" alt="Model6" title="Venus" onclick="window.loadModel('./data/models/venus.glb')">
-    <img id="b5" class="buttons" src="data/images/5.png" alt="Model5" title="Pingouin" onclick="window.loadModel('./data/models/pingouin.glb')">
-    <img id="b4" class="buttons" src="data/images/4.png" alt="Model4" title="Gears" onclick="window.loadModel('./data/models/gears.glb')">
-    <img id="b3" class="buttons" src="data/images/3.png" alt="Model3" title="Frog" onclick="window.loadModel('./data/models/frog.glb')">
-    <img id="b2" class="buttons" src="data/images/2.png" alt="Model2" title="Cassini huygens" onclick="window.loadModel('./data/models/cassini_huygens.glb')">
-    <img id="b1" class="buttons" src="data/images/1.png" alt="Model1" title="Ring" onclick="window.loadModel('./data/models/ring.glb')">
+    <img id="logo" src="data/images/logo_40x40.png" alt="Logo" width="40" height="40" onclick="blockSelector(true); about.inert=true; about.showModal(); about.inert=false;">
+    <div id="text" onclick="blockSelector(true); about.inert=true;  about.showModal(); about.inert=false;">POV-Ray Studio 0.18</div>
+    <img id="help" class="buttons" src="data/images/help_36x36.png" alt="Help" onclick="blockSelector(true); about.inert=true;  about.showModal(); about.inert=false;">
+    <img id="xr" class="buttons" src="data/images/xr_36x36.png" alt="XR" title="Enter XR" onclick="enterXR()">    
+    <img id="b6" class="buttons" src="data/images/6.png" alt="Model6" title="Venus" onclick="loadModel('./data/models/venus.glb')">
+    <img id="b5" class="buttons" src="data/images/5.png" alt="Model5" title="Pingouin" onclick="loadModel('./data/models/pingouin.glb')">
+    <img id="b4" class="buttons" src="data/images/4.png" alt="Model4" title="Gears" onclick="loadModel('./data/models/gears.glb')">
+    <img id="b3" class="buttons" src="data/images/3.png" alt="Model3" title="Frog" onclick="loadModel('./data/models/frog.glb')">
+    <img id="b2" class="buttons" src="data/images/2.png" alt="Model2" title="Cassini huygens" onclick="loadModel('./data/models/cassini_huygens.glb')">
+    <img id="b1" class="buttons" src="data/images/1.png" alt="Model1" title="Ring" onclick="loadModel('./data/models/ring.glb')">
     </div>
     <hr>
 
@@ -48,14 +48,14 @@
     <!-- Download -->
     <dialog id="download_dlg" class="dialog" style="text-align: center;">
       <div style="font-size: 20px; font-style: italic; color:#ff9127; padding-bottom: 10px;">Download</div>
-      <button id="glb"  class="control" onclick="window.download(this.id);download_dlg.close()" title="GLB">GLB</button>
-      <button id="gltf" class="control" onclick="window.download(this.id);download_dlg.close()" title="GLTF">GLTF</button>
-      <button id="pov"  class="control" onclick="window.download(this.id);download_dlg.close()" title="POV">POV</button>
+      <button id="glb"  class="control" onclick="download(this.id);download_dlg.close()" title="GLB">GLB</button>
+      <button id="gltf" class="control" onclick="download(this.id);download_dlg.close()" title="GLTF">GLTF</button>
+      <button id="pov"  class="control" onclick="download(this.id);download_dlg.close()" title="POV">POV</button>
       <button id="cancel" class="control" onclick="download_dlg.close()" title="Cancel">Cancel</button>
     </dialog>
     <script>
-       document.getElementById('about').addEventListener('close', (event) => { window.blockSelector(false) });
-       document.getElementById('download_dlg').addEventListener('close', (event) => { window.blockSelector(false) });
+       document.getElementById('about').addEventListener('close', (event) => { blockSelector(false) });
+       document.getElementById('download_dlg').addEventListener('close', (event) => { blockSelector(false) });
     </script>
 
     <!-- Main -->
@@ -67,7 +67,7 @@
         <h3>Upload model (obj,fbx,glb,gltf,stl)</h3>
         <input type="file" id="model" name="model"  accept=".obj,.fbx,.glb,.gltf,.stl"/><br/><br/>
         <input type="submit"  id="Upload" value="Upload" />&nbsp;&nbsp;&nbsp;&nbsp;
-        <input type="button"  id="Cancel" value="Cancel" onclick="window.blockSelector(false); console.log('QQ');
+        <input type="button"  id="Cancel" value="Cancel" onclick="blockSelector(false); console.log('QQ');
                                                                   parentElement.parentElement.style.visibility = 'hidden'"/>
       </form>
     </div>
@@ -112,7 +112,7 @@
 
         xhr.onload = function() {
           if (xhr.status === 200) {
-            window.loadModel(xhr.response.model);
+            loadModel(xhr.response.model);
           } else {
             alert("Error loading model: " + xhr.status);
             document.getElementById('progress-container').style.display = 'none';
@@ -127,7 +127,7 @@
         // Send the request
         xhr.send(formData);
         form.style.visibility = 'hidden';
-        window.blockSelector(false);
+        blockSelector(false);
       });
     </script>
 
@@ -137,11 +137,11 @@
     <!-- Controls -->
     <div style='position: absolute; top:65px; left:20px; width:90px; z-index:4;'>
       <input id="upload_button"   type="image" src='data/images/upload_icon.png'   style='position: relative; padding-top: 15px;'>
-      <input id="download_button" type="image" src='data/images/download_icon.png' onclick="window.blockSelector(true); download_dlg.inert=true; download_dlg.showModal(); download_dlg.inert=false;" style='position: relative; padding-top: 5px;'>
+      <input id="download_button" type="image" src='data/images/download_icon.png' onclick="stopAnimation(); blockSelector(true); download_dlg.inert=true; download_dlg.showModal(); download_dlg.inert=false;" style='position: relative; padding-top: 5px;'>
     </div>
     <script>
       ub = document.getElementById("upload_button");
-      ub.onclick = function() { window.blockSelector(true);
+      ub.onclick = function() { blockSelector(true);
                                 let form = document.getElementById("form_upload");
                                 form.style.visibility == "visible" ? form.style.visibility = 'hidden': form.style.visibility = "visible"; }
     </script>
@@ -155,30 +155,30 @@
     <div id="parts" style="position: absolute; top:300px; left:20px; width:130px"></div>
 
     <div style='position: absolute; top:65px; right:20px; width:200px; z-index:4;'>
-      <input id="M_glass_wripple" title="M_glass_wripple" type="image" src='data/materials/M_glass_wripple_icon.png' class="mc_button" onclick = "window.selectMat(this)">
-      <input id="M_glass_gold_wripple" title="M_glass_gold_wripple" type="image" src='data/materials/M_glass_gold_wripple_icon.png' class="mc_button" onclick = "window.selectMat(this)">
-      <input id="M_glass_green_water" title="M_glass_green_water" type="image" src='data/materials/M_glass_green_water_icon.png' class="mc_button" onclick = "window.selectMat(this)">
-      <input id="M_glass_blue" title="M_glass_blue" type="image" src='data/materials/M_glass_blue_icon.png' class="mc_button" onclick = "window.selectMat(this)">
-      <input id="M_glass_red" title="M_glass_red" type="image" src='data/materials/M_glass_red_icon.png' class="mc_button" onclick = "window.selectMat(this)">
-      <input id="M_dark_gold_metal" title="M_dark_gold_metal" type="image" src='data/materials/M_dark_gold_metal_icon.png' class="mc_button" onclick = "window.selectMat(this)">
-      <input id="M_bright_gold_metal" title="M_bright_gold_metal" type="image" src='data/materials/M_bright_gold_metal_icon.png' class="mc_button" onclick = "window.selectMat(this)">
-      <input id="M_rose_metal" title="M_rose_metal" type="image" src='data/materials/M_rose_metal_icon.png' class="mc_button" onclick = "window.selectMat(this)">
+      <input id="M_glass_wripple" title="M_glass_wripple" type="image" src='data/materials/M_glass_wripple_icon.png' class="mc_button" onclick = "selectMat(this)">
+      <input id="M_glass_gold_wripple" title="M_glass_gold_wripple" type="image" src='data/materials/M_glass_gold_wripple_icon.png' class="mc_button" onclick = "selectMat(this)">
+      <input id="M_glass_green_water" title="M_glass_green_water" type="image" src='data/materials/M_glass_green_water_icon.png' class="mc_button" onclick = "selectMat(this)">
+      <input id="M_glass_blue" title="M_glass_blue" type="image" src='data/materials/M_glass_blue_icon.png' class="mc_button" onclick = "selectMat(this)">
+      <input id="M_glass_red" title="M_glass_red" type="image" src='data/materials/M_glass_red_icon.png' class="mc_button" onclick = "selectMat(this)">
+      <input id="M_dark_gold_metal" title="M_dark_gold_metal" type="image" src='data/materials/M_dark_gold_metal_icon.png' class="mc_button" onclick = "selectMat(this)">
+      <input id="M_bright_gold_metal" title="M_bright_gold_metal" type="image" src='data/materials/M_bright_gold_metal_icon.png' class="mc_button" onclick = "selectMat(this)">
+      <input id="M_rose_metal" title="M_rose_metal" type="image" src='data/materials/M_rose_metal_icon.png' class="mc_button" onclick = "selectMat(this)">
 
-      <input id="M_light_tan_dull" title="M_light_tan_dull" type="image" src='data/materials/M_light_tan_dull_icon.png' class="mc_button" onclick = "window.selectMat(this)">
-      <input id="M_coral_dull" title="M_coral_dull" type="image" src='data/materials/M_coral_dull_icon.png' class="mc_button" onclick = "window.selectMat(this)">
-      <input id="M_orange_gloss" title="M_orange_gloss" type="image" src='data/materials/M_orange_gloss_icon.png' class="mc_button" onclick = "window.selectMat(this)">
-      <input id="M_yellow_green_gloss" title="M_yellow_green_gloss" type="image" src='data/materials/M_yellow_green_gloss_icon.png' class="mc_button" onclick = "window.selectMat(this)">
+      <input id="M_light_tan_dull" title="M_light_tan_dull" type="image" src='data/materials/M_light_tan_dull_icon.png' class="mc_button" onclick = "selectMat(this)">
+      <input id="M_coral_dull" title="M_coral_dull" type="image" src='data/materials/M_coral_dull_icon.png' class="mc_button" onclick = "selectMat(this)">
+      <input id="M_orange_gloss" title="M_orange_gloss" type="image" src='data/materials/M_orange_gloss_icon.png' class="mc_button" onclick = "selectMat(this)">
+      <input id="M_yellow_green_gloss" title="M_yellow_green_gloss" type="image" src='data/materials/M_yellow_green_gloss_icon.png' class="mc_button" onclick = "selectMat(this)">
     </div>
 
     <!-- Settings -->
     <div style='position: absolute; bottom:15px; left:20px; z-index:4; font-size: 130%;'>
-      <input type="checkbox" id="rotation" onclick="window.switchRotation(this.checked)">
+      <input type="checkbox" id="rotation" onclick="switchRotation(this.checked)">
       <label for="rotation">Rotation</label><br>
 
-      <input type="checkbox" id="flat" onclick="window.updateShading(this.checked)">
+      <input type="checkbox" id="flat" onclick="updateShading(this.checked)">
       <label for="flat">Flat shading</label><br>
 
-      <input type="checkbox" id="vertex_colors" onclick="window.updateVertexColors(this.checked)">
+      <input type="checkbox" id="vertex_colors" onclick="updateVertexColors(this.checked)">
       <label for="vertex_colors">Vertex colors</label><br>
 
       <input type="checkbox" id="export_arrays">
@@ -187,17 +187,17 @@
       <input type="checkbox" id="reverse_vertices">
       <label for="reverse_vertices">Reverse vertices</label><br>
 -->
-      <input type="checkbox" id="display_axis" onclick="window.displayAxis(this.checked)">
+      <input type="checkbox" id="display_axis" onclick="displayAxis(this.checked)">
       <label for="display_axis">Display axis</label><br>
 
-      <input type="checkbox" id="display_floor" onclick="window.displayFloor(this.checked)">
+      <input type="checkbox" id="display_floor" onclick="displayFloor(this.checked)">
       <label for="display_floor">Display floor</label><br>
 
-      <input type="checkbox" id="display_normals" onclick="window.displayNormals(this.checked)">
+      <input type="checkbox" id="display_normals" onclick="displayNormals(this.checked)">
       <label for="display_normals">Display normals</label><br>
     </div>
     <div style="position: absolute; bottom:15px; right:20px; z-index:4; font-size: 130%;"> 
-      <input type="checkbox" id="fill" onclick="window.setFill(this.checked)">
+      <input type="checkbox" id="fill" onclick="setFill(this.checked)">
     <label for="fill">Fill model</label><br>
     </div>
 
